@@ -1,0 +1,31 @@
+{
+  "release": "themed_initial_v1",
+  "reviewDate": "2026-10-14",
+  "reviewMethod": "Visual inspection of all 150 front and 150 reverse renders in eight proof sheets; additional full-size sample inspection and collection overview review.",
+  "reviewedVariants": 150,
+  "reviewedViews": 300,
+  "families": 20,
+  "proofFiles": ["QA/Front_Proof_1.png", "QA/Front_Proof_2.png", "QA/Front_Proof_3.png", "QA/Front_Proof_4.png", "QA/Reverse_Proof_1.png", "QA/Reverse_Proof_2.png", "QA/Reverse_Proof_3.png", "QA/Reverse_Proof_4.png"],
+  "findings": {
+    "racingNumbersOrSponsorTextVisible": false,
+    "brokenOrMissingTexturesObserved": false,
+    "newMeshDecorationsUsed": false,
+    "coherentFamilyPalettes": true,
+    "themedBadgesPresent": true,
+    "originalCarSilhouettesPreserved": true
+  },
+  "revisionsMade": [
+    "Removed original-palette emission from derived paint materials.",
+    "Corrected bonnet icon orientation and texture wrapping at UV boundaries.",
+    "Excluded C006 and C013 for insufficient badge area and curated replacement selections.",
+    "Disabled optional supplier engine, spoiler, and turbine objects.",
+    "Included the neutral roof swatches of C012 in the theme paint.",
+    "Separated Wizard's navy/lavender palette from Royal's purple/gold palette."
+  ],
+  "limits": [
+    "Review used isolated asset-preview cameras, not the eventual gameplay camera.",
+    "Badge size and mirrored placement are constrained by the original UVs; no meshes or UVs were changed.",
+    "Some original body shapes and integrated wings remain inherently sporty."
+  ],
+  "accepted": true
+}
