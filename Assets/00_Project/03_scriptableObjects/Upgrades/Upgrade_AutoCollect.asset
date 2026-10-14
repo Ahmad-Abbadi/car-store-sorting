@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259b2f7f1cbc8ff4bbc33cfcc144f5ec, type: 3}
+  m_Name: Upgrade_AutoCollect
+  m_EditorClassIdentifier: Assembly-CSharp::AutoCollectUpgradeSO
+  saveId: AutoCollect
+  displayName: Auto-collect items
+  description: Auto-equips up to {value} items matching the one in your hand.
+  icon: {fileID: 21300000, guid: bf14ab2fa5390814389ea1de01321cc7, type: 3}
+  baseValues:
+    unlocked: 0
+    maxItemsPerUse: 0
+  levels:
+  - cost: 18
+    values:
+      unlocked: 1
+      maxItemsPerUse: 3
+  - cost: 30
+    values:
+      unlocked: 1
+      maxItemsPerUse: 5
+  - cost: 45
+    values:
+      unlocked: 1
+      maxItemsPerUse: 8
+  - cost: 60
+    values:
+      unlocked: 1
+      maxItemsPerUse: 12
+  - cost: 75
+    values:
+      unlocked: 1
+      maxItemsPerUse: 20
+  cooldown: 30
+  maxDuration: 75
+  stagger: 0.3
+  riseHeight: 1
+  riseDuration: 0.35
+  riseEase: 27
+  flightDuration: 0.8
+  flightEase: 5
+  dropSpeed: 3
+  outlineColor: {r: 0.3, g: 1, b: 0.4, a: 1}

@@ -1,0 +1,306 @@
+{
+  "masterId": "M01",
+  "status": "CANDIDATE_REQUIRES_VISUAL_REVIEW",
+  "source": "original Blender custom mesh construction",
+  "sourceScript": "scripts/build_m01.py",
+  "blenderVersion": "5.1.0",
+  "coordinateSystem": "metres, front -X, up +Z; FBX export forward -Z up Y",
+  "recipe": "Nine-section micro hatch shell with cut arches, upright tapered cabin, molded ivory roof cap, mounted bumper belts, deep dish wheels",
+  "objects": [
+    {
+      "name": "BODY_PocketHatchShell",
+      "triangles": 1652,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Paint_Print",
+        "M01_Paint_Solid"
+      ],
+      "dimensionsM": [
+        0.08474999666213989,
+        0.048500001430511475,
+        0.028875000774860382
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 5.379913848392683e-05
+    },
+    {
+      "name": "CABIN_UprightHatch",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Cabin_Print"
+      ],
+      "dimensionsM": [
+        0.05531219765543938,
+        0.04218597710132599,
+        0.02174999937415123
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.3687573133290925e-05
+    },
+    {
+      "name": "ROOF_ContrastingMoldedCap",
+      "triangles": 180,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Ivory_Plastic"
+      ],
+      "dimensionsM": [
+        0.048499997705221176,
+        0.039500001817941666,
+        0.0037499964237213135
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 6.807807236775221e-06
+    },
+    {
+      "name": "FRONT_MODULE_ChromeBelt",
+      "triangles": 400,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Ivory_Plastic"
+      ],
+      "dimensionsM": [
+        0.0034999996423721313,
+        0.04252017289400101,
+        0.0091061070561409
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.1425329241574538e-06
+    },
+    {
+      "name": "REAR_MODULE_ChromeBelt",
+      "triangles": 400,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Ivory_Plastic"
+      ],
+      "dimensionsM": [
+        0.0034999996423721313,
+        0.04252017289400101,
+        0.0091061070561409
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.1425320424017114e-06
+    },
+    {
+      "name": "CHASSIS_CentralSpine",
+      "triangles": 188,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Graphite"
+      ],
+      "dimensionsM": [
+        0.07000000029802322,
+        0.03100000135600567,
+        0.005000000353902578
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.068770157313439e-05
+    },
+    {
+      "name": "WHEEL_FL_Tire",
+      "triangles": 448,
+      "uvLayers": 1,
+      "materials": [
+        "Rubber_Satin"
+      ],
+      "dimensionsM": [
+        0.029249999672174454,
+        0.009999999776482582,
+        0.029249999672174454
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.1267089238283085e-06
+    },
+    {
+      "name": "WHEEL_FL_DishRim",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "M01_SatinAlloy"
+      ],
+      "dimensionsM": [
+        0.02199999988079071,
+        0.002900000661611557,
+        0.02199999988079071
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 8.719420804191853e-07
+    },
+    {
+      "name": "WHEEL_FL_Hub",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Graphite"
+      ],
+      "dimensionsM": [
+        0.008500000461935997,
+        0.0020000003278255463,
+        0.008500001393258572
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.061280008901105e-07
+    },
+    {
+      "name": "WHEEL_FR_Tire",
+      "triangles": 448,
+      "uvLayers": 1,
+      "materials": [
+        "Rubber_Satin"
+      ],
+      "dimensionsM": [
+        0.029249999672174454,
+        0.009999999776482582,
+        0.029249999672174454
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.126708923828312e-06
+    },
+    {
+      "name": "WHEEL_FR_DishRim",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "M01_SatinAlloy"
+      ],
+      "dimensionsM": [
+        0.02199999988079071,
+        0.002900000661611557,
+        0.02199999988079071
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 8.719420804191849e-07
+    },
+    {
+      "name": "WHEEL_FR_Hub",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Graphite"
+      ],
+      "dimensionsM": [
+        0.008500000461935997,
+        0.0020000003278255463,
+        0.008500001393258572
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.0612800089011014e-07
+    },
+    {
+      "name": "WHEEL_RL_Tire",
+      "triangles": 448,
+      "uvLayers": 1,
+      "materials": [
+        "Rubber_Satin"
+      ],
+      "dimensionsM": [
+        0.029249997809529305,
+        0.009999999776482582,
+        0.029249999672174454
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.126708594167254e-06
+    },
+    {
+      "name": "WHEEL_RL_DishRim",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "M01_SatinAlloy"
+      ],
+      "dimensionsM": [
+        0.02199999988079071,
+        0.002900000661611557,
+        0.02199999988079071
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 8.719420527033152e-07
+    },
+    {
+      "name": "WHEEL_RL_Hub",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Graphite"
+      ],
+      "dimensionsM": [
+        0.008499998599290848,
+        0.0020000003278255463,
+        0.008500001393258572
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.0612801944725566e-07
+    },
+    {
+      "name": "WHEEL_RR_Tire",
+      "triangles": 448,
+      "uvLayers": 1,
+      "materials": [
+        "Rubber_Satin"
+      ],
+      "dimensionsM": [
+        0.029249997809529305,
+        0.009999999776482582,
+        0.029249999672174454
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.126708594167249e-06
+    },
+    {
+      "name": "WHEEL_RR_DishRim",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "M01_SatinAlloy"
+      ],
+      "dimensionsM": [
+        0.02199999988079071,
+        0.002900000661611557,
+        0.02199999988079071
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 8.719420527033159e-07
+    },
+    {
+      "name": "WHEEL_RR_Hub",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "M01_Graphite"
+      ],
+      "dimensionsM": [
+        0.008499998599290848,
+        0.0020000003278255463,
+        0.008500001393258572
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.0612801944725523e-07
+    }
+  ],
+  "triangles": 6672,
+  "fontObjects": [],
+  "wheelGroundM": 0.0,
+  "technicalFailures": [],
+  "technicalPass": true,
+  "completedMasterCount": 0
+}

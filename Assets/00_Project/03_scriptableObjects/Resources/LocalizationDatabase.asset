@@ -1,0 +1,2450 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc4fd6eb4c31a1d49802fe30d276674c, type: 3}
+  m_Name: LocalizationDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizationDatabase_SO
+  languages:
+  - Code: en
+    NativeName: English
+    Flag: {fileID: 21300000, guid: 98088c32e8dfff2438ad52a4c0d8d8d4, type: 3}
+    IsRtl: 0
+  - Code: es
+    NativeName: "Espa\xF1ol"
+    Flag: {fileID: 21300000, guid: 0938848b74b47914ebdff64058225d5d, type: 3}
+    IsRtl: 0
+  - Code: pt-BR
+    NativeName: "Portugu\xEAs"
+    Flag: {fileID: 21300000, guid: 8179588e6a30565438b06eca9d006447, type: 3}
+    IsRtl: 0
+  - Code: id
+    NativeName: Bahasa Indonesia
+    Flag: {fileID: 21300000, guid: e0ccbe08770721145a21f46bcd1d9c8b, type: 3}
+    IsRtl: 0
+  - Code: tr
+    NativeName: "T\xFCrk\xE7e"
+    Flag: {fileID: 21300000, guid: d78ebbdf2a6cb0f47a96dbf697c6b2fa, type: 3}
+    IsRtl: 0
+  - Code: pl
+    NativeName: Polski
+    Flag: {fileID: 21300000, guid: 1cd9db776dee7d748b28d138e9364af4, type: 3}
+    IsRtl: 0
+  - Code: vi
+    NativeName: "Ti\u1EBFng Vi\u1EC7t"
+    Flag: {fileID: 21300000, guid: a9f9b03e4966e1a4b88b8d68583b3c36, type: 3}
+    IsRtl: 0
+  - Code: ar
+    NativeName: "\u0627\u0644\u0639\u0631\u0628\u064A\u0629"
+    Flag: {fileID: 21300000, guid: c797613366150a644a46c8025cd80dd4, type: 3}
+    IsRtl: 1
+  keys:
+  - category.C001
+  - category.C002
+  - category.C003
+  - category.C004
+  - category.C005
+  - category.C006
+  - category.C007
+  - category.C008
+  - category.C009
+  - category.C010
+  - category.C011
+  - category.C012
+  - category.C013
+  - category.C014
+  - category.C015
+  - category.example
+  - controls.collect
+  - controls.jump
+  - controls.pause
+  - controls.place
+  - controls.switch
+  - feedback.inventory_full
+  - feedback.wrong_section
+  - item.BlueSphere.name
+  - item.GreenCylinder.name
+  - item.Item_Example.name
+  - item.RedCube.name
+  - item.TR-C001-CUS-L01.name
+  - item.TR-C001-CUS-L02.name
+  - item.TR-C001-CUS-L03.name
+  - item.TR-C001-CUS-L04.name
+  - item.TR-C001-CUS-L05.name
+  - item.TR-C001-STD-L01.name
+  - item.TR-C001-STD-L02.name
+  - item.TR-C001-STD-L03.name
+  - item.TR-C001-STD-L04.name
+  - item.TR-C001-STD-L05.name
+  - item.TR-C002-CUS-L01.name
+  - item.TR-C002-CUS-L02.name
+  - item.TR-C002-CUS-L03.name
+  - item.TR-C002-CUS-L04.name
+  - item.TR-C002-CUS-L05.name
+  - item.TR-C002-STD-L01.name
+  - item.TR-C002-STD-L02.name
+  - item.TR-C002-STD-L03.name
+  - item.TR-C002-STD-L04.name
+  - item.TR-C002-STD-L05.name
+  - item.TR-C003-CUS-L01.name
+  - item.TR-C003-CUS-L02.name
+  - item.TR-C003-CUS-L03.name
+  - item.TR-C003-CUS-L04.name
+  - item.TR-C003-CUS-L05.name
+  - item.TR-C003-STD-L01.name
+  - item.TR-C003-STD-L02.name
+  - item.TR-C003-STD-L03.name
+  - item.TR-C003-STD-L04.name
+  - item.TR-C003-STD-L05.name
+  - item.TR-C004-CUS-L01.name
+  - item.TR-C004-CUS-L02.name
+  - item.TR-C004-CUS-L03.name
+  - item.TR-C004-CUS-L04.name
+  - item.TR-C004-CUS-L05.name
+  - item.TR-C004-STD-L01.name
+  - item.TR-C004-STD-L02.name
+  - item.TR-C004-STD-L03.name
+  - item.TR-C004-STD-L04.name
+  - item.TR-C004-STD-L05.name
+  - item.TR-C005-CUS-L01.name
+  - item.TR-C005-CUS-L02.name
+  - item.TR-C005-CUS-L03.name
+  - item.TR-C005-CUS-L04.name
+  - item.TR-C005-CUS-L05.name
+  - item.TR-C005-STD-L01.name
+  - item.TR-C005-STD-L02.name
+  - item.TR-C005-STD-L03.name
+  - item.TR-C005-STD-L04.name
+  - item.TR-C005-STD-L05.name
+  - item.TR-C006-CUS-L01.name
+  - item.TR-C006-CUS-L02.name
+  - item.TR-C006-CUS-L03.name
+  - item.TR-C006-CUS-L04.name
+  - item.TR-C006-CUS-L05.name
+  - item.TR-C006-STD-L01.name
+  - item.TR-C006-STD-L02.name
+  - item.TR-C006-STD-L03.name
+  - item.TR-C006-STD-L04.name
+  - item.TR-C006-STD-L05.name
+  - item.TR-C007-CUS-L01.name
+  - item.TR-C007-CUS-L02.name
+  - item.TR-C007-CUS-L03.name
+  - item.TR-C007-CUS-L04.name
+  - item.TR-C007-CUS-L05.name
+  - item.TR-C007-STD-L01.name
+  - item.TR-C007-STD-L02.name
+  - item.TR-C007-STD-L03.name
+  - item.TR-C007-STD-L04.name
+  - item.TR-C007-STD-L05.name
+  - item.TR-C008-CUS-L01.name
+  - item.TR-C008-CUS-L02.name
+  - item.TR-C008-CUS-L03.name
+  - item.TR-C008-CUS-L04.name
+  - item.TR-C008-CUS-L05.name
+  - item.TR-C008-STD-L01.name
+  - item.TR-C008-STD-L02.name
+  - item.TR-C008-STD-L03.name
+  - item.TR-C008-STD-L04.name
+  - item.TR-C008-STD-L05.name
+  - item.TR-C009-CUS-L01.name
+  - item.TR-C009-CUS-L02.name
+  - item.TR-C009-CUS-L03.name
+  - item.TR-C009-CUS-L04.name
+  - item.TR-C009-CUS-L05.name
+  - item.TR-C009-STD-L01.name
+  - item.TR-C009-STD-L02.name
+  - item.TR-C009-STD-L03.name
+  - item.TR-C009-STD-L04.name
+  - item.TR-C009-STD-L05.name
+  - item.TR-C010-CUS-L01.name
+  - item.TR-C010-CUS-L02.name
+  - item.TR-C010-CUS-L03.name
+  - item.TR-C010-CUS-L04.name
+  - item.TR-C010-CUS-L05.name
+  - item.TR-C010-STD-L01.name
+  - item.TR-C010-STD-L02.name
+  - item.TR-C010-STD-L03.name
+  - item.TR-C010-STD-L04.name
+  - item.TR-C010-STD-L05.name
+  - item.TR-C011-CUS-L01.name
+  - item.TR-C011-CUS-L02.name
+  - item.TR-C011-CUS-L03.name
+  - item.TR-C011-CUS-L04.name
+  - item.TR-C011-CUS-L05.name
+  - item.TR-C011-STD-L01.name
+  - item.TR-C011-STD-L02.name
+  - item.TR-C011-STD-L03.name
+  - item.TR-C011-STD-L04.name
+  - item.TR-C011-STD-L05.name
+  - item.TR-C012-CUS-L01.name
+  - item.TR-C012-CUS-L02.name
+  - item.TR-C012-CUS-L03.name
+  - item.TR-C012-CUS-L04.name
+  - item.TR-C012-CUS-L05.name
+  - item.TR-C012-STD-L01.name
+  - item.TR-C012-STD-L02.name
+  - item.TR-C012-STD-L03.name
+  - item.TR-C012-STD-L04.name
+  - item.TR-C012-STD-L05.name
+  - item.TR-C013-CUS-L01.name
+  - item.TR-C013-CUS-L02.name
+  - item.TR-C013-CUS-L03.name
+  - item.TR-C013-CUS-L04.name
+  - item.TR-C013-CUS-L05.name
+  - item.TR-C013-STD-L01.name
+  - item.TR-C013-STD-L02.name
+  - item.TR-C013-STD-L03.name
+  - item.TR-C013-STD-L04.name
+  - item.TR-C013-STD-L05.name
+  - item.TR-C014-CUS-L01.name
+  - item.TR-C014-CUS-L02.name
+  - item.TR-C014-CUS-L03.name
+  - item.TR-C014-CUS-L04.name
+  - item.TR-C014-CUS-L05.name
+  - item.TR-C014-STD-L01.name
+  - item.TR-C014-STD-L02.name
+  - item.TR-C014-STD-L03.name
+  - item.TR-C014-STD-L04.name
+  - item.TR-C014-STD-L05.name
+  - item.TR-C015-CUS-L01.name
+  - item.TR-C015-CUS-L02.name
+  - item.TR-C015-CUS-L03.name
+  - item.TR-C015-CUS-L04.name
+  - item.TR-C015-CUS-L05.name
+  - item.TR-C015-STD-L01.name
+  - item.TR-C015-STD-L02.name
+  - item.TR-C015-STD-L03.name
+  - item.TR-C015-STD-L04.name
+  - item.TR-C015-STD-L05.name
+  - language.title
+  - menu.detail.high
+  - menu.detail.low
+  - menu.detail.medium
+  - menu.details
+  - menu.play
+  - pause.sensitivity
+  - pause.title
+  - prompt.hold
+  - prompt.pick_up
+  - prompt.place
+  - prompt.place_item_on
+  - prompt.press
+  - prompt.take_back
+  - prompt.upgrades
+  - store.build.CUS
+  - store.build.STD
+  - store.color.Amber
+  - store.color.Cobalt
+  - store.color.Cyan
+  - store.color.Emerald
+  - store.color.Fuchsia
+  - store.color.Lime
+  - store.color.Scarlet
+  - store.color.Tangerine
+  - store.color.Teal
+  - store.color.Violet
+  - store.complete
+  - store.mixed_cars
+  - store.model_directory_title
+  - store.model_sign
+  - store.progress
+  - store.replay
+  - store.section_progress
+  - store.start
+  - store.title
+  - store.tutorial
+  - store.zone_legend
+  - ui.continue
+  - ui.no
+  - ui.quit
+  - ui.reset_message
+  - ui.reset_progress
+  - ui.restart
+  - ui.yes
+  - upgrade.AutoCollect.desc
+  - upgrade.AutoCollect.name
+  - upgrade.HighlightItems.desc
+  - upgrade.HighlightItems.name
+  - upgrade.Upgrade_AutoShelve.desc
+  - upgrade.Upgrade_AutoShelve.name
+  - upgrade.Upgrade_BiggerInventory.desc
+  - upgrade.Upgrade_BiggerInventory.name
+  - upgrade.Upgrade_LongerReach.desc
+  - upgrade.Upgrade_LongerReach.name
+  - upgrade.Upgrade_StrongerThrow.desc
+  - upgrade.Upgrade_StrongerThrow.name
+  - upgrade.Upgrade_UnlockSprint.desc
+  - upgrade.Upgrade_UnlockSprint.name
+  - upgrade.max
+  - upgrade.panel_title
+  columns:
+  - Code: en
+    Values:
+    - Touring Coupe
+    - Sprint Coupe
+    - Rally Beetle
+    - Rally SUV
+    - Rally Hatchback
+    - Formula Racer
+    - Delivery Van
+    - Open Cockpit Racer
+    - Track Prototype
+    - Endurance Coupe
+    - Offroad Buggy
+    - Trail Jeep
+    - Cargo Truck
+    - Desert Buggy
+    - Classic Roadster
+    - Example
+    - Collect
+    - Jump
+    - Pause
+    - Place
+    - Switch
+    - Inventory Full
+    - Wrong Section
+    - Blue Sphere
+    - Green Cylinder
+    - Example
+    - Red Cube
+    - Touring Coupe Custom Teal
+    - Touring Coupe Custom Cyan
+    - Touring Coupe Custom Cobalt
+    - Touring Coupe Custom Violet
+    - Touring Coupe Custom Fuchsia
+    - Touring Coupe Standard Scarlet
+    - Touring Coupe Standard Tangerine
+    - Touring Coupe Standard Amber
+    - Touring Coupe Standard Lime
+    - Touring Coupe Standard Emerald
+    - Sprint Coupe Custom Teal
+    - Sprint Coupe Custom Cyan
+    - Sprint Coupe Custom Cobalt
+    - Sprint Coupe Custom Violet
+    - Sprint Coupe Custom Fuchsia
+    - Sprint Coupe Standard Scarlet
+    - Sprint Coupe Standard Tangerine
+    - Sprint Coupe Standard Amber
+    - Sprint Coupe Standard Lime
+    - Sprint Coupe Standard Emerald
+    - Rally Beetle Custom Teal
+    - Rally Beetle Custom Cyan
+    - Rally Beetle Custom Cobalt
+    - Rally Beetle Custom Violet
+    - Rally Beetle Custom Fuchsia
+    - Rally Beetle Standard Scarlet
+    - Rally Beetle Standard Tangerine
+    - Rally Beetle Standard Amber
+    - Rally Beetle Standard Lime
+    - Rally Beetle Standard Emerald
+    - Rally SUV Custom Teal
+    - Rally SUV Custom Cyan
+    - Rally SUV Custom Cobalt
+    - Rally SUV Custom Violet
+    - Rally SUV Custom Fuchsia
+    - Rally SUV Standard Scarlet
+    - Rally SUV Standard Tangerine
+    - Rally SUV Standard Amber
+    - Rally SUV Standard Lime
+    - Rally SUV Standard Emerald
+    - Rally Hatchback Custom Teal
+    - Rally Hatchback Custom Cyan
+    - Rally Hatchback Custom Cobalt
+    - Rally Hatchback Custom Violet
+    - Rally Hatchback Custom Fuchsia
+    - Rally Hatchback Standard Scarlet
+    - Rally Hatchback Standard Tangerine
+    - Rally Hatchback Standard Amber
+    - Rally Hatchback Standard Lime
+    - Rally Hatchback Standard Emerald
+    - Formula Racer Custom Teal
+    - Formula Racer Custom Cyan
+    - Formula Racer Custom Cobalt
+    - Formula Racer Custom Violet
+    - Formula Racer Custom Fuchsia
+    - Formula Racer Standard Scarlet
+    - Formula Racer Standard Tangerine
+    - Formula Racer Standard Amber
+    - Formula Racer Standard Lime
+    - Formula Racer Standard Emerald
+    - Delivery Van Custom Teal
+    - Delivery Van Custom Cyan
+    - Delivery Van Custom Cobalt
+    - Delivery Van Custom Violet
+    - Delivery Van Custom Fuchsia
+    - Delivery Van Standard Scarlet
+    - Delivery Van Standard Tangerine
+    - Delivery Van Standard Amber
+    - Delivery Van Standard Lime
+    - Delivery Van Standard Emerald
+    - Open Cockpit Racer Custom Teal
+    - Open Cockpit Racer Custom Cyan
+    - Open Cockpit Racer Custom Cobalt
+    - Open Cockpit Racer Custom Violet
+    - Open Cockpit Racer Custom Fuchsia
+    - Open Cockpit Racer Standard Scarlet
+    - Open Cockpit Racer Standard Tangerine
+    - Open Cockpit Racer Standard Amber
+    - Open Cockpit Racer Standard Lime
+    - Open Cockpit Racer Standard Emerald
+    - Track Prototype Custom Teal
+    - Track Prototype Custom Cyan
+    - Track Prototype Custom Cobalt
+    - Track Prototype Custom Violet
+    - Track Prototype Custom Fuchsia
+    - Track Prototype Standard Scarlet
+    - Track Prototype Standard Tangerine
+    - Track Prototype Standard Amber
+    - Track Prototype Standard Lime
+    - Track Prototype Standard Emerald
+    - Endurance Coupe Custom Teal
+    - Endurance Coupe Custom Cyan
+    - Endurance Coupe Custom Cobalt
+    - Endurance Coupe Custom Violet
+    - Endurance Coupe Custom Fuchsia
+    - Endurance Coupe Standard Scarlet
+    - Endurance Coupe Standard Tangerine
+    - Endurance Coupe Standard Amber
+    - Endurance Coupe Standard Lime
+    - Endurance Coupe Standard Emerald
+    - Offroad Buggy Custom Teal
+    - Offroad Buggy Custom Cyan
+    - Offroad Buggy Custom Cobalt
+    - Offroad Buggy Custom Violet
+    - Offroad Buggy Custom Fuchsia
+    - Offroad Buggy Standard Scarlet
+    - Offroad Buggy Standard Tangerine
+    - Offroad Buggy Standard Amber
+    - Offroad Buggy Standard Lime
+    - Offroad Buggy Standard Emerald
+    - Trail Jeep Custom Teal
+    - Trail Jeep Custom Cyan
+    - Trail Jeep Custom Cobalt
+    - Trail Jeep Custom Violet
+    - Trail Jeep Custom Fuchsia
+    - Trail Jeep Standard Scarlet
+    - Trail Jeep Standard Tangerine
+    - Trail Jeep Standard Amber
+    - Trail Jeep Standard Lime
+    - Trail Jeep Standard Emerald
+    - Cargo Truck Custom Teal
+    - Cargo Truck Custom Cyan
+    - Cargo Truck Custom Cobalt
+    - Cargo Truck Custom Violet
+    - Cargo Truck Custom Fuchsia
+    - Cargo Truck Standard Scarlet
+    - Cargo Truck Standard Tangerine
+    - Cargo Truck Standard Amber
+    - Cargo Truck Standard Lime
+    - Cargo Truck Standard Emerald
+    - Desert Buggy Custom Teal
+    - Desert Buggy Custom Cyan
+    - Desert Buggy Custom Cobalt
+    - Desert Buggy Custom Violet
+    - Desert Buggy Custom Fuchsia
+    - Desert Buggy Standard Scarlet
+    - Desert Buggy Standard Tangerine
+    - Desert Buggy Standard Amber
+    - Desert Buggy Standard Lime
+    - Desert Buggy Standard Emerald
+    - Classic Roadster Custom Teal
+    - Classic Roadster Custom Cyan
+    - Classic Roadster Custom Cobalt
+    - Classic Roadster Custom Violet
+    - Classic Roadster Custom Fuchsia
+    - Classic Roadster Standard Scarlet
+    - Classic Roadster Standard Tangerine
+    - Classic Roadster Standard Amber
+    - Classic Roadster Standard Lime
+    - Classic Roadster Standard Emerald
+    - Language
+    - High
+    - Low
+    - Medium
+    - 'Details: {0}'
+    - Play
+    - Sensitivity
+    - Paused
+    - Hold
+    - Pick up
+    - Place
+    - Place {0} On {1}
+    - Press
+    - Take back
+    - Upgrades
+    - Custom
+    - Standard
+    - Amber
+    - Cobalt
+    - Cyan
+    - Emerald
+    - Fuchsia
+    - Lime
+    - Scarlet
+    - Tangerine
+    - Teal
+    - Violet
+    - "Store complete!\n525 cars sorted across 75 shelves.\nTime: {0}  \u2022  Coins
+      left: {1}"
+    - "MIXED CARS  \u2022  PICK UP HERE"
+    - MODEL DIRECTORY
+    - "MODEL {0}  \u2022  {1}"
+    - 'Cars sorted: {0} / 525'
+    - Replay store
+    - '{0}: {1} / 35'
+    - Start sorting
+    - TOY CAR STORE
+    - Welcome to the toy car store! Pick up cars from the floor pile. Match each
+      car to the shelf with its model and color. Each shelf needs seven copies. Wrong
+      cars can be taken back. Buy upgrades with coins from correct placements. There
+      is no timer.
+    - "W WEST  \u2022  E EAST  \u2022  B BACK  \u2022  F FRONT"
+    - Continue
+    - No
+    - Quit
+    - 'Reset all progress?
+
+      This can''t be undone.'
+    - Reset Progress
+    - Restart
+    - Yes
+    - Auto-equips up to {value} items matching the one in your hand.
+    - Auto-collect items
+    - Matching items float and glow for {value} seconds.
+    - Highlight items
+    - Thrown items land on the right shelf automatically.
+    - Auto-shelves item when thrown at correct shelf
+    - Carry up to {value} items at once.
+    - Bigger inventory
+    - 'Grab and place from farther away. Reach: {value}.'
+    - Longer reach
+    - 'Throw items harder and farther. Force: {value}.'
+    - Stronger throw
+    - Run faster around the level.
+    - Unlock sprint
+    - MAX
+    - Upgrades
+  - Code: es
+    Values:
+    - "Cup\xE9 de turismo"
+    - "Cup\xE9 veloz"
+    - Escarabajo de rally
+    - Todoterreno de rally
+    - Hatchback de rally
+    - "Monoplaza de f\xF3rmula"
+    - Furgoneta de reparto
+    - Carreras descapotable
+    - Prototipo de pista
+    - "Cup\xE9 de resistencia"
+    - Buggy todoterreno
+    - "Jeep de monta\xF1a"
+    - "Cami\xF3n de carga"
+    - Buggy del desierto
+    - "Descapotable cl\xE1sico"
+    - Ejemplo
+    - Recoger
+    - Saltar
+    - Pausa
+    - Colocar
+    - Cambiar
+    - Inventario lleno
+    - "Secci\xF3n incorrecta"
+    - Esfera azul
+    - Cilindro verde
+    - Ejemplo
+    - Cubo rojo
+    - "Cup\xE9 de turismo Personalizado Verde azulado"
+    - "Cup\xE9 de turismo Personalizado Cian"
+    - "Cup\xE9 de turismo Personalizado Cobalto"
+    - "Cup\xE9 de turismo Personalizado Violeta"
+    - "Cup\xE9 de turismo Personalizado Fucsia"
+    - "Cup\xE9 de turismo Est\xE1ndar Escarlata"
+    - "Cup\xE9 de turismo Est\xE1ndar Mandarina"
+    - "Cup\xE9 de turismo Est\xE1ndar \xC1mbar"
+    - "Cup\xE9 de turismo Est\xE1ndar Lima"
+    - "Cup\xE9 de turismo Est\xE1ndar Esmeralda"
+    - "Cup\xE9 veloz Personalizado Verde azulado"
+    - "Cup\xE9 veloz Personalizado Cian"
+    - "Cup\xE9 veloz Personalizado Cobalto"
+    - "Cup\xE9 veloz Personalizado Violeta"
+    - "Cup\xE9 veloz Personalizado Fucsia"
+    - "Cup\xE9 veloz Est\xE1ndar Escarlata"
+    - "Cup\xE9 veloz Est\xE1ndar Mandarina"
+    - "Cup\xE9 veloz Est\xE1ndar \xC1mbar"
+    - "Cup\xE9 veloz Est\xE1ndar Lima"
+    - "Cup\xE9 veloz Est\xE1ndar Esmeralda"
+    - Escarabajo de rally Personalizado Verde azulado
+    - Escarabajo de rally Personalizado Cian
+    - Escarabajo de rally Personalizado Cobalto
+    - Escarabajo de rally Personalizado Violeta
+    - Escarabajo de rally Personalizado Fucsia
+    - "Escarabajo de rally Est\xE1ndar Escarlata"
+    - "Escarabajo de rally Est\xE1ndar Mandarina"
+    - "Escarabajo de rally Est\xE1ndar \xC1mbar"
+    - "Escarabajo de rally Est\xE1ndar Lima"
+    - "Escarabajo de rally Est\xE1ndar Esmeralda"
+    - Todoterreno de rally Personalizado Verde azulado
+    - Todoterreno de rally Personalizado Cian
+    - Todoterreno de rally Personalizado Cobalto
+    - Todoterreno de rally Personalizado Violeta
+    - Todoterreno de rally Personalizado Fucsia
+    - "Todoterreno de rally Est\xE1ndar Escarlata"
+    - "Todoterreno de rally Est\xE1ndar Mandarina"
+    - "Todoterreno de rally Est\xE1ndar \xC1mbar"
+    - "Todoterreno de rally Est\xE1ndar Lima"
+    - "Todoterreno de rally Est\xE1ndar Esmeralda"
+    - Hatchback de rally Personalizado Verde azulado
+    - Hatchback de rally Personalizado Cian
+    - Hatchback de rally Personalizado Cobalto
+    - Hatchback de rally Personalizado Violeta
+    - Hatchback de rally Personalizado Fucsia
+    - "Hatchback de rally Est\xE1ndar Escarlata"
+    - "Hatchback de rally Est\xE1ndar Mandarina"
+    - "Hatchback de rally Est\xE1ndar \xC1mbar"
+    - "Hatchback de rally Est\xE1ndar Lima"
+    - "Hatchback de rally Est\xE1ndar Esmeralda"
+    - "Monoplaza de f\xF3rmula Personalizado Verde azulado"
+    - "Monoplaza de f\xF3rmula Personalizado Cian"
+    - "Monoplaza de f\xF3rmula Personalizado Cobalto"
+    - "Monoplaza de f\xF3rmula Personalizado Violeta"
+    - "Monoplaza de f\xF3rmula Personalizado Fucsia"
+    - "Monoplaza de f\xF3rmula Est\xE1ndar Escarlata"
+    - "Monoplaza de f\xF3rmula Est\xE1ndar Mandarina"
+    - "Monoplaza de f\xF3rmula Est\xE1ndar \xC1mbar"
+    - "Monoplaza de f\xF3rmula Est\xE1ndar Lima"
+    - "Monoplaza de f\xF3rmula Est\xE1ndar Esmeralda"
+    - Furgoneta de reparto Personalizado Verde azulado
+    - Furgoneta de reparto Personalizado Cian
+    - Furgoneta de reparto Personalizado Cobalto
+    - Furgoneta de reparto Personalizado Violeta
+    - Furgoneta de reparto Personalizado Fucsia
+    - "Furgoneta de reparto Est\xE1ndar Escarlata"
+    - "Furgoneta de reparto Est\xE1ndar Mandarina"
+    - "Furgoneta de reparto Est\xE1ndar \xC1mbar"
+    - "Furgoneta de reparto Est\xE1ndar Lima"
+    - "Furgoneta de reparto Est\xE1ndar Esmeralda"
+    - Carreras descapotable Personalizado Verde azulado
+    - Carreras descapotable Personalizado Cian
+    - Carreras descapotable Personalizado Cobalto
+    - Carreras descapotable Personalizado Violeta
+    - Carreras descapotable Personalizado Fucsia
+    - "Carreras descapotable Est\xE1ndar Escarlata"
+    - "Carreras descapotable Est\xE1ndar Mandarina"
+    - "Carreras descapotable Est\xE1ndar \xC1mbar"
+    - "Carreras descapotable Est\xE1ndar Lima"
+    - "Carreras descapotable Est\xE1ndar Esmeralda"
+    - Prototipo de pista Personalizado Verde azulado
+    - Prototipo de pista Personalizado Cian
+    - Prototipo de pista Personalizado Cobalto
+    - Prototipo de pista Personalizado Violeta
+    - Prototipo de pista Personalizado Fucsia
+    - "Prototipo de pista Est\xE1ndar Escarlata"
+    - "Prototipo de pista Est\xE1ndar Mandarina"
+    - "Prototipo de pista Est\xE1ndar \xC1mbar"
+    - "Prototipo de pista Est\xE1ndar Lima"
+    - "Prototipo de pista Est\xE1ndar Esmeralda"
+    - "Cup\xE9 de resistencia Personalizado Verde azulado"
+    - "Cup\xE9 de resistencia Personalizado Cian"
+    - "Cup\xE9 de resistencia Personalizado Cobalto"
+    - "Cup\xE9 de resistencia Personalizado Violeta"
+    - "Cup\xE9 de resistencia Personalizado Fucsia"
+    - "Cup\xE9 de resistencia Est\xE1ndar Escarlata"
+    - "Cup\xE9 de resistencia Est\xE1ndar Mandarina"
+    - "Cup\xE9 de resistencia Est\xE1ndar \xC1mbar"
+    - "Cup\xE9 de resistencia Est\xE1ndar Lima"
+    - "Cup\xE9 de resistencia Est\xE1ndar Esmeralda"
+    - Buggy todoterreno Personalizado Verde azulado
+    - Buggy todoterreno Personalizado Cian
+    - Buggy todoterreno Personalizado Cobalto
+    - Buggy todoterreno Personalizado Violeta
+    - Buggy todoterreno Personalizado Fucsia
+    - "Buggy todoterreno Est\xE1ndar Escarlata"
+    - "Buggy todoterreno Est\xE1ndar Mandarina"
+    - "Buggy todoterreno Est\xE1ndar \xC1mbar"
+    - "Buggy todoterreno Est\xE1ndar Lima"
+    - "Buggy todoterreno Est\xE1ndar Esmeralda"
+    - "Jeep de monta\xF1a Personalizado Verde azulado"
+    - "Jeep de monta\xF1a Personalizado Cian"
+    - "Jeep de monta\xF1a Personalizado Cobalto"
+    - "Jeep de monta\xF1a Personalizado Violeta"
+    - "Jeep de monta\xF1a Personalizado Fucsia"
+    - "Jeep de monta\xF1a Est\xE1ndar Escarlata"
+    - "Jeep de monta\xF1a Est\xE1ndar Mandarina"
+    - "Jeep de monta\xF1a Est\xE1ndar \xC1mbar"
+    - "Jeep de monta\xF1a Est\xE1ndar Lima"
+    - "Jeep de monta\xF1a Est\xE1ndar Esmeralda"
+    - "Cami\xF3n de carga Personalizado Verde azulado"
+    - "Cami\xF3n de carga Personalizado Cian"
+    - "Cami\xF3n de carga Personalizado Cobalto"
+    - "Cami\xF3n de carga Personalizado Violeta"
+    - "Cami\xF3n de carga Personalizado Fucsia"
+    - "Cami\xF3n de carga Est\xE1ndar Escarlata"
+    - "Cami\xF3n de carga Est\xE1ndar Mandarina"
+    - "Cami\xF3n de carga Est\xE1ndar \xC1mbar"
+    - "Cami\xF3n de carga Est\xE1ndar Lima"
+    - "Cami\xF3n de carga Est\xE1ndar Esmeralda"
+    - Buggy del desierto Personalizado Verde azulado
+    - Buggy del desierto Personalizado Cian
+    - Buggy del desierto Personalizado Cobalto
+    - Buggy del desierto Personalizado Violeta
+    - Buggy del desierto Personalizado Fucsia
+    - "Buggy del desierto Est\xE1ndar Escarlata"
+    - "Buggy del desierto Est\xE1ndar Mandarina"
+    - "Buggy del desierto Est\xE1ndar \xC1mbar"
+    - "Buggy del desierto Est\xE1ndar Lima"
+    - "Buggy del desierto Est\xE1ndar Esmeralda"
+    - "Descapotable cl\xE1sico Personalizado Verde azulado"
+    - "Descapotable cl\xE1sico Personalizado Cian"
+    - "Descapotable cl\xE1sico Personalizado Cobalto"
+    - "Descapotable cl\xE1sico Personalizado Violeta"
+    - "Descapotable cl\xE1sico Personalizado Fucsia"
+    - "Descapotable cl\xE1sico Est\xE1ndar Escarlata"
+    - "Descapotable cl\xE1sico Est\xE1ndar Mandarina"
+    - "Descapotable cl\xE1sico Est\xE1ndar \xC1mbar"
+    - "Descapotable cl\xE1sico Est\xE1ndar Lima"
+    - "Descapotable cl\xE1sico Est\xE1ndar Esmeralda"
+    - Idioma
+    - Alto
+    - Bajo
+    - Medio
+    - 'Detalles: {0}'
+    - Jugar
+    - Sensibilidad
+    - Pausa
+    - Mantener
+    - Recoger
+    - Colocar
+    - Colocar {0} en {1}
+    - Presiona
+    - Recuperar
+    - Mejoras
+    - Personalizado
+    - "Est\xE1ndar"
+    - "\xC1mbar"
+    - Cobalto
+    - Cian
+    - Esmeralda
+    - Fucsia
+    - Lima
+    - Escarlata
+    - Mandarina
+    - Verde azulado
+    - Violeta
+    - "\xA1Tienda completa!\n525 coches en 75 estantes.\nTiempo: {0}  \u2022  Monedas:
+      {1}"
+    - "COCHES MEZCLADOS  \u2022  RECOGE AQU\xCD"
+    - DIRECTORIO DE MODELOS
+    - "MODELO {0}  \u2022  {1}"
+    - 'Coches ordenados: {0} / 525'
+    - Reiniciar tienda
+    - '{0}: {1} / 35'
+    - Empezar
+    - TIENDA DE COCHES
+    - "\xA1Bienvenido a la tienda de coches! Recoge coches del mont\xF3n en el suelo
+      y col\xF3calos en el estante de su modelo y color. Cada estante necesita siete.
+      Puedes retirar los incorrectos. Gana monedas para mejoras. No hay l\xEDmite
+      de tiempo."
+    - "W OESTE  \u2022  E ESTE  \u2022  B FONDO  \u2022  F FRENTE"
+    - Continuar
+    - No
+    - Salir
+    - "\xBFReiniciar todo el progreso?\nEsto no se puede deshacer."
+    - Reiniciar progreso
+    - Reiniciar
+    - "S\xED"
+    - "Equipa autom\xE1ticamente hasta {value} objetos iguales al que tienes en la
+      mano."
+    - "Recoger objetos autom\xE1ticamente"
+    - Los objetos iguales flotan y brillan durante {value} segundos.
+    - Resaltar objetos
+    - Los objetos lanzados caen solos en el estante correcto.
+    - Autocoloca objetos lanzados al estante correcto
+    - Lleva hasta {value} objetos a la vez.
+    - "Inventario m\xE1s grande"
+    - "Agarra y coloca desde m\xE1s lejos. Alcance: {value}."
+    - Mayor alcance
+    - "Lanza objetos m\xE1s fuerte y m\xE1s lejos. Fuerza: {value}."
+    - "Lanzamiento m\xE1s fuerte"
+    - "Corre m\xE1s r\xE1pido por el nivel."
+    - Desbloquear carrera
+    - "M\xC1X"
+    - Mejoras
+  - Code: pt-BR
+    Values:
+    - "Cup\xEA de turismo"
+    - "Cup\xEA de velocidade"
+    - Fusca de rali
+    - SUV de rali
+    - Hatch de rali
+    - "Carro de f\xF3rmula"
+    - Van de entregas
+    - Carro de corrida aberto
+    - "Prot\xF3tipo de pista"
+    - "Cup\xEA de resist\xEAncia"
+    - Buggy off-road
+    - Jipe de trilha
+    - "Caminh\xE3o de carga"
+    - Buggy do deserto
+    - "Roadster cl\xE1ssico"
+    - Exemplo
+    - Coletar
+    - Pular
+    - Pausar
+    - Colocar
+    - Trocar
+    - "Invent\xE1rio Cheio"
+    - "Se\xE7\xE3o Errada"
+    - Esfera azul
+    - Cilindro verde
+    - Exemplo
+    - Cubo vermelho
+    - "Cup\xEA de turismo Personalizado Azul petr\xF3leo"
+    - "Cup\xEA de turismo Personalizado Ciano"
+    - "Cup\xEA de turismo Personalizado Cobalto"
+    - "Cup\xEA de turismo Personalizado Violeta"
+    - "Cup\xEA de turismo Personalizado F\xFAcsia"
+    - "Cup\xEA de turismo Padr\xE3o Escarlate"
+    - "Cup\xEA de turismo Padr\xE3o Tangerina"
+    - "Cup\xEA de turismo Padr\xE3o \xC2mbar"
+    - "Cup\xEA de turismo Padr\xE3o Lima"
+    - "Cup\xEA de turismo Padr\xE3o Esmeralda"
+    - "Cup\xEA de velocidade Personalizado Azul petr\xF3leo"
+    - "Cup\xEA de velocidade Personalizado Ciano"
+    - "Cup\xEA de velocidade Personalizado Cobalto"
+    - "Cup\xEA de velocidade Personalizado Violeta"
+    - "Cup\xEA de velocidade Personalizado F\xFAcsia"
+    - "Cup\xEA de velocidade Padr\xE3o Escarlate"
+    - "Cup\xEA de velocidade Padr\xE3o Tangerina"
+    - "Cup\xEA de velocidade Padr\xE3o \xC2mbar"
+    - "Cup\xEA de velocidade Padr\xE3o Lima"
+    - "Cup\xEA de velocidade Padr\xE3o Esmeralda"
+    - "Fusca de rali Personalizado Azul petr\xF3leo"
+    - Fusca de rali Personalizado Ciano
+    - Fusca de rali Personalizado Cobalto
+    - Fusca de rali Personalizado Violeta
+    - "Fusca de rali Personalizado F\xFAcsia"
+    - "Fusca de rali Padr\xE3o Escarlate"
+    - "Fusca de rali Padr\xE3o Tangerina"
+    - "Fusca de rali Padr\xE3o \xC2mbar"
+    - "Fusca de rali Padr\xE3o Lima"
+    - "Fusca de rali Padr\xE3o Esmeralda"
+    - "SUV de rali Personalizado Azul petr\xF3leo"
+    - SUV de rali Personalizado Ciano
+    - SUV de rali Personalizado Cobalto
+    - SUV de rali Personalizado Violeta
+    - "SUV de rali Personalizado F\xFAcsia"
+    - "SUV de rali Padr\xE3o Escarlate"
+    - "SUV de rali Padr\xE3o Tangerina"
+    - "SUV de rali Padr\xE3o \xC2mbar"
+    - "SUV de rali Padr\xE3o Lima"
+    - "SUV de rali Padr\xE3o Esmeralda"
+    - "Hatch de rali Personalizado Azul petr\xF3leo"
+    - Hatch de rali Personalizado Ciano
+    - Hatch de rali Personalizado Cobalto
+    - Hatch de rali Personalizado Violeta
+    - "Hatch de rali Personalizado F\xFAcsia"
+    - "Hatch de rali Padr\xE3o Escarlate"
+    - "Hatch de rali Padr\xE3o Tangerina"
+    - "Hatch de rali Padr\xE3o \xC2mbar"
+    - "Hatch de rali Padr\xE3o Lima"
+    - "Hatch de rali Padr\xE3o Esmeralda"
+    - "Carro de f\xF3rmula Personalizado Azul petr\xF3leo"
+    - "Carro de f\xF3rmula Personalizado Ciano"
+    - "Carro de f\xF3rmula Personalizado Cobalto"
+    - "Carro de f\xF3rmula Personalizado Violeta"
+    - "Carro de f\xF3rmula Personalizado F\xFAcsia"
+    - "Carro de f\xF3rmula Padr\xE3o Escarlate"
+    - "Carro de f\xF3rmula Padr\xE3o Tangerina"
+    - "Carro de f\xF3rmula Padr\xE3o \xC2mbar"
+    - "Carro de f\xF3rmula Padr\xE3o Lima"
+    - "Carro de f\xF3rmula Padr\xE3o Esmeralda"
+    - "Van de entregas Personalizado Azul petr\xF3leo"
+    - Van de entregas Personalizado Ciano
+    - Van de entregas Personalizado Cobalto
+    - Van de entregas Personalizado Violeta
+    - "Van de entregas Personalizado F\xFAcsia"
+    - "Van de entregas Padr\xE3o Escarlate"
+    - "Van de entregas Padr\xE3o Tangerina"
+    - "Van de entregas Padr\xE3o \xC2mbar"
+    - "Van de entregas Padr\xE3o Lima"
+    - "Van de entregas Padr\xE3o Esmeralda"
+    - "Carro de corrida aberto Personalizado Azul petr\xF3leo"
+    - Carro de corrida aberto Personalizado Ciano
+    - Carro de corrida aberto Personalizado Cobalto
+    - Carro de corrida aberto Personalizado Violeta
+    - "Carro de corrida aberto Personalizado F\xFAcsia"
+    - "Carro de corrida aberto Padr\xE3o Escarlate"
+    - "Carro de corrida aberto Padr\xE3o Tangerina"
+    - "Carro de corrida aberto Padr\xE3o \xC2mbar"
+    - "Carro de corrida aberto Padr\xE3o Lima"
+    - "Carro de corrida aberto Padr\xE3o Esmeralda"
+    - "Prot\xF3tipo de pista Personalizado Azul petr\xF3leo"
+    - "Prot\xF3tipo de pista Personalizado Ciano"
+    - "Prot\xF3tipo de pista Personalizado Cobalto"
+    - "Prot\xF3tipo de pista Personalizado Violeta"
+    - "Prot\xF3tipo de pista Personalizado F\xFAcsia"
+    - "Prot\xF3tipo de pista Padr\xE3o Escarlate"
+    - "Prot\xF3tipo de pista Padr\xE3o Tangerina"
+    - "Prot\xF3tipo de pista Padr\xE3o \xC2mbar"
+    - "Prot\xF3tipo de pista Padr\xE3o Lima"
+    - "Prot\xF3tipo de pista Padr\xE3o Esmeralda"
+    - "Cup\xEA de resist\xEAncia Personalizado Azul petr\xF3leo"
+    - "Cup\xEA de resist\xEAncia Personalizado Ciano"
+    - "Cup\xEA de resist\xEAncia Personalizado Cobalto"
+    - "Cup\xEA de resist\xEAncia Personalizado Violeta"
+    - "Cup\xEA de resist\xEAncia Personalizado F\xFAcsia"
+    - "Cup\xEA de resist\xEAncia Padr\xE3o Escarlate"
+    - "Cup\xEA de resist\xEAncia Padr\xE3o Tangerina"
+    - "Cup\xEA de resist\xEAncia Padr\xE3o \xC2mbar"
+    - "Cup\xEA de resist\xEAncia Padr\xE3o Lima"
+    - "Cup\xEA de resist\xEAncia Padr\xE3o Esmeralda"
+    - "Buggy off-road Personalizado Azul petr\xF3leo"
+    - Buggy off-road Personalizado Ciano
+    - Buggy off-road Personalizado Cobalto
+    - Buggy off-road Personalizado Violeta
+    - "Buggy off-road Personalizado F\xFAcsia"
+    - "Buggy off-road Padr\xE3o Escarlate"
+    - "Buggy off-road Padr\xE3o Tangerina"
+    - "Buggy off-road Padr\xE3o \xC2mbar"
+    - "Buggy off-road Padr\xE3o Lima"
+    - "Buggy off-road Padr\xE3o Esmeralda"
+    - "Jipe de trilha Personalizado Azul petr\xF3leo"
+    - Jipe de trilha Personalizado Ciano
+    - Jipe de trilha Personalizado Cobalto
+    - Jipe de trilha Personalizado Violeta
+    - "Jipe de trilha Personalizado F\xFAcsia"
+    - "Jipe de trilha Padr\xE3o Escarlate"
+    - "Jipe de trilha Padr\xE3o Tangerina"
+    - "Jipe de trilha Padr\xE3o \xC2mbar"
+    - "Jipe de trilha Padr\xE3o Lima"
+    - "Jipe de trilha Padr\xE3o Esmeralda"
+    - "Caminh\xE3o de carga Personalizado Azul petr\xF3leo"
+    - "Caminh\xE3o de carga Personalizado Ciano"
+    - "Caminh\xE3o de carga Personalizado Cobalto"
+    - "Caminh\xE3o de carga Personalizado Violeta"
+    - "Caminh\xE3o de carga Personalizado F\xFAcsia"
+    - "Caminh\xE3o de carga Padr\xE3o Escarlate"
+    - "Caminh\xE3o de carga Padr\xE3o Tangerina"
+    - "Caminh\xE3o de carga Padr\xE3o \xC2mbar"
+    - "Caminh\xE3o de carga Padr\xE3o Lima"
+    - "Caminh\xE3o de carga Padr\xE3o Esmeralda"
+    - "Buggy do deserto Personalizado Azul petr\xF3leo"
+    - Buggy do deserto Personalizado Ciano
+    - Buggy do deserto Personalizado Cobalto
+    - Buggy do deserto Personalizado Violeta
+    - "Buggy do deserto Personalizado F\xFAcsia"
+    - "Buggy do deserto Padr\xE3o Escarlate"
+    - "Buggy do deserto Padr\xE3o Tangerina"
+    - "Buggy do deserto Padr\xE3o \xC2mbar"
+    - "Buggy do deserto Padr\xE3o Lima"
+    - "Buggy do deserto Padr\xE3o Esmeralda"
+    - "Roadster cl\xE1ssico Personalizado Azul petr\xF3leo"
+    - "Roadster cl\xE1ssico Personalizado Ciano"
+    - "Roadster cl\xE1ssico Personalizado Cobalto"
+    - "Roadster cl\xE1ssico Personalizado Violeta"
+    - "Roadster cl\xE1ssico Personalizado F\xFAcsia"
+    - "Roadster cl\xE1ssico Padr\xE3o Escarlate"
+    - "Roadster cl\xE1ssico Padr\xE3o Tangerina"
+    - "Roadster cl\xE1ssico Padr\xE3o \xC2mbar"
+    - "Roadster cl\xE1ssico Padr\xE3o Lima"
+    - "Roadster cl\xE1ssico Padr\xE3o Esmeralda"
+    - Idioma
+    - Alto
+    - Baixo
+    - "M\xE9dio"
+    - 'Detalhes: {0}'
+    - Jogar
+    - Sensibilidade
+    - Pausado
+    - Segurar
+    - Pegar
+    - Colocar
+    - Colocar {0} em {1}
+    - Apertar
+    - Devolver
+    - Melhorias
+    - Personalizado
+    - "Padr\xE3o"
+    - "\xC2mbar"
+    - Cobalto
+    - Ciano
+    - Esmeralda
+    - "F\xFAcsia"
+    - Lima
+    - Escarlate
+    - Tangerina
+    - "Azul petr\xF3leo"
+    - Violeta
+    - "Loja completa!\n525 carros em 75 prateleiras.\nTempo: {0}  \u2022  Moedas:
+      {1}"
+    - "CARROS MISTURADOS  \u2022  PEGUE AQUI"
+    - GUIA DE MODELOS
+    - "MODELO {0}  \u2022  {1}"
+    - 'Carros organizados: {0} / 525'
+    - Reiniciar loja
+    - '{0}: {1} / 35'
+    - "Come\xE7ar"
+    - LOJA DE CARRINHOS
+    - "Bem-vindo \xE0 loja de carrinhos! Pegue carros da pilha no ch\xE3o e coloque-os
+      na prateleira do modelo e cor certos. Cada prateleira precisa de sete. Retire
+      os incorretos. Ganhe moedas para melhorias. N\xE3o h\xE1 tempo limite."
+    - "W OESTE  \u2022  E LESTE  \u2022  B FUNDO  \u2022  F FRENTE"
+    - Continuar
+    - "N\xE3o"
+    - Sair
+    - "Zerar todo o progresso?\nIsso n\xE3o pode ser desfeito."
+    - Zerar Progresso
+    - Reiniciar
+    - Sim
+    - "Equipa automaticamente at\xE9 {value} itens iguais ao que est\xE1 na sua m\xE3o."
+    - Coletar itens automaticamente
+    - Itens iguais flutuam e brilham por {value} segundos.
+    - Destacar itens
+    - Itens arremessados caem sozinhos na prateleira certa.
+    - Guarda o item sozinho ao acertar a prateleira certa
+    - "Carregue at\xE9 {value} itens de uma vez."
+    - "Invent\xE1rio maior"
+    - 'Pegue e coloque de mais longe. Alcance: {value}.'
+    - Alcance maior
+    - "Arremesse itens com mais for\xE7a e dist\xE2ncia. For\xE7a: {value}."
+    - Arremesso mais forte
+    - "Corra mais r\xE1pido pelo n\xEDvel."
+    - Liberar corrida
+    - "M\xC1X"
+    - Melhorias
+  - Code: id
+    Values:
+    - Kupe touring
+    - Kupe sprint
+    - Kumbang reli
+    - SUV reli
+    - Hatchback reli
+    - Mobil formula
+    - Van pengantar
+    - Pembalap kokpit terbuka
+    - Prototipe lintasan
+    - Kupe ketahanan
+    - Buggy offroad
+    - Jeep lintasan
+    - Truk kargo
+    - Buggy gurun
+    - Roadster klasik
+    - Contoh
+    - Kumpul
+    - Lompat
+    - Jeda
+    - Taruh
+    - Ganti
+    - Inventaris Penuh
+    - Bagian Salah
+    - Bola biru
+    - Silinder hijau
+    - Contoh
+    - Kubus merah
+    - Kupe touring Kustom Hijau kebiruan
+    - Kupe touring Kustom Sian
+    - Kupe touring Kustom Kobalt
+    - Kupe touring Kustom Ungu
+    - Kupe touring Kustom Fusia
+    - Kupe touring Standar Merah tua
+    - Kupe touring Standar Jingga
+    - Kupe touring Standar Kuning amber
+    - Kupe touring Standar Hijau limau
+    - Kupe touring Standar Zamrud
+    - Kupe sprint Kustom Hijau kebiruan
+    - Kupe sprint Kustom Sian
+    - Kupe sprint Kustom Kobalt
+    - Kupe sprint Kustom Ungu
+    - Kupe sprint Kustom Fusia
+    - Kupe sprint Standar Merah tua
+    - Kupe sprint Standar Jingga
+    - Kupe sprint Standar Kuning amber
+    - Kupe sprint Standar Hijau limau
+    - Kupe sprint Standar Zamrud
+    - Kumbang reli Kustom Hijau kebiruan
+    - Kumbang reli Kustom Sian
+    - Kumbang reli Kustom Kobalt
+    - Kumbang reli Kustom Ungu
+    - Kumbang reli Kustom Fusia
+    - Kumbang reli Standar Merah tua
+    - Kumbang reli Standar Jingga
+    - Kumbang reli Standar Kuning amber
+    - Kumbang reli Standar Hijau limau
+    - Kumbang reli Standar Zamrud
+    - SUV reli Kustom Hijau kebiruan
+    - SUV reli Kustom Sian
+    - SUV reli Kustom Kobalt
+    - SUV reli Kustom Ungu
+    - SUV reli Kustom Fusia
+    - SUV reli Standar Merah tua
+    - SUV reli Standar Jingga
+    - SUV reli Standar Kuning amber
+    - SUV reli Standar Hijau limau
+    - SUV reli Standar Zamrud
+    - Hatchback reli Kustom Hijau kebiruan
+    - Hatchback reli Kustom Sian
+    - Hatchback reli Kustom Kobalt
+    - Hatchback reli Kustom Ungu
+    - Hatchback reli Kustom Fusia
+    - Hatchback reli Standar Merah tua
+    - Hatchback reli Standar Jingga
+    - Hatchback reli Standar Kuning amber
+    - Hatchback reli Standar Hijau limau
+    - Hatchback reli Standar Zamrud
+    - Mobil formula Kustom Hijau kebiruan
+    - Mobil formula Kustom Sian
+    - Mobil formula Kustom Kobalt
+    - Mobil formula Kustom Ungu
+    - Mobil formula Kustom Fusia
+    - Mobil formula Standar Merah tua
+    - Mobil formula Standar Jingga
+    - Mobil formula Standar Kuning amber
+    - Mobil formula Standar Hijau limau
+    - Mobil formula Standar Zamrud
+    - Van pengantar Kustom Hijau kebiruan
+    - Van pengantar Kustom Sian
+    - Van pengantar Kustom Kobalt
+    - Van pengantar Kustom Ungu
+    - Van pengantar Kustom Fusia
+    - Van pengantar Standar Merah tua
+    - Van pengantar Standar Jingga
+    - Van pengantar Standar Kuning amber
+    - Van pengantar Standar Hijau limau
+    - Van pengantar Standar Zamrud
+    - Pembalap kokpit terbuka Kustom Hijau kebiruan
+    - Pembalap kokpit terbuka Kustom Sian
+    - Pembalap kokpit terbuka Kustom Kobalt
+    - Pembalap kokpit terbuka Kustom Ungu
+    - Pembalap kokpit terbuka Kustom Fusia
+    - Pembalap kokpit terbuka Standar Merah tua
+    - Pembalap kokpit terbuka Standar Jingga
+    - Pembalap kokpit terbuka Standar Kuning amber
+    - Pembalap kokpit terbuka Standar Hijau limau
+    - Pembalap kokpit terbuka Standar Zamrud
+    - Prototipe lintasan Kustom Hijau kebiruan
+    - Prototipe lintasan Kustom Sian
+    - Prototipe lintasan Kustom Kobalt
+    - Prototipe lintasan Kustom Ungu
+    - Prototipe lintasan Kustom Fusia
+    - Prototipe lintasan Standar Merah tua
+    - Prototipe lintasan Standar Jingga
+    - Prototipe lintasan Standar Kuning amber
+    - Prototipe lintasan Standar Hijau limau
+    - Prototipe lintasan Standar Zamrud
+    - Kupe ketahanan Kustom Hijau kebiruan
+    - Kupe ketahanan Kustom Sian
+    - Kupe ketahanan Kustom Kobalt
+    - Kupe ketahanan Kustom Ungu
+    - Kupe ketahanan Kustom Fusia
+    - Kupe ketahanan Standar Merah tua
+    - Kupe ketahanan Standar Jingga
+    - Kupe ketahanan Standar Kuning amber
+    - Kupe ketahanan Standar Hijau limau
+    - Kupe ketahanan Standar Zamrud
+    - Buggy offroad Kustom Hijau kebiruan
+    - Buggy offroad Kustom Sian
+    - Buggy offroad Kustom Kobalt
+    - Buggy offroad Kustom Ungu
+    - Buggy offroad Kustom Fusia
+    - Buggy offroad Standar Merah tua
+    - Buggy offroad Standar Jingga
+    - Buggy offroad Standar Kuning amber
+    - Buggy offroad Standar Hijau limau
+    - Buggy offroad Standar Zamrud
+    - Jeep lintasan Kustom Hijau kebiruan
+    - Jeep lintasan Kustom Sian
+    - Jeep lintasan Kustom Kobalt
+    - Jeep lintasan Kustom Ungu
+    - Jeep lintasan Kustom Fusia
+    - Jeep lintasan Standar Merah tua
+    - Jeep lintasan Standar Jingga
+    - Jeep lintasan Standar Kuning amber
+    - Jeep lintasan Standar Hijau limau
+    - Jeep lintasan Standar Zamrud
+    - Truk kargo Kustom Hijau kebiruan
+    - Truk kargo Kustom Sian
+    - Truk kargo Kustom Kobalt
+    - Truk kargo Kustom Ungu
+    - Truk kargo Kustom Fusia
+    - Truk kargo Standar Merah tua
+    - Truk kargo Standar Jingga
+    - Truk kargo Standar Kuning amber
+    - Truk kargo Standar Hijau limau
+    - Truk kargo Standar Zamrud
+    - Buggy gurun Kustom Hijau kebiruan
+    - Buggy gurun Kustom Sian
+    - Buggy gurun Kustom Kobalt
+    - Buggy gurun Kustom Ungu
+    - Buggy gurun Kustom Fusia
+    - Buggy gurun Standar Merah tua
+    - Buggy gurun Standar Jingga
+    - Buggy gurun Standar Kuning amber
+    - Buggy gurun Standar Hijau limau
+    - Buggy gurun Standar Zamrud
+    - Roadster klasik Kustom Hijau kebiruan
+    - Roadster klasik Kustom Sian
+    - Roadster klasik Kustom Kobalt
+    - Roadster klasik Kustom Ungu
+    - Roadster klasik Kustom Fusia
+    - Roadster klasik Standar Merah tua
+    - Roadster klasik Standar Jingga
+    - Roadster klasik Standar Kuning amber
+    - Roadster klasik Standar Hijau limau
+    - Roadster klasik Standar Zamrud
+    - Bahasa
+    - Tinggi
+    - Rendah
+    - Sedang
+    - 'Detail: {0}'
+    - Main
+    - Sensitivitas
+    - Jeda
+    - Tahan
+    - Ambil
+    - Taruh
+    - Taruh {0} di {1}
+    - Tekan
+    - Ambil lagi
+    - Upgrade
+    - Kustom
+    - Standar
+    - Kuning amber
+    - Kobalt
+    - Sian
+    - Zamrud
+    - Fusia
+    - Hijau limau
+    - Merah tua
+    - Jingga
+    - Hijau kebiruan
+    - Ungu
+    - "Toko selesai!\n525 mobil di 75 rak.\nWaktu: {0}  \u2022  Sisa koin: {1}"
+    - "MOBIL CAMPUR  \u2022  AMBIL DI SINI"
+    - DIREKTORI MODEL
+    - "MODEL {0}  \u2022  {1}"
+    - 'Mobil tersortir: {0} / 525'
+    - Ulangi toko
+    - '{0}: {1} / 35'
+    - Mulai
+    - TOKO MOBIL MAINAN
+    - Selamat datang di toko mobil mainan! Ambil mobil dari tumpukan di lantai dan
+      cocokkan model serta warnanya. Setiap rak perlu tujuh mobil. Mobil yang salah
+      bisa diambil kembali. Dapatkan koin untuk peningkatan. Tidak ada batas waktu.
+    - "W BARAT  \u2022  E TIMUR  \u2022  B BELAKANG  \u2022  F DEPAN"
+    - Lanjut
+    - Tidak
+    - Keluar
+    - 'Reset semua progres?
+
+      Ini tidak bisa dibatalkan.'
+    - Reset Progres
+    - Ulang
+    - Ya
+    - Otomatis memegang hingga {value} barang yang sama dengan yang ada di tanganmu.
+    - Ambil barang otomatis
+    - Barang yang sama melayang dan bersinar selama {value} detik.
+    - Sorot barang
+    - Item yang dilempar otomatis mendarat di rak yang tepat.
+    - Item otomatis tertata saat dilempar ke rak yang benar
+    - Bawa hingga {value} item sekaligus.
+    - Inventaris lebih besar
+    - 'Ambil dan taruh dari jarak lebih jauh. Jangkauan: {value}.'
+    - Jangkauan lebih jauh
+    - 'Lempar item lebih keras dan lebih jauh. Kekuatan: {value}.'
+    - Lemparan lebih kuat
+    - Lari lebih cepat di sekitar level.
+    - Buka lari cepat
+    - MAKS
+    - Upgrade
+  - Code: tr
+    Values:
+    - Touring Coupe
+    - Sprint Coupe
+    - Ralli Beetle
+    - Ralli SUV
+    - Ralli Hatchback
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131"
+    - "Teslimat Minib\xFCs\xFC"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131"
+    - Pist Prototipi
+    - "Dayan\u0131kl\u0131l\u0131k Coupe"
+    - "Arazi Arabas\u0131"
+    - Arazi Jeepi
+    - "Y\xFCk Kamyonu"
+    - "\xC7\xF6l Arabas\u0131"
+    - Klasik Roadster
+    - "\xD6rnek"
+    - Topla
+    - "Z\u0131pla"
+    - Duraklat
+    - Koy
+    - "De\u011Fi\u015Ftir"
+    - Envanter Dolu
+    - "Yanl\u0131\u015F B\xF6l\xFCm"
+    - "Mavi k\xFCre"
+    - "Ye\u015Fil silindir"
+    - "\xD6rnek"
+    - "K\u0131rm\u0131z\u0131 k\xFCp"
+    - "Touring Coupe \xD6zel Camg\xF6be\u011Fi"
+    - "Touring Coupe \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Touring Coupe \xD6zel Kobalt"
+    - "Touring Coupe \xD6zel Menek\u015Fe"
+    - "Touring Coupe \xD6zel Fu\u015Fya"
+    - "Touring Coupe Standart K\u0131z\u0131l"
+    - Touring Coupe Standart Mandalina
+    - Touring Coupe Standart Kehribar
+    - "Touring Coupe Standart Limon ye\u015Fili"
+    - "Touring Coupe Standart Z\xFCmr\xFCt"
+    - "Sprint Coupe \xD6zel Camg\xF6be\u011Fi"
+    - "Sprint Coupe \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Sprint Coupe \xD6zel Kobalt"
+    - "Sprint Coupe \xD6zel Menek\u015Fe"
+    - "Sprint Coupe \xD6zel Fu\u015Fya"
+    - "Sprint Coupe Standart K\u0131z\u0131l"
+    - Sprint Coupe Standart Mandalina
+    - Sprint Coupe Standart Kehribar
+    - "Sprint Coupe Standart Limon ye\u015Fili"
+    - "Sprint Coupe Standart Z\xFCmr\xFCt"
+    - "Ralli Beetle \xD6zel Camg\xF6be\u011Fi"
+    - "Ralli Beetle \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Ralli Beetle \xD6zel Kobalt"
+    - "Ralli Beetle \xD6zel Menek\u015Fe"
+    - "Ralli Beetle \xD6zel Fu\u015Fya"
+    - "Ralli Beetle Standart K\u0131z\u0131l"
+    - Ralli Beetle Standart Mandalina
+    - Ralli Beetle Standart Kehribar
+    - "Ralli Beetle Standart Limon ye\u015Fili"
+    - "Ralli Beetle Standart Z\xFCmr\xFCt"
+    - "Ralli SUV \xD6zel Camg\xF6be\u011Fi"
+    - "Ralli SUV \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Ralli SUV \xD6zel Kobalt"
+    - "Ralli SUV \xD6zel Menek\u015Fe"
+    - "Ralli SUV \xD6zel Fu\u015Fya"
+    - "Ralli SUV Standart K\u0131z\u0131l"
+    - Ralli SUV Standart Mandalina
+    - Ralli SUV Standart Kehribar
+    - "Ralli SUV Standart Limon ye\u015Fili"
+    - "Ralli SUV Standart Z\xFCmr\xFCt"
+    - "Ralli Hatchback \xD6zel Camg\xF6be\u011Fi"
+    - "Ralli Hatchback \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Ralli Hatchback \xD6zel Kobalt"
+    - "Ralli Hatchback \xD6zel Menek\u015Fe"
+    - "Ralli Hatchback \xD6zel Fu\u015Fya"
+    - "Ralli Hatchback Standart K\u0131z\u0131l"
+    - Ralli Hatchback Standart Mandalina
+    - Ralli Hatchback Standart Kehribar
+    - "Ralli Hatchback Standart Limon ye\u015Fili"
+    - "Ralli Hatchback Standart Z\xFCmr\xFCt"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Camg\xF6be\u011Fi"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Kobalt"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Menek\u015Fe"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Fu\u015Fya"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 Standart K\u0131z\u0131l"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 Standart Mandalina"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 Standart Kehribar"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 Standart Limon ye\u015Fili"
+    - "Formula Yar\u0131\u015F\xE7\u0131s\u0131 Standart Z\xFCmr\xFCt"
+    - "Teslimat Minib\xFCs\xFC \xD6zel Camg\xF6be\u011Fi"
+    - "Teslimat Minib\xFCs\xFC \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Teslimat Minib\xFCs\xFC \xD6zel Kobalt"
+    - "Teslimat Minib\xFCs\xFC \xD6zel Menek\u015Fe"
+    - "Teslimat Minib\xFCs\xFC \xD6zel Fu\u015Fya"
+    - "Teslimat Minib\xFCs\xFC Standart K\u0131z\u0131l"
+    - "Teslimat Minib\xFCs\xFC Standart Mandalina"
+    - "Teslimat Minib\xFCs\xFC Standart Kehribar"
+    - "Teslimat Minib\xFCs\xFC Standart Limon ye\u015Fili"
+    - "Teslimat Minib\xFCs\xFC Standart Z\xFCmr\xFCt"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Camg\xF6be\u011Fi"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Camg\xF6be\u011Fi
+      a\xE7\u0131k"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Kobalt"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Menek\u015Fe"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 \xD6zel Fu\u015Fya"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 Standart K\u0131z\u0131l"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 Standart Mandalina"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 Standart Kehribar"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 Standart Limon ye\u015Fili"
+    - "A\xE7\u0131k Kokpit Yar\u0131\u015F\xE7\u0131s\u0131 Standart Z\xFCmr\xFCt"
+    - "Pist Prototipi \xD6zel Camg\xF6be\u011Fi"
+    - "Pist Prototipi \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Pist Prototipi \xD6zel Kobalt"
+    - "Pist Prototipi \xD6zel Menek\u015Fe"
+    - "Pist Prototipi \xD6zel Fu\u015Fya"
+    - "Pist Prototipi Standart K\u0131z\u0131l"
+    - Pist Prototipi Standart Mandalina
+    - Pist Prototipi Standart Kehribar
+    - "Pist Prototipi Standart Limon ye\u015Fili"
+    - "Pist Prototipi Standart Z\xFCmr\xFCt"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe \xD6zel Camg\xF6be\u011Fi"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe \xD6zel Kobalt"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe \xD6zel Menek\u015Fe"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe \xD6zel Fu\u015Fya"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe Standart K\u0131z\u0131l"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe Standart Mandalina"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe Standart Kehribar"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe Standart Limon ye\u015Fili"
+    - "Dayan\u0131kl\u0131l\u0131k Coupe Standart Z\xFCmr\xFCt"
+    - "Arazi Arabas\u0131 \xD6zel Camg\xF6be\u011Fi"
+    - "Arazi Arabas\u0131 \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Arazi Arabas\u0131 \xD6zel Kobalt"
+    - "Arazi Arabas\u0131 \xD6zel Menek\u015Fe"
+    - "Arazi Arabas\u0131 \xD6zel Fu\u015Fya"
+    - "Arazi Arabas\u0131 Standart K\u0131z\u0131l"
+    - "Arazi Arabas\u0131 Standart Mandalina"
+    - "Arazi Arabas\u0131 Standart Kehribar"
+    - "Arazi Arabas\u0131 Standart Limon ye\u015Fili"
+    - "Arazi Arabas\u0131 Standart Z\xFCmr\xFCt"
+    - "Arazi Jeepi \xD6zel Camg\xF6be\u011Fi"
+    - "Arazi Jeepi \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Arazi Jeepi \xD6zel Kobalt"
+    - "Arazi Jeepi \xD6zel Menek\u015Fe"
+    - "Arazi Jeepi \xD6zel Fu\u015Fya"
+    - "Arazi Jeepi Standart K\u0131z\u0131l"
+    - Arazi Jeepi Standart Mandalina
+    - Arazi Jeepi Standart Kehribar
+    - "Arazi Jeepi Standart Limon ye\u015Fili"
+    - "Arazi Jeepi Standart Z\xFCmr\xFCt"
+    - "Y\xFCk Kamyonu \xD6zel Camg\xF6be\u011Fi"
+    - "Y\xFCk Kamyonu \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Y\xFCk Kamyonu \xD6zel Kobalt"
+    - "Y\xFCk Kamyonu \xD6zel Menek\u015Fe"
+    - "Y\xFCk Kamyonu \xD6zel Fu\u015Fya"
+    - "Y\xFCk Kamyonu Standart K\u0131z\u0131l"
+    - "Y\xFCk Kamyonu Standart Mandalina"
+    - "Y\xFCk Kamyonu Standart Kehribar"
+    - "Y\xFCk Kamyonu Standart Limon ye\u015Fili"
+    - "Y\xFCk Kamyonu Standart Z\xFCmr\xFCt"
+    - "\xC7\xF6l Arabas\u0131 \xD6zel Camg\xF6be\u011Fi"
+    - "\xC7\xF6l Arabas\u0131 \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "\xC7\xF6l Arabas\u0131 \xD6zel Kobalt"
+    - "\xC7\xF6l Arabas\u0131 \xD6zel Menek\u015Fe"
+    - "\xC7\xF6l Arabas\u0131 \xD6zel Fu\u015Fya"
+    - "\xC7\xF6l Arabas\u0131 Standart K\u0131z\u0131l"
+    - "\xC7\xF6l Arabas\u0131 Standart Mandalina"
+    - "\xC7\xF6l Arabas\u0131 Standart Kehribar"
+    - "\xC7\xF6l Arabas\u0131 Standart Limon ye\u015Fili"
+    - "\xC7\xF6l Arabas\u0131 Standart Z\xFCmr\xFCt"
+    - "Klasik Roadster \xD6zel Camg\xF6be\u011Fi"
+    - "Klasik Roadster \xD6zel Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Klasik Roadster \xD6zel Kobalt"
+    - "Klasik Roadster \xD6zel Menek\u015Fe"
+    - "Klasik Roadster \xD6zel Fu\u015Fya"
+    - "Klasik Roadster Standart K\u0131z\u0131l"
+    - Klasik Roadster Standart Mandalina
+    - Klasik Roadster Standart Kehribar
+    - "Klasik Roadster Standart Limon ye\u015Fili"
+    - "Klasik Roadster Standart Z\xFCmr\xFCt"
+    - Dil
+    - "Y\xFCksek"
+    - "D\xFC\u015F\xFCk"
+    - Orta
+    - 'Detay: {0}'
+    - Oyna
+    - Hassasiyet
+    - "Duraklat\u0131ld\u0131"
+    - Tut
+    - Al
+    - Koy
+    - "{1} b\xF6l\xFCm\xFCne koy: {0}"
+    - Bas
+    - Geri al
+    - "Geli\u015Ftirmeler"
+    - "\xD6zel"
+    - Standart
+    - Kehribar
+    - Kobalt
+    - "Camg\xF6be\u011Fi a\xE7\u0131k"
+    - "Z\xFCmr\xFCt"
+    - "Fu\u015Fya"
+    - "Limon ye\u015Fili"
+    - "K\u0131z\u0131l"
+    - Mandalina
+    - "Camg\xF6be\u011Fi"
+    - "Menek\u015Fe"
+    - "Ma\u011Faza tamamland\u0131!\n75 rafta 525 araba.\nS\xFCre: {0}  \u2022  Kalan
+      para: {1}"
+    - "KARI\u015EIK ARABALAR  \u2022  BURADAN AL"
+    - "MODEL REHBER\u0130"
+    - "MODEL {0}  \u2022  {1}"
+    - "S\u0131ralanan arabalar: {0} / 525"
+    - "Ma\u011Fazay\u0131 yeniden oyna"
+    - '{0}: {1} / 35'
+    - "Ba\u015Fla"
+    - "OYUNCAK ARABA MA\u011EAZASI"
+    - "Oyuncak araba ma\u011Fazas\u0131na ho\u015F geldin! Arabalar\u0131 yerdeki
+      y\u0131\u011F\u0131ndan al ve model ile rengine uygun rafa yerle\u015Ftir.
+      Her raf yedi araba ister. Yanl\u0131\u015F arabalar\u0131 geri alabilirsin.
+      Do\u011Fru yerle\u015Ftirerek geli\u015Ftirme paras\u0131 kazan. S\xFCre s\u0131n\u0131r\u0131
+      yok."
+    - "W BATI  \u2022  E DO\u011EU  \u2022  B ARKA  \u2022  F \xD6N"
+    - Devam Et
+    - "Hay\u0131r"
+    - "\xC7\u0131k"
+    - "T\xFCm ilerleme s\u0131f\u0131rlans\u0131n m\u0131?\nBu i\u015Flem geri al\u0131namaz."
+    - "\u0130lerlemeyi S\u0131f\u0131rla"
+    - "Yeniden Ba\u015Fla"
+    - Evet
+    - "Elindekiyle ayn\u0131 olan en fazla {value} e\u015Fyay\u0131 otomatik ku\u015Fan\u0131r."
+    - "E\u015Fyalar\u0131 otomatik topla"
+    - "E\u015Fle\u015Fen e\u015Fyalar {value} saniye boyunca s\xFCz\xFCl\xFCr ve
+      parlar."
+    - "E\u015Fyalar\u0131 vurgula"
+    - "At\u0131lan e\u015Fyalar otomatik olarak do\u011Fru rafa yerle\u015Fir."
+    - "Do\u011Fru rafa at\u0131lan e\u015Fya otomatik yerle\u015Fir"
+    - "Ayn\u0131 anda en fazla {value} e\u015Fya ta\u015F\u0131."
+    - "Daha b\xFCy\xFCk envanter"
+    - "Daha uzaktan al ve yerle\u015Ftir. Menzil: {value}."
+    - Daha uzun menzil
+    - "E\u015Fyalar\u0131 daha sert ve uza\u011Fa at. G\xFC\xE7: {value}."
+    - "Daha g\xFC\xE7l\xFC at\u0131\u015F"
+    - "B\xF6l\xFCmde daha h\u0131zl\u0131 ko\u015F."
+    - "Ko\u015Fuyu a\xE7"
+    - MAKS
+    - "Geli\u015Ftirmeler"
+  - Code: pl
+    Values:
+    - Coupe turystyczne
+    - Coupe sprinterskie
+    - Garbus rajdowy
+    - SUV rajdowy
+    - Hatchback rajdowy
+    - "Bolid formu\u0142y"
+    - Furgonetka dostawcza
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem"
+    - Prototyp torowy
+    - "Coupe wytrzyma\u0142o\u015Bciowe"
+    - Buggy terenowe
+    - Jeep terenowy
+    - "Ci\u0119\u017Car\xF3wka towarowa"
+    - Buggy pustynne
+    - Klasyczny roadster
+    - "Przyk\u0142ad"
+    - Zbierz
+    - Skok
+    - Pauza
+    - "Po\u0142\xF3\u017C"
+    - "Zmie\u0144"
+    - "Pe\u0142ny ekwipunek"
+    - "Z\u0142a sekcja"
+    - Niebieska kula
+    - Zielony walec
+    - "Przyk\u0142ad"
+    - "Czerwony sze\u015Bcian"
+    - Coupe turystyczne Niestandardowy Morski
+    - Coupe turystyczne Niestandardowy Cyjan
+    - Coupe turystyczne Niestandardowy Kobaltowy
+    - Coupe turystyczne Niestandardowy Fioletowy
+    - Coupe turystyczne Niestandardowy Fuksja
+    - "Coupe turystyczne Standard Szkar\u0142atny"
+    - Coupe turystyczne Standard Mandarynkowy
+    - Coupe turystyczne Standard Bursztynowy
+    - Coupe turystyczne Standard Limonkowy
+    - Coupe turystyczne Standard Szmaragdowy
+    - Coupe sprinterskie Niestandardowy Morski
+    - Coupe sprinterskie Niestandardowy Cyjan
+    - Coupe sprinterskie Niestandardowy Kobaltowy
+    - Coupe sprinterskie Niestandardowy Fioletowy
+    - Coupe sprinterskie Niestandardowy Fuksja
+    - "Coupe sprinterskie Standard Szkar\u0142atny"
+    - Coupe sprinterskie Standard Mandarynkowy
+    - Coupe sprinterskie Standard Bursztynowy
+    - Coupe sprinterskie Standard Limonkowy
+    - Coupe sprinterskie Standard Szmaragdowy
+    - Garbus rajdowy Niestandardowy Morski
+    - Garbus rajdowy Niestandardowy Cyjan
+    - Garbus rajdowy Niestandardowy Kobaltowy
+    - Garbus rajdowy Niestandardowy Fioletowy
+    - Garbus rajdowy Niestandardowy Fuksja
+    - "Garbus rajdowy Standard Szkar\u0142atny"
+    - Garbus rajdowy Standard Mandarynkowy
+    - Garbus rajdowy Standard Bursztynowy
+    - Garbus rajdowy Standard Limonkowy
+    - Garbus rajdowy Standard Szmaragdowy
+    - SUV rajdowy Niestandardowy Morski
+    - SUV rajdowy Niestandardowy Cyjan
+    - SUV rajdowy Niestandardowy Kobaltowy
+    - SUV rajdowy Niestandardowy Fioletowy
+    - SUV rajdowy Niestandardowy Fuksja
+    - "SUV rajdowy Standard Szkar\u0142atny"
+    - SUV rajdowy Standard Mandarynkowy
+    - SUV rajdowy Standard Bursztynowy
+    - SUV rajdowy Standard Limonkowy
+    - SUV rajdowy Standard Szmaragdowy
+    - Hatchback rajdowy Niestandardowy Morski
+    - Hatchback rajdowy Niestandardowy Cyjan
+    - Hatchback rajdowy Niestandardowy Kobaltowy
+    - Hatchback rajdowy Niestandardowy Fioletowy
+    - Hatchback rajdowy Niestandardowy Fuksja
+    - "Hatchback rajdowy Standard Szkar\u0142atny"
+    - Hatchback rajdowy Standard Mandarynkowy
+    - Hatchback rajdowy Standard Bursztynowy
+    - Hatchback rajdowy Standard Limonkowy
+    - Hatchback rajdowy Standard Szmaragdowy
+    - "Bolid formu\u0142y Niestandardowy Morski"
+    - "Bolid formu\u0142y Niestandardowy Cyjan"
+    - "Bolid formu\u0142y Niestandardowy Kobaltowy"
+    - "Bolid formu\u0142y Niestandardowy Fioletowy"
+    - "Bolid formu\u0142y Niestandardowy Fuksja"
+    - "Bolid formu\u0142y Standard Szkar\u0142atny"
+    - "Bolid formu\u0142y Standard Mandarynkowy"
+    - "Bolid formu\u0142y Standard Bursztynowy"
+    - "Bolid formu\u0142y Standard Limonkowy"
+    - "Bolid formu\u0142y Standard Szmaragdowy"
+    - Furgonetka dostawcza Niestandardowy Morski
+    - Furgonetka dostawcza Niestandardowy Cyjan
+    - Furgonetka dostawcza Niestandardowy Kobaltowy
+    - Furgonetka dostawcza Niestandardowy Fioletowy
+    - Furgonetka dostawcza Niestandardowy Fuksja
+    - "Furgonetka dostawcza Standard Szkar\u0142atny"
+    - Furgonetka dostawcza Standard Mandarynkowy
+    - Furgonetka dostawcza Standard Bursztynowy
+    - Furgonetka dostawcza Standard Limonkowy
+    - Furgonetka dostawcza Standard Szmaragdowy
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Niestandardowy Morski"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Niestandardowy Cyjan"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Niestandardowy Kobaltowy"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Niestandardowy Fioletowy"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Niestandardowy Fuksja"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Standard Szkar\u0142atny"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Standard Mandarynkowy"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Standard Bursztynowy"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Standard Limonkowy"
+    - "Wy\u015Bcig\xF3wka z otwartym kokpitem Standard Szmaragdowy"
+    - Prototyp torowy Niestandardowy Morski
+    - Prototyp torowy Niestandardowy Cyjan
+    - Prototyp torowy Niestandardowy Kobaltowy
+    - Prototyp torowy Niestandardowy Fioletowy
+    - Prototyp torowy Niestandardowy Fuksja
+    - "Prototyp torowy Standard Szkar\u0142atny"
+    - Prototyp torowy Standard Mandarynkowy
+    - Prototyp torowy Standard Bursztynowy
+    - Prototyp torowy Standard Limonkowy
+    - Prototyp torowy Standard Szmaragdowy
+    - "Coupe wytrzyma\u0142o\u015Bciowe Niestandardowy Morski"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Niestandardowy Cyjan"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Niestandardowy Kobaltowy"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Niestandardowy Fioletowy"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Niestandardowy Fuksja"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Standard Szkar\u0142atny"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Standard Mandarynkowy"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Standard Bursztynowy"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Standard Limonkowy"
+    - "Coupe wytrzyma\u0142o\u015Bciowe Standard Szmaragdowy"
+    - Buggy terenowe Niestandardowy Morski
+    - Buggy terenowe Niestandardowy Cyjan
+    - Buggy terenowe Niestandardowy Kobaltowy
+    - Buggy terenowe Niestandardowy Fioletowy
+    - Buggy terenowe Niestandardowy Fuksja
+    - "Buggy terenowe Standard Szkar\u0142atny"
+    - Buggy terenowe Standard Mandarynkowy
+    - Buggy terenowe Standard Bursztynowy
+    - Buggy terenowe Standard Limonkowy
+    - Buggy terenowe Standard Szmaragdowy
+    - Jeep terenowy Niestandardowy Morski
+    - Jeep terenowy Niestandardowy Cyjan
+    - Jeep terenowy Niestandardowy Kobaltowy
+    - Jeep terenowy Niestandardowy Fioletowy
+    - Jeep terenowy Niestandardowy Fuksja
+    - "Jeep terenowy Standard Szkar\u0142atny"
+    - Jeep terenowy Standard Mandarynkowy
+    - Jeep terenowy Standard Bursztynowy
+    - Jeep terenowy Standard Limonkowy
+    - Jeep terenowy Standard Szmaragdowy
+    - "Ci\u0119\u017Car\xF3wka towarowa Niestandardowy Morski"
+    - "Ci\u0119\u017Car\xF3wka towarowa Niestandardowy Cyjan"
+    - "Ci\u0119\u017Car\xF3wka towarowa Niestandardowy Kobaltowy"
+    - "Ci\u0119\u017Car\xF3wka towarowa Niestandardowy Fioletowy"
+    - "Ci\u0119\u017Car\xF3wka towarowa Niestandardowy Fuksja"
+    - "Ci\u0119\u017Car\xF3wka towarowa Standard Szkar\u0142atny"
+    - "Ci\u0119\u017Car\xF3wka towarowa Standard Mandarynkowy"
+    - "Ci\u0119\u017Car\xF3wka towarowa Standard Bursztynowy"
+    - "Ci\u0119\u017Car\xF3wka towarowa Standard Limonkowy"
+    - "Ci\u0119\u017Car\xF3wka towarowa Standard Szmaragdowy"
+    - Buggy pustynne Niestandardowy Morski
+    - Buggy pustynne Niestandardowy Cyjan
+    - Buggy pustynne Niestandardowy Kobaltowy
+    - Buggy pustynne Niestandardowy Fioletowy
+    - Buggy pustynne Niestandardowy Fuksja
+    - "Buggy pustynne Standard Szkar\u0142atny"
+    - Buggy pustynne Standard Mandarynkowy
+    - Buggy pustynne Standard Bursztynowy
+    - Buggy pustynne Standard Limonkowy
+    - Buggy pustynne Standard Szmaragdowy
+    - Klasyczny roadster Niestandardowy Morski
+    - Klasyczny roadster Niestandardowy Cyjan
+    - Klasyczny roadster Niestandardowy Kobaltowy
+    - Klasyczny roadster Niestandardowy Fioletowy
+    - Klasyczny roadster Niestandardowy Fuksja
+    - "Klasyczny roadster Standard Szkar\u0142atny"
+    - Klasyczny roadster Standard Mandarynkowy
+    - Klasyczny roadster Standard Bursztynowy
+    - Klasyczny roadster Standard Limonkowy
+    - Klasyczny roadster Standard Szmaragdowy
+    - "J\u0119zyk"
+    - Wysokie
+    - Niskie
+    - "\u015Arednie"
+    - "Szczeg\xF3\u0142y: {0}"
+    - Graj
+    - "Czu\u0142o\u015B\u0107"
+    - Pauza
+    - Trzymaj
+    - "Podnie\u015B"
+    - "Po\u0142\xF3\u017C"
+    - "Po\u0142\xF3\u017C {0} w dziale {1}"
+    - "Naci\u015Bnij"
+    - Zabierz
+    - Ulepszenia
+    - Niestandardowy
+    - Standard
+    - Bursztynowy
+    - Kobaltowy
+    - Cyjan
+    - Szmaragdowy
+    - Fuksja
+    - Limonkowy
+    - "Szkar\u0142atny"
+    - Mandarynkowy
+    - Morski
+    - Fioletowy
+    - "Sklep uko\u0144czony!\n525 aut na 75 p\xF3\u0142kach.\nCzas: {0}  \u2022 
+      Monety: {1}"
+    - "POMIESZANE AUTA  \u2022  WE\u0179 ST\u0104D"
+    - SPIS MODELI
+    - "MODEL {0}  \u2022  {1}"
+    - 'Posortowane auta: {0} / 525'
+    - Zagraj ponownie
+    - '{0}: {1} / 35'
+    - Zacznij
+    - SKLEP Z AUTKAMI
+    - "Witamy w sklepie z autkami! Bierz auta ze sterty na pod\u0142odze i dopasuj
+      model oraz kolor do p\xF3\u0142ki. Ka\u017Cda p\xF3\u0142ka potrzebuje siedmiu
+      sztuk. B\u0142\u0119dne auta mo\u017Cna zabra\u0107. Za poprawne odk\u0142adanie
+      dostajesz monety na ulepszenia. Nie ma limitu czasu."
+    - "W ZACH\xD3D  \u2022  E WSCH\xD3D  \u2022  B TY\u0141  \u2022  F PRZ\xD3D"
+    - Kontynuuj
+    - Nie
+    - "Wyjd\u017A"
+    - "Zresetowa\u0107 ca\u0142y post\u0119p?\nTego nie da si\u0119 cofn\u0105\u0107."
+    - "Resetuj post\u0119p"
+    - Restart
+    - Tak
+    - "Automatycznie bierze do {value} przedmiot\xF3w takich jak ten w r\u0119ce."
+    - "Automatyczne zbieranie przedmiot\xF3w"
+    - "Pasuj\u0105ce przedmioty unosz\u0105 si\u0119 i \u015Bwiec\u0105 przez {value}
+      s."
+    - "Pod\u015Bwietl przedmioty"
+    - "Rzucone przedmioty same trafiaj\u0105 na w\u0142a\u015Bciw\u0105 p\xF3\u0142k\u0119."
+    - "Auto-odk\u0142adanie po rzucie na dobr\u0105 p\xF3\u0142k\u0119"
+    - "No\u015B wi\u0119cej przedmiot\xF3w naraz. Limit: {value}."
+    - "Wi\u0119kszy ekwipunek"
+    - "Chwytaj i odk\u0142adaj z wi\u0119kszej odleg\u0142o\u015Bci. Zasi\u0119g:
+      {value}."
+    - "D\u0142u\u017Cszy zasi\u0119g"
+    - "Rzucaj mocniej i dalej. Si\u0142a: {value}."
+    - Mocniejszy rzut
+    - Biegaj szybciej po poziomie.
+    - Odblokuj sprint
+    - MAKS
+    - Ulepszenia
+  - Code: vi
+    Values:
+    - "Coupe du l\u1ECBch"
+    - "Coupe t\u1ED1c \u0111\u1ED9"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c"
+    - "Xe giao h\xE0ng"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng"
+    - "Xe buggy \u0111\u1ECBa h\xECnh"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng"
+    - "Xe buggy sa m\u1EA1c"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n"
+    - "V\xED d\u1EE5"
+    - Gom
+    - "Nh\u1EA3y"
+    - "D\u1EEBng"
+    - "\u0110\u1EB7t"
+    - "\u0110\u1ED5i"
+    - "T\xFAi \u0111\u1ED3 \u0111\u1EA7y"
+    - Sai khu
+    - "Qu\u1EA3 c\u1EA7u xanh d\u01B0\u01A1ng"
+    - "Kh\u1ED1i tr\u1EE5 xanh l\xE1"
+    - "V\xED d\u1EE5"
+    - "Kh\u1ED1i l\u1EADp ph\u01B0\u01A1ng \u0111\u1ECF"
+    - "Coupe du l\u1ECBch T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Coupe du l\u1ECBch T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Coupe du l\u1ECBch T\xF9y ch\u1EC9nh Xanh coban"
+    - "Coupe du l\u1ECBch T\xF9y ch\u1EC9nh T\xEDm"
+    - "Coupe du l\u1ECBch T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Coupe du l\u1ECBch Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Coupe du l\u1ECBch Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Coupe du l\u1ECBch Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Coupe du l\u1ECBch Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Coupe du l\u1ECBch Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Coupe t\u1ED1c \u0111\u1ED9 T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Coupe t\u1ED1c \u0111\u1ED9 T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Coupe t\u1ED1c \u0111\u1ED9 T\xF9y ch\u1EC9nh Xanh coban"
+    - "Coupe t\u1ED1c \u0111\u1ED9 T\xF9y ch\u1EC9nh T\xEDm"
+    - "Coupe t\u1ED1c \u0111\u1ED9 T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Coupe t\u1ED1c \u0111\u1ED9 Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Coupe t\u1ED1c \u0111\u1ED9 Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Coupe t\u1ED1c \u0111\u1ED9 Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Coupe t\u1ED1c \u0111\u1ED9 Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Coupe t\u1ED1c \u0111\u1ED9 Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh
+      Xanh c\u1ED5 v\u1ECBt"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh
+      Xanh l\u01A1"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh
+      Xanh coban"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh
+      T\xEDm"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh
+      H\u1ED3ng v\xE2n anh"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n
+      \u0110\u1ECF t\u01B0\u01A1i"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n
+      Cam qu\xFDt"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n
+      H\u1ED5 ph\xE1ch"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n
+      Xanh chanh"
+    - "B\u1ECD c\xE1nh c\u1EE9ng \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n
+      L\u1EE5c b\u1EA3o"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh coban"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh T\xEDm"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "SUV \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh coban"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh T\xEDm"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n
+      anh"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Hatchback \u0111ua \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe \u0111ua c\xF4ng th\u1EE9c Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe giao h\xE0ng T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe giao h\xE0ng T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe giao h\xE0ng T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe giao h\xE0ng T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe giao h\xE0ng T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe giao h\xE0ng Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe giao h\xE0ng Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe giao h\xE0ng Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe giao h\xE0ng Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe giao h\xE0ng Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe \u0111ua bu\u1ED3ng l\xE1i m\u1EDF Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua T\xF9y ch\u1EC9nh Xanh c\u1ED5
+      v\u1ECBt"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua T\xF9y ch\u1EC9nh Xanh coban"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua T\xF9y ch\u1EC9nh T\xEDm"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua T\xF9y ch\u1EC9nh H\u1ED3ng
+      v\xE2n anh"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua Ti\xEAu chu\u1EA9n \u0110\u1ECF
+      t\u01B0\u01A1i"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua Ti\xEAu chu\u1EA9n H\u1ED5
+      ph\xE1ch"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Nguy\xEAn m\u1EABu \u0111\u01B0\u1EDDng \u0111ua Ti\xEAu chu\u1EA9n L\u1EE5c
+      b\u1EA3o"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng T\xF9y ch\u1EC9nh Xanh c\u1ED5
+      v\u1ECBt"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng T\xF9y ch\u1EC9nh Xanh coban"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng T\xF9y ch\u1EC9nh T\xEDm"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n
+      anh"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng Ti\xEAu chu\u1EA9n \u0110\u1ECF
+      t\u01B0\u01A1i"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Coupe \u0111\u01B0\u1EDDng tr\u01B0\u1EDDng Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe buggy \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe buggy \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe buggy \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe buggy \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe buggy \u0111\u1ECBa h\xECnh T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe buggy \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe buggy \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe buggy \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe buggy \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe buggy \u0111\u1ECBa h\xECnh Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n T\xF9y ch\u1EC9nh Xanh coban"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n T\xF9y ch\u1EC9nh T\xEDm"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Jeep \u0111\u01B0\u1EDDng m\xF2n Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe t\u1EA3i ch\u1EDF h\xE0ng Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe buggy sa m\u1EA1c T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe buggy sa m\u1EA1c T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe buggy sa m\u1EA1c T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe buggy sa m\u1EA1c T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe buggy sa m\u1EA1c T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n anh"
+    - "Xe buggy sa m\u1EA1c Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe buggy sa m\u1EA1c Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe buggy sa m\u1EA1c Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe buggy sa m\u1EA1c Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe buggy sa m\u1EA1c Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n T\xF9y ch\u1EC9nh Xanh c\u1ED5 v\u1ECBt"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n T\xF9y ch\u1EC9nh Xanh l\u01A1"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n T\xF9y ch\u1EC9nh Xanh coban"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n T\xF9y ch\u1EC9nh T\xEDm"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n T\xF9y ch\u1EC9nh H\u1ED3ng v\xE2n
+      anh"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n Ti\xEAu chu\u1EA9n \u0110\u1ECF t\u01B0\u01A1i"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n Ti\xEAu chu\u1EA9n Cam qu\xFDt"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n Ti\xEAu chu\u1EA9n H\u1ED5 ph\xE1ch"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n Ti\xEAu chu\u1EA9n Xanh chanh"
+    - "Xe mui tr\u1EA7n c\u1ED5 \u0111i\u1EC3n Ti\xEAu chu\u1EA9n L\u1EE5c b\u1EA3o"
+    - "Ng\xF4n ng\u1EEF"
+    - Cao
+    - "Th\u1EA5p"
+    - "V\u1EEBa"
+    - "Chi ti\u1EBFt: {0}"
+    - "Ch\u01A1i"
+    - "\u0110\u1ED9 nh\u1EA1y"
+    - "T\u1EA1m d\u1EEBng"
+    - "Gi\u1EEF"
+    - "Nh\u1EB7t"
+    - "\u0110\u1EB7t"
+    - "\u0110\u1EB7t {0} v\xE0o {1}"
+    - "Nh\u1EA5n"
+    - "L\u1EA5y l\u1EA1i"
+    - "N\xE2ng c\u1EA5p"
+    - "T\xF9y ch\u1EC9nh"
+    - "Ti\xEAu chu\u1EA9n"
+    - "H\u1ED5 ph\xE1ch"
+    - Xanh coban
+    - "Xanh l\u01A1"
+    - "L\u1EE5c b\u1EA3o"
+    - "H\u1ED3ng v\xE2n anh"
+    - Xanh chanh
+    - "\u0110\u1ECF t\u01B0\u01A1i"
+    - "Cam qu\xFDt"
+    - "Xanh c\u1ED5 v\u1ECBt"
+    - "T\xEDm"
+    - "Ho\xE0n th\xE0nh c\u1EEDa h\xE0ng!\n525 xe tr\xEAn 75 k\u1EC7.\nTh\u1EDDi
+      gian: {0}  \u2022  Xu c\xF2n: {1}"
+    - "XE CH\u01AFA PH\xC2N LO\u1EA0I  \u2022  L\u1EA4Y T\u1EA0I \u0110\xC2Y"
+    - "DANH M\u1EE4C M\u1EAAU XE"
+    - "M\u1EAAU {0}  \u2022  {1}"
+    - "Xe \u0111\xE3 x\u1EBFp: {0} / 525"
+    - "Ch\u01A1i l\u1EA1i c\u1EEDa h\xE0ng"
+    - '{0}: {1} / 35'
+    - "B\u1EAFt \u0111\u1EA7u"
+    - "C\u1EECA H\xC0NG XE \u0110\u1ED2 CH\u01A0I"
+    - "Ch\xE0o m\u1EEBng \u0111\u1EBFn c\u1EEDa h\xE0ng xe \u0111\u1ED3 ch\u01A1i!
+      L\u1EA5y xe t\u1EEB \u0111\u1ED1ng tr\xEAn s\xE0n v\xE0 \u0111\u1EB7t l\xEAn
+      k\u1EC7 \u0111\xFAng m\u1EABu, \u0111\xFAng m\xE0u. M\u1ED7i k\u1EC7 c\u1EA7n
+      b\u1EA3y xe. C\xF3 th\u1EC3 l\u1EA5y l\u1EA1i xe \u0111\u1EB7t sai. \u0110\u1EB7t
+      \u0111\xFAng \u0111\u1EC3 nh\u1EADn xu n\xE2ng c\u1EA5p. Kh\xF4ng gi\u1EDBi
+      h\u1EA1n th\u1EDDi gian."
+    - "W T\xC2Y  \u2022  E \u0110\xD4NG  \u2022  B SAU  \u2022  F TR\u01AF\u1EDAC"
+    - "Ti\u1EBFp t\u1EE5c"
+    - "Kh\xF4ng"
+    - "Tho\xE1t"
+    - "X\xF3a to\xE0n b\u1ED9 ti\u1EBFn tr\xECnh?\nKh\xF4ng th\u1EC3 ho\xE0n t\xE1c."
+    - "X\xF3a ti\u1EBFn tr\xECnh"
+    - "Ch\u01A1i l\u1EA1i"
+    - "C\xF3"
+    - "T\u1EF1 \u0111\u1ED9ng c\u1EA7m t\u1ED1i \u0111a {value} m\xF3n gi\u1ED1ng
+      m\xF3n tr\xEAn tay."
+    - "T\u1EF1 \u0111\u1ED9ng nh\u1EB7t \u0111\u1ED3"
+    - "\u0110\u1ED3 v\u1EADt gi\u1ED1ng nhau bay l\xEAn v\xE0 ph\xE1t s\xE1ng trong
+      {value} gi\xE2y."
+    - "L\xE0m n\u1ED5i b\u1EADt \u0111\u1ED3 v\u1EADt"
+    - "\u0110\u1ED3 n\xE9m ra s\u1EBD t\u1EF1 v\xE0o \u0111\xFAng k\u1EC7."
+    - "T\u1EF1 l\xEAn k\u1EC7 khi n\xE9m \u0111\xFAng k\u1EC7"
+    - "Mang t\u1ED1i \u0111a {value} m\xF3n c\xF9ng l\xFAc."
+    - "T\xFAi \u0111\u1ED3 l\u1EDBn h\u01A1n"
+    - "Nh\u1EB7t v\xE0 \u0111\u1EB7t t\u1EEB xa h\u01A1n. T\u1EA7m v\u1EDBi: {value}."
+    - "T\u1EA7m v\u1EDBi xa h\u01A1n"
+    - "N\xE9m \u0111\u1ED3 m\u1EA1nh v\xE0 xa h\u01A1n. L\u1EF1c: {value}."
+    - "N\xE9m m\u1EA1nh h\u01A1n"
+    - "Ch\u1EA1y nhanh h\u01A1n trong m\xE0n ch\u01A1i."
+    - "M\u1EDF kh\xF3a ch\u1EA1y nhanh"
+    - "T\u1ED0I \u0110A"
+    - "N\xE2ng c\u1EA5p"
+  - Code: ar
+    Values:
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629"
+    - "\u0645\u062B\u0627\u0644"
+    - "\u062C\u0645\u0639"
+    - "\u0642\u0641\u0632"
+    - "\u0625\u064A\u0642\u0627\u0641"
+    - "\u0636\u0639"
+    - "\u062A\u0628\u062F\u064A\u0644"
+    - "\u0627\u0644\u062D\u0642\u064A\u0628\u0629 \u0645\u0645\u062A\u0644\u0626\u0629"
+    - "\u0642\u0633\u0645 \u062E\u0627\u0637\u0626"
+    - "\u0643\u0631\u0629 \u0632\u0631\u0642\u0627\u0621"
+    - "\u0623\u0633\u0637\u0648\u0627\u0646\u0629 \u062E\u0636\u0631\u0627\u0621"
+    - "\u0645\u062B\u0627\u0644"
+    - "\u0645\u0643\u0639\u0628 \u0623\u062D\u0645\u0631"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u064A\u0627\u062D\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u0633\u0631\u064A\u0639\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u062E\u0646\u0641\u0633\u0627\u0621 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u062F\u0641\u0639 \u0631\u0628\u0627\u0639\u064A \u0631\u0627\u0644\u064A
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0647\u0627\u062A\u0634\u0628\u0627\u0643 \u0631\u0627\u0644\u064A \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0641\u0648\u0631\u0645\u0648\u0644\u0627
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u062A\u0648\u0635\u064A\u0644 \u0635\u063A\u064A\u0631\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0633\u064A\u0627\u0631\u0629 \u0633\u0628\u0627\u0642 \u0645\u0643\u0634\u0648\u0641\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0646\u0645\u0648\u0630\u062C \u0633\u0628\u0627\u0642 \u0627\u0644\u062D\u0644\u0628\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0643\u0648\u0628\u064A\u0647 \u062A\u062D\u0645\u0651\u0644 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0637\u0631\u0642 \u0648\u0639\u0631\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u062C\u064A\u0628 \u0644\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0634\u0627\u062D\u0646\u0629 \u0628\u0636\u0627\u0626\u0639 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0633\u0645\u0627\u0648\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0645\u062E\u0635\u0635
+      \u0641\u0648\u0634\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0642\u0631\u0645\u0632\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0639\u0631\u0628\u0629 \u0635\u062D\u0631\u0627\u0648\u064A\u0629 \u0642\u064A\u0627\u0633\u064A
+      \u0632\u0645\u0631\u062F\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0645\u062E\u0635\u0635 \u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0645\u062E\u0635\u0635 \u0633\u0645\u0627\u0648\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0645\u062E\u0635\u0635 \u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0645\u062E\u0635\u0635 \u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0645\u062E\u0635\u0635 \u0641\u0648\u0634\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0642\u0631\u0645\u0632\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0631\u0648\u062F\u0633\u062A\u0631 \u0643\u0644\u0627\u0633\u064A\u0643\u064A\u0629
+      \u0642\u064A\u0627\u0633\u064A \u0632\u0645\u0631\u062F\u064A"
+    - "\u0627\u0644\u0644\u063A\u0629"
+    - "\u0639\u0627\u0644\u064A\u0629"
+    - "\u0645\u0646\u062E\u0641\u0636\u0629"
+    - "\u0645\u062A\u0648\u0633\u0637\u0629"
+    - "\u0627\u0644\u062A\u0641\u0627\u0635\u064A\u0644: {0}"
+    - "\u0627\u0644\u0639\u0628"
+    - "\u0627\u0644\u062D\u0633\u0627\u0633\u064A\u0629"
+    - "\u0625\u064A\u0642\u0627\u0641 \u0645\u0624\u0642\u062A"
+    - "\u0627\u0636\u063A\u0637 \u0645\u0637\u0648\u0644\u0627"
+    - "\u0627\u0644\u062A\u0642\u0637"
+    - "\u0636\u0639"
+    - "\u0636\u0639 {0} \u0641\u064A {1}"
+    - "\u0627\u0636\u063A\u0637"
+    - "\u0627\u0633\u062A\u0631\u062C\u0639"
+    - "\u0627\u0644\u062A\u0631\u0642\u064A\u0627\u062A"
+    - "\u0645\u062E\u0635\u0635"
+    - "\u0642\u064A\u0627\u0633\u064A"
+    - "\u0643\u0647\u0631\u0645\u0627\u0646\u064A"
+    - "\u0643\u0648\u0628\u0627\u0644\u062A"
+    - "\u0633\u0645\u0627\u0648\u064A"
+    - "\u0632\u0645\u0631\u062F\u064A"
+    - "\u0641\u0648\u0634\u064A"
+    - "\u0644\u064A\u0645\u0648\u0646\u064A"
+    - "\u0642\u0631\u0645\u0632\u064A"
+    - "\u0628\u0631\u062A\u0642\u0627\u0644\u064A"
+    - "\u0623\u0632\u0631\u0642 \u0645\u062E\u0636\u0631"
+    - "\u0628\u0646\u0641\u0633\u062C\u064A"
+    - "\u0627\u0643\u062A\u0645\u0644 \u0627\u0644\u0645\u062A\u062C\u0631!\n\u062A\u0645
+      \u062A\u0631\u062A\u064A\u0628 \u0665\u0662\u0665 \u0633\u064A\u0627\u0631\u0629
+      \u0639\u0644\u0649 \u0667\u0665 \u0631\u0641\u0627\u064B.\n\u0627\u0644\u0648\u0642\u062A:
+      {0}  \u2022  \u0627\u0644\u0639\u0645\u0644\u0627\u062A \u0627\u0644\u0645\u062A\u0628\u0642\u064A\u0629:
+      {1}"
+    - "\u0633\u064A\u0627\u0631\u0627\u062A \u0645\u062E\u062A\u0644\u0637\u0629 
+      \u2022  \u062E\u0630 \u0645\u0646 \u0647\u0646\u0627"
+    - "\u062F\u0644\u064A\u0644 \u0627\u0644\u0637\u0631\u0627\u0632\u0627\u062A"
+    - "\u0627\u0644\u0637\u0631\u0627\u0632 {0}  \u2022  {1}"
+    - "\u0627\u0644\u0633\u064A\u0627\u0631\u0627\u062A \u0627\u0644\u0645\u0631\u062A\u0628\u0629:
+      {0} / 525"
+    - "\u0623\u0639\u062F \u0627\u0644\u0645\u062A\u062C\u0631"
+    - '{0}: {1} / 35'
+    - "\u0627\u0628\u062F\u0623 \u0627\u0644\u062A\u0631\u062A\u064A\u0628"
+    - "\u0645\u062A\u062C\u0631 \u0633\u064A\u0627\u0631\u0627\u062A \u0627\u0644\u0623\u0644\u0639\u0627\u0628"
+    - "\u0645\u0631\u062D\u0628\u0627\u064B \u0628\u0643 \u0641\u064A \u0645\u062A\u062C\u0631
+      \u0633\u064A\u0627\u0631\u0627\u062A \u0627\u0644\u0623\u0644\u0639\u0627\u0628!
+      \u062E\u0630 \u0627\u0644\u0633\u064A\u0627\u0631\u0627\u062A \u0645\u0646
+      \u0627\u0644\u0643\u0648\u0645\u0629 \u0639\u0644\u0649 \u0627\u0644\u0623\u0631\u0636
+      \u0648\u0636\u0639 \u0643\u0644 \u0633\u064A\u0627\u0631\u0629 \u0639\u0644\u0649
+      \u0631\u0641 \u0637\u0631\u0627\u0632\u0647\u0627 \u0648\u0644\u0648\u0646\u0647\u0627.
+      \u064A\u062D\u062A\u0627\u062C \u0643\u0644 \u0631\u0641 \u0625\u0644\u0649
+      \u0633\u0628\u0639 \u0633\u064A\u0627\u0631\u0627\u062A. \u064A\u0645\u0643\u0646\u0643
+      \u0627\u0633\u062A\u0631\u062C\u0627\u0639 \u0627\u0644\u0633\u064A\u0627\u0631\u0629
+      \u0627\u0644\u0645\u0648\u0636\u0648\u0639\u0629 \u062E\u0637\u0623\u064B.
+      \u0627\u0643\u0633\u0628 \u0639\u0645\u0644\u0627\u062A \u0644\u0644\u062A\u0631\u0642\u064A\u0627\u062A
+      \u0639\u0646\u062F \u0627\u0644\u0648\u0636\u0639 \u0627\u0644\u0635\u062D\u064A\u062D.
+      \u0644\u0627 \u064A\u0648\u062C\u062F \u0645\u0624\u0642\u062A."
+    - "W \u063A\u0631\u0628  \u2022  E \u0634\u0631\u0642  \u2022  B \u062E\u0644\u0641 
+      \u2022  F \u0623\u0645\u0627\u0645"
+    - "\u0645\u062A\u0627\u0628\u0639\u0629"
+    - "\u0644\u0627"
+    - "\u062E\u0631\u0648\u062C"
+    - "\u0647\u0644 \u062A\u0631\u064A\u062F \u0645\u0633\u062D \u0643\u0644 \u0627\u0644\u062A\u0642\u062F\u0645\u061F\n\u0644\u0627
+      \u064A\u0645\u0643\u0646 \u0627\u0644\u062A\u0631\u0627\u062C\u0639 \u0639\u0646
+      \u0630\u0644\u0643."
+    - "\u0645\u0633\u062D \u0627\u0644\u062A\u0642\u062F\u0645"
+    - "\u0625\u0639\u0627\u062F\u0629"
+    - "\u0646\u0639\u0645"
+    - "\u064A\u062D\u0645\u0644 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627
+      \u062D\u062A\u0649 {value} \u0623\u063A\u0631\u0627\u0636 \u0645\u0637\u0627\u0628\u0642\u0629
+      \u0644\u0644\u063A\u0631\u0636 \u0627\u0644\u0630\u064A \u0641\u064A \u064A\u062F\u0643."
+    - "\u062C\u0645\u0639 \u0627\u0644\u0623\u063A\u0631\u0627\u0636 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627"
+    - "\u062A\u0637\u0641\u0648 \u0627\u0644\u0623\u063A\u0631\u0627\u0636 \u0627\u0644\u0645\u0637\u0627\u0628\u0642\u0629
+      \u0648\u062A\u062A\u0648\u0647\u062C \u0644\u0645\u062F\u0629 {value} \u062B\u0627\u0646\u064A\u0629."
+    - "\u062A\u0645\u064A\u064A\u0632 \u0627\u0644\u0623\u063A\u0631\u0627\u0636"
+    - "\u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0627\u0644\u0645\u0631\u0645\u064A\u0629
+      \u062A\u0633\u062A\u0642\u0631 \u0639\u0644\u0649 \u0627\u0644\u0631\u0641
+      \u0627\u0644\u0635\u062D\u064A\u062D \u062A\u0644\u0642\u0627\u0626\u064A\u0627."
+    - "\u062A\u0631\u062A\u064A\u0628 \u062A\u0644\u0642\u0627\u0626\u064A \u0639\u0646\u062F
+      \u0627\u0644\u0631\u0645\u064A \u0639\u0644\u0649 \u0627\u0644\u0631\u0641
+      \u0627\u0644\u0635\u062D\u064A\u062D"
+    - "\u0627\u062D\u0645\u0644 \u062D\u062A\u0649 {value} \u0645\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631
+      \u062F\u0641\u0639\u0629 \u0648\u0627\u062D\u062F\u0629."
+    - "\u062D\u0642\u064A\u0628\u0629 \u0623\u0643\u0628\u0631"
+    - "\u0627\u0644\u062A\u0642\u0637 \u0648\u0636\u0639 \u0627\u0644\u0639\u0646\u0627\u0635\u0631
+      \u0645\u0646 \u0645\u0633\u0627\u0641\u0629 \u0623\u0628\u0639\u062F. \u0627\u0644\u0645\u062F\u0649:
+      {value}."
+    - "\u0645\u062F\u0649 \u0623\u0637\u0648\u0644"
+    - "\u0627\u0631\u0645 \u0627\u0644\u0639\u0646\u0627\u0635\u0631 \u0628\u0642\u0648\u0629
+      \u0623\u0643\u0628\u0631 \u0648\u0644\u0645\u0633\u0627\u0641\u0629 \u0623\u0628\u0639\u062F.
+      \u0627\u0644\u0642\u0648\u0629: {value}."
+    - "\u0631\u0645\u064A \u0623\u0642\u0648\u0649"
+    - "\u0627\u0631\u0643\u0636 \u0623\u0633\u0631\u0639 \u0641\u064A \u0623\u0631\u062C\u0627\u0621
+      \u0627\u0644\u0645\u0631\u062D\u0644\u0629."
+    - "\u0641\u062A\u062D \u0627\u0644\u0631\u0643\u0636 \u0627\u0644\u0633\u0631\u064A\u0639"
+    - "\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649"
+    - "\u0627\u0644\u062A\u0631\u0642\u064A\u0627\u062A"

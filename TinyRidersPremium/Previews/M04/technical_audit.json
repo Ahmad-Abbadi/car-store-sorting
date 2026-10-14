@@ -1,0 +1,690 @@
+{
+  "masterId": "M04",
+  "status": "CANDIDATE_REQUIRES_VISUAL_REVIEW",
+  "source": "original Blender custom mesh construction",
+  "sourceScript": "scripts/build_m04.py",
+  "blenderVersion": "5.1.0",
+  "coordinateSystem": "metres, front -X, up +Z; FBX export forward -Z up Y",
+  "recipe": "Independent folded-fender hull, sloping long nose, low narrow fastback canopy, integrated ducktail, cut arches, shared five-spoke sport wheels",
+  "objects": [
+    {
+      "name": "BODY_FoldedWedgeHull",
+      "triangles": 2008,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Paint_Print",
+        "M04_Paint_Solid"
+      ],
+      "dimensionsM": [
+        0.10000000149011612,
+        0.05230425298213959,
+        0.027248159050941467
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.6341302603385664e-05
+    },
+    {
+      "name": "CABIN_NarrowFastbackCanopy",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Cabin_Print"
+      ],
+      "dimensionsM": [
+        0.04060143232345581,
+        0.03538743779063225,
+        0.01575000025331974
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.4294216862659123e-05
+    },
+    {
+      "name": "CHASSIS_WedgeSpine",
+      "triangles": 188,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Graphite"
+      ],
+      "dimensionsM": [
+        0.08000000566244125,
+        0.03375000134110451,
+        0.0044999998062849045
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 1.2002764708670022e-05
+    },
+    {
+      "name": "FRONT_MODULE_ChinSplitter",
+      "triangles": 328,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Graphite"
+      ],
+      "dimensionsM": [
+        0.005125001072883606,
+        0.04682541266083717,
+        0.002919625025242567
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 5.569966952626415e-07
+    },
+    {
+      "name": "REAR_MODULE_DiffuserBelt",
+      "triangles": 398,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Graphite"
+      ],
+      "dimensionsM": [
+        0.005125004798173904,
+        0.04671502858400345,
+        0.00570615055039525
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 9.146840070178538e-07
+    },
+    {
+      "name": "SPOILER_IntegratedDucktail",
+      "triangles": 368,
+      "uvLayers": 1,
+      "materials": [
+        "M04_Paint_Solid"
+      ],
+      "dimensionsM": [
+        0.008250001817941666,
+        0.0478767491877079,
+        0.009000001475214958
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 2.5621055951337004e-06
+    },
+    {
+      "name": "WHEEL_FL_Tire",
+      "triangles": 384,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Rubber"
+      ],
+      "dimensionsM": [
+        0.03100000135600567,
+        0.010999999940395355,
+        0.03100000135600567
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.812407431640791e-06
+    },
+    {
+      "name": "WHEEL_FL_Rim_outer_lip",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.021700000390410423,
+        0.0018250010907649994,
+        0.021700000390410423
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 2.310933104479653e-07
+    },
+    {
+      "name": "WHEEL_FL_Rim_barrel",
+      "triangles": 192,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Graphite"
+      ],
+      "dimensionsM": [
+        0.02039799839258194,
+        0.007695002481341362,
+        0.020398002117872238
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 7.742728251623759e-07
+    },
+    {
+      "name": "WHEEL_FL_Five_spoke_4",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00491270050406456,
+        0.0015749987214803696,
+        0.007952554151415825
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365800113157055e-08
+    },
+    {
+      "name": "WHEEL_FL_Five_spoke_3",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621346041560173,
+        0.0015749987214803696,
+        0.006573762744665146
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365821783388415e-08
+    },
+    {
+      "name": "WHEEL_FL_Five_spoke_2",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621346041560173,
+        0.0015749987214803696,
+        0.006573764607310295
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336581826212534e-08
+    },
+    {
+      "name": "WHEEL_FL_Five_spoke_1",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00491270050406456,
+        0.0015749987214803696,
+        0.007952552288770676
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336579274044746e-08
+    },
+    {
+      "name": "WHEEL_FL_Five_spoke_0",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00759500078856945,
+        0.0015749987214803696,
+        0.0032243598252534866
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336581071231709e-08
+    },
+    {
+      "name": "WHEEL_FL_Axle_cap",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00531650148332119,
+        0.0020500030368566513,
+        0.005316498689353466
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.167609055356889e-08
+    },
+    {
+      "name": "WHEEL_FR_Tire",
+      "triangles": 384,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Rubber"
+      ],
+      "dimensionsM": [
+        0.03100000135600567,
+        0.010999999940395355,
+        0.03100000135600567
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.812407431640796e-06
+    },
+    {
+      "name": "WHEEL_FR_Rim_outer_lip",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.021700000390410423,
+        0.0018250010907649994,
+        0.021700000390410423
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 2.3109331044796685e-07
+    },
+    {
+      "name": "WHEEL_FR_Rim_barrel",
+      "triangles": 192,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Graphite"
+      ],
+      "dimensionsM": [
+        0.02039799839258194,
+        0.007695002481341362,
+        0.020398002117872238
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 7.742728251623757e-07
+    },
+    {
+      "name": "WHEEL_FR_Five_spoke_4",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00491270050406456,
+        0.0015749987214803696,
+        0.007952554151415825
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.33658023154801e-08
+    },
+    {
+      "name": "WHEEL_FR_Five_spoke_3",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621346041560173,
+        0.0015749987214803696,
+        0.006573762744665146
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365821306849274e-08
+    },
+    {
+      "name": "WHEEL_FR_Five_spoke_2",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621346041560173,
+        0.0015749987214803696,
+        0.006573764607310295
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.33658183055204e-08
+    },
+    {
+      "name": "WHEEL_FR_Five_spoke_1",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00491270050406456,
+        0.0015749987214803696,
+        0.007952552288770676
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.33657924294416e-08
+    },
+    {
+      "name": "WHEEL_FR_Five_spoke_0",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00759500078856945,
+        0.0015749987214803696,
+        0.0032243598252534866
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336581046236673e-08
+    },
+    {
+      "name": "WHEEL_FR_Axle_cap",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00531650148332119,
+        0.0020500030368566513,
+        0.005316498689353466
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.1676090553568825e-08
+    },
+    {
+      "name": "WHEEL_RL_Tire",
+      "triangles": 384,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Rubber"
+      ],
+      "dimensionsM": [
+        0.03100000135600567,
+        0.010999999940395355,
+        0.03100000135600567
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.8124074647061526e-06
+    },
+    {
+      "name": "WHEEL_RL_Rim_outer_lip",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.021700000390410423,
+        0.0018250010907649994,
+        0.021700000390410423
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 2.3109330609785397e-07
+    },
+    {
+      "name": "WHEEL_RL_Rim_barrel",
+      "triangles": 192,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Graphite"
+      ],
+      "dimensionsM": [
+        0.02039799652993679,
+        0.007695002481341362,
+        0.020398002117872238
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 7.742727997951975e-07
+    },
+    {
+      "name": "WHEEL_RL_Five_spoke_4",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.004912702366709709,
+        0.0015749987214803696,
+        0.0079525550827384
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365795601625413e-08
+    },
+    {
+      "name": "WHEEL_RL_Five_spoke_3",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621342316269875,
+        0.0015749987214803696,
+        0.0065737636759877205
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336579953831459e-08
+    },
+    {
+      "name": "WHEEL_RL_Five_spoke_2",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621342316269875,
+        0.0015749987214803696,
+        0.006573764607310295
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365791966093273e-08
+    },
+    {
+      "name": "WHEEL_RL_Five_spoke_1",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.004912702366709709,
+        0.0015749987214803696,
+        0.007952554151415825
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365791019270706e-08
+    },
+    {
+      "name": "WHEEL_RL_Five_spoke_0",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.0075950026512146,
+        0.0015749987214803696,
+        0.0032243598252534866
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365817242988104e-08
+    },
+    {
+      "name": "WHEEL_RL_Axle_cap",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00531650148332119,
+        0.0020500030368566513,
+        0.005316498689353466
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.1676087752441615e-08
+    },
+    {
+      "name": "WHEEL_RR_Tire",
+      "triangles": 384,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Rubber"
+      ],
+      "dimensionsM": [
+        0.03100000135600567,
+        0.010999999940395355,
+        0.03100000135600567
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.812407464706147e-06
+    },
+    {
+      "name": "WHEEL_RR_Rim_outer_lip",
+      "triangles": 288,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.021700000390410423,
+        0.0018250010907649994,
+        0.021700000390410423
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 2.3109330609785424e-07
+    },
+    {
+      "name": "WHEEL_RR_Rim_barrel",
+      "triangles": 192,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Graphite"
+      ],
+      "dimensionsM": [
+        0.02039799652993679,
+        0.007695002481341362,
+        0.020398002117872238
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 7.742727997951974e-07
+    },
+    {
+      "name": "WHEEL_RR_Five_spoke_4",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.004912702366709709,
+        0.0015749987214803696,
+        0.0079525550827384
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336579373882089e-08
+    },
+    {
+      "name": "WHEEL_RR_Five_spoke_3",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621342316269875,
+        0.0015749987214803696,
+        0.0065737636759877205
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365798971741453e-08
+    },
+    {
+      "name": "WHEEL_RR_Five_spoke_2",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.007621342316269875,
+        0.0015749987214803696,
+        0.006573764607310295
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.336579237171097e-08
+    },
+    {
+      "name": "WHEEL_RR_Five_spoke_1",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.004912702366709709,
+        0.0015749987214803696,
+        0.007952554151415825
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365786012583045e-08
+    },
+    {
+      "name": "WHEEL_RR_Five_spoke_0",
+      "triangles": 108,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.0075950026512146,
+        0.0015749987214803696,
+        0.0032243598252534866
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 3.3365816993035676e-08
+    },
+    {
+      "name": "WHEEL_RR_Axle_cap",
+      "triangles": 200,
+      "uvLayers": 1,
+      "materials": [
+        "Wheel_Alloy"
+      ],
+      "dimensionsM": [
+        0.00531650148332119,
+        0.0020500030368566513,
+        0.005316498689353466
+      ],
+      "nonManifoldEdges": 0,
+      "degenerateFaces": 0,
+      "signedVolumeM3": 4.1676087752441986e-08
+    }
+  ],
+  "triangles": 9814,
+  "fontObjects": [],
+  "wheelGroundM": -6.780028760644541e-10,
+  "technicalFailures": [],
+  "technicalPass": true,
+  "completedMasterCount": 0
+}

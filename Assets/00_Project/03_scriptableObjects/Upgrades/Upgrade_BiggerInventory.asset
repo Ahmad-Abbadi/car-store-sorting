@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4074491c7c2e07f4c91a55de6074e82b, type: 3}
+  m_Name: Upgrade_BiggerInventory
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUpgradeSO
+  saveId: Upgrade_BiggerInventory
+  displayName: Bigger inventory
+  description: Carry up to {value} items at once.
+  icon: {fileID: 21300000, guid: fdaf7d1e9919a654fad79bfee28c7ca4, type: 3}
+  baseValues:
+    capacity: 5
+  levels:
+  - cost: 10
+    values:
+      capacity: 8
+  - cost: 18
+    values:
+      capacity: 11
+  - cost: 28
+    values:
+      capacity: 14
+  - cost: 40
+    values:
+      capacity: 17
+  - cost: 55
+    values:
+      capacity: 20

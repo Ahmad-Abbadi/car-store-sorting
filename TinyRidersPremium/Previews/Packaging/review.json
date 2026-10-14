@@ -1,0 +1,27 @@
+{
+  "status": "SHARED_TEMPLATE_VALIDATED",
+  "scope": "Physical shared card and Blue Racer blister fit, locked front layout and actual-car hero composition. No final SKU package released.",
+  "reviewedAt": "2026-10-14",
+  "evidence": ["package_front.png", "package_three_quarter.png", "package_back.png", "package_clay.png", "unity_package_front.png", "unity_package_three_quarter.png", "unity_package_back.png", "package_geometry_audit.json", "unity_package_audit.json", "hero_provenance.json"],
+  "verified": [
+    "120 x 180 x 0.7 mm card, rounded corners and physical 24 x 6 mm hanger cutout",
+    "Original canonical logo and locked layout regions preserved",
+    "Hero is a render of the exact approved M03 assembly",
+    "Five package mesh parts are closed, positive volume and UV mapped",
+    "Car versus shell BVH overlap check passes after raising molded cradles",
+    "Unity front and back text readable and correctly oriented",
+    "Hanger cutout triangulation corrected for FBX import",
+    "Unity card dimensions and vehicle dimensions match Blender",
+    "Unity has zero missing UVs and materials",
+    "Clear shell is visible with a Fresnel material using actual geometry normals",
+    "All printed graphics disappear in clay"
+  ],
+  "limitations": [
+    "Unity uses a transparent Fresnel/specular approximation; it does not reproduce Cycles refraction.",
+    "Back family lineup images await the five final Track Club vehicles.",
+    "The 71 mm blister is fitted to M03; remaining silhouettes require per-build fit checks and possibly depth variants.",
+    "Final identity, build, livery and SKU assembly verification remain required."
+  ],
+  "finishedPackages": 0,
+  "remainingDefects": []
+}

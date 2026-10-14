@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3950854859876111055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3391337701911505526}
+  - component: {fileID: 8043196238412470155}
+  m_Layer: 0
+  m_Name: Upgrade Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3391337701911505526
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3950854859876111055}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8043196238412470155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3950854859876111055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0a75e95815db4ea16dbe5060e16bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
+  inventoryUpgrade: {fileID: 11400000, guid: 10dfee804b23b8f488752641c841da19, type: 2}
+  throwUpgrade: {fileID: 11400000, guid: 0800eee29558df842abc2c537457020a, type: 2}
+  reachUpgrade: {fileID: 11400000, guid: aa331c150fc5eb54e98b230902db1b99, type: 2}
+  sprintUpgrade: {fileID: 11400000, guid: 2536ccbe858863c4fbdf1f41d20dbc86, type: 2}
+  autoShelfUpgrade: {fileID: 11400000, guid: f81a26d4737ca3d4eb8a4506d9252e05, type: 2}
+  highlightItemsUpgrade: {fileID: 11400000, guid: b66a5c39b00902a42ac3840beef88c2a, type: 2}
+  autoCollectUpgrade: {fileID: 11400000, guid: 53c3aeb38305aff4ea1807203c515ffd, type: 2}
+  player: {fileID: 0}
+  interaction: {fileID: 0}

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6d1dd2a4af5fac4ca4195ced7a325da, type: 3}
+  m_Name: Upgrade_LongerReach
+  m_EditorClassIdentifier: Assembly-CSharp::ReachUpgradeSO
+  saveId: Upgrade_LongerReach
+  displayName: Longer reach
+  description: 'Grab and place from farther away. Reach: {value}.'
+  icon: {fileID: 21300000, guid: 33dbe318546c6fc4fa554b822babf482, type: 3}
+  baseValues:
+    distance: 3
+  levels:
+  - cost: 10
+    values:
+      distance: 3.5
+  - cost: 18
+    values:
+      distance: 4
+  - cost: 28
+    values:
+      distance: 4.5
+  - cost: 40
+    values:
+      distance: 5
+  - cost: 55
+    values:
+      distance: 5.5

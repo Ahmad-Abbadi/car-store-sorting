@@ -1,0 +1,18 @@
+{
+  "masterId": "M01",
+  "status": "MASTER_APPROVED",
+  "scope": "Original Pocket foundation geometry, ready for Bean identity and standard/custom build development. This does not approve or complete all 20 dependent SKUs.",
+  "reviewedAt": "2026-10-14",
+  "reviewer": "Codex visual and technical inspection",
+  "sourceProvenance": "Original Blender vertex/face construction from the user-provided Pocket art direction; no downloaded or externally generated geometry.",
+  "approvedIdentityIds": [],
+  "evidence": ["three_quarter.png", "front.png", "side.png", "rear.png", "top.png", "clay.png", "wireframe.png", "unity_three_quarter.png", "unity_rear.png", "unity_side.png", "technical_audit.json", "unity_audit.json"],
+  "findings": {
+    "silhouette": "Compact upright hatch with a short bonnet, broad squared face, ivory roof cap, substantial bumpers, and oversized dish wheels; visibly distinct from the M03 track coupe.",
+    "printedGraphics": "01, stripes, lamp graphics, windows and POCKET label are UV artwork. They disappear in the actual clay render.",
+    "geometry": "6672 evaluated triangles, closed positive-volume meshes, no degenerate faces, no tire/body intersections, common zero ground plane.",
+    "unity": "18 mesh renderers, 6672 imported triangles, correct 89.25 mm length, UV0 artwork present on both sides and front/rear, no missing materials or UVs.",
+    "repairsVerified": ["Roof corner profile", "Window-divider UV distortion", "Headlamp clipping", "Rear bumper degenerate faces", "UV0/active-render UV mismatch", "FBX root axis and scale preservation", "Rim normal discontinuities"]
+  },
+  "limitations": ["6672 triangles is slightly above the 6000 starting guideline; crowd LOD and batching remain to be implemented.", "Unity uses a realtime studio with directional shadows, so lighting is not identical to Cycles.", "Bean identity, custom builds, additional liveries, packaging and final SKU-prefab assembly remain unfinished."]
+}

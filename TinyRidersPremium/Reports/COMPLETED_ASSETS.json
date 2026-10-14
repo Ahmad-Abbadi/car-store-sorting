@@ -1,0 +1,308 @@
+[
+  {
+    "masterId": "M01",
+    "namedIdentities": [
+      "CC-01",
+      "CC-02"
+    ],
+    "names": [
+      "Pocket",
+      "Bean"
+    ],
+    "status": "MASTER_APPROVED",
+    "sourceMethod": "Original local Blender modeling only",
+    "candidateFiles": [
+      "Blender\\Candidates\\M01_Pocket_candidate.blend"
+    ],
+    "reviewEvidence": [
+      "Previews\\M01\\clay.png",
+      "Previews\\M01\\front.png",
+      "Previews\\M01\\rear.png",
+      "Previews\\M01\\side.png",
+      "Previews\\M01\\three_quarter.png",
+      "Previews\\M01\\top.png",
+      "Previews\\M01\\unity_rear.png",
+      "Previews\\M01\\unity_side.png",
+      "Previews\\M01\\unity_three_quarter.png",
+      "Previews\\M01\\wireframe.png"
+    ],
+    "dependentSkus": [
+      "TR-CC-01-S-01",
+      "TR-CC-01-S-02",
+      "TR-CC-01-S-03",
+      "TR-CC-01-S-04",
+      "TR-CC-01-S-05",
+      "TR-CC-01-C-01",
+      "TR-CC-01-C-02",
+      "TR-CC-01-C-03",
+      "TR-CC-01-C-04",
+      "TR-CC-01-C-05",
+      "TR-CC-02-S-01",
+      "TR-CC-02-S-02",
+      "TR-CC-02-S-03",
+      "TR-CC-02-S-04",
+      "TR-CC-02-S-05",
+      "TR-CC-02-C-01",
+      "TR-CC-02-C-02",
+      "TR-CC-02-C-03",
+      "TR-CC-02-C-04",
+      "TR-CC-02-C-05"
+    ],
+    "review": {
+      "masterId": "M01",
+      "status": "MASTER_APPROVED",
+      "scope": "Original Pocket foundation geometry, ready for Bean identity and standard/custom build development. This does not approve or complete all 20 dependent SKUs.",
+      "reviewedAt": "2026-10-14",
+      "reviewer": "Codex visual and technical inspection",
+      "sourceProvenance": "Original Blender vertex/face construction from the user-provided Pocket art direction; no downloaded or externally generated geometry.",
+      "approvedIdentityIds": [],
+      "evidence": [
+        "three_quarter.png",
+        "front.png",
+        "side.png",
+        "rear.png",
+        "top.png",
+        "clay.png",
+        "wireframe.png",
+        "unity_three_quarter.png",
+        "unity_rear.png",
+        "unity_side.png",
+        "technical_audit.json",
+        "unity_audit.json"
+      ],
+      "findings": {
+        "silhouette": "Compact upright hatch with a short bonnet, broad squared face, ivory roof cap, substantial bumpers, and oversized dish wheels; visibly distinct from the M03 track coupe.",
+        "printedGraphics": "01, stripes, lamp graphics, windows and POCKET label are UV artwork. They disappear in the actual clay render.",
+        "geometry": "6672 evaluated triangles, closed positive-volume meshes, no degenerate faces, no tire/body intersections, common zero ground plane.",
+        "unity": "18 mesh renderers, 6672 imported triangles, correct 89.25 mm length, UV0 artwork present on both sides and front/rear, no missing materials or UVs.",
+        "repairsVerified": [
+          "Roof corner profile",
+          "Window-divider UV distortion",
+          "Headlamp clipping",
+          "Rear bumper degenerate faces",
+          "UV0/active-render UV mismatch",
+          "FBX root axis and scale preservation",
+          "Rim normal discontinuities"
+        ]
+      },
+      "limitations": [
+        "6672 triangles is slightly above the 6000 starting guideline; crowd LOD and batching remain to be implemented.",
+        "Unity uses a realtime studio with directional shadows, so lighting is not identical to Cycles.",
+        "Bean identity, custom builds, additional liveries, packaging and final SKU-prefab assembly remain unfinished."
+      ]
+    },
+    "approvedSourceFiles": [
+      {
+        "path": "Blender\\Masters\\M01_approved.blend",
+        "sha256": "bcb1d6219eef5ed1d97063edf9034f587ecde4a5dd7af01d78f2beeb68899539"
+      },
+      {
+        "path": "Exports\\Masters\\M01_master.fbx",
+        "sha256": "7d90745a5a11f5f6feb600618f6c8914fc39bbc0b2584a26bb9d911bf277e0fa"
+      }
+    ]
+  },
+  {
+    "masterId": "M02",
+    "namedIdentities": [
+      "CC-03",
+      "CC-05"
+    ],
+    "names": [
+      "Parcel",
+      "Loop"
+    ],
+    "status": "MASTER_APPROVED",
+    "sourceMethod": "Original local Blender modeling only",
+    "candidateFiles": [
+      "Blender\\Candidates\\M02_Parcel_candidate.blend"
+    ],
+    "reviewEvidence": [
+      "Previews\\M02\\clay.png",
+      "Previews\\M02\\front.png",
+      "Previews\\M02\\rear.png",
+      "Previews\\M02\\reference_comparison.png",
+      "Previews\\M02\\side.png",
+      "Previews\\M02\\three_quarter.png",
+      "Previews\\M02\\top.png",
+      "Previews\\M02\\unity_rear.png",
+      "Previews\\M02\\unity_side.png",
+      "Previews\\M02\\unity_three_quarter.png",
+      "Previews\\M02\\wireframe.png"
+    ],
+    "dependentSkus": [
+      "TR-CC-03-S-01",
+      "TR-CC-03-S-02",
+      "TR-CC-03-S-03",
+      "TR-CC-03-S-04",
+      "TR-CC-03-S-05",
+      "TR-CC-03-C-01",
+      "TR-CC-03-C-02",
+      "TR-CC-03-C-03",
+      "TR-CC-03-C-04",
+      "TR-CC-03-C-05",
+      "TR-CC-05-S-01",
+      "TR-CC-05-S-02",
+      "TR-CC-05-S-03",
+      "TR-CC-05-S-04",
+      "TR-CC-05-S-05",
+      "TR-CC-05-C-01",
+      "TR-CC-05-C-02",
+      "TR-CC-05-C-03",
+      "TR-CC-05-C-04",
+      "TR-CC-05-C-05"
+    ],
+    "review": {
+      "masterId": "M02",
+      "status": "MASTER_APPROVED",
+      "scope": "Parcel delivery foundation approved for identity and build development; no dependent SKU released.",
+      "reviewedAt": "2026-10-14",
+      "sourceProvenance": "Original Blender section meshes and custom cab vertices; printed artwork authored locally with Pillow from the supplied City Crew direction.",
+      "evidence": [
+        "three_quarter.png",
+        "front.png",
+        "side.png",
+        "rear.png",
+        "top.png",
+        "clay.png",
+        "wireframe.png",
+        "reference_comparison.png",
+        "technical_audit.json",
+        "unity_three_quarter.png",
+        "unity_rear.png",
+        "unity_side.png",
+        "unity_audit.json"
+      ],
+      "verified": [
+        "Distinct forward-control silhouette and shaped raised cargo module",
+        "18 purposeful mesh components with roof/cargo/rear/axle attachment sockets",
+        "7452 triangles in Blender and Unity after explicit triangulation repaired dropped importer faces",
+        "Closed positive-volume mesh parts; no nonmanifold edges or zero-area faces",
+        "No tire/body/bumper intersections; wheel ground height is zero",
+        "Unity size 93.75 x 66.87 x 61.15 mm, zero missing UVs or materials",
+        "Front, side and rear artwork is readable; printed details disappear in clay",
+        "Inspected actual Blender renders with Blender MCP and three Unity captures",
+        "Raised cargo module and front roof fit within the revised evidence framing"
+      ],
+      "remainingDefects": [],
+      "limitations": [
+        "Original stylized interpretation; slightly taller cab and more pronounced cargo shoulder than the supplied small reference crop.",
+        "Loop identity, standard/custom differences, five liveries per build and final packages remain unfinished.",
+        "Crowd LODs and collection batching are still required."
+      ],
+      "dependentSkusReleased": []
+    },
+    "approvedSourceFiles": [
+      {
+        "path": "Blender\\Masters\\M02_approved.blend",
+        "sha256": "e1e8980b344dd90e1ed959539687e070764af56a8529b9d45a4551e689ccf786"
+      },
+      {
+        "path": "Exports\\Masters\\M02_master.fbx",
+        "sha256": "31e802e088d3c85e63b158c71a1a3b305ed00f735d455f138ffcf2db9408c5a0"
+      }
+    ]
+  },
+  {
+    "masterId": "M03",
+    "namedIdentities": [
+      "TC-01",
+      "TC-05"
+    ],
+    "names": [
+      "Blue Racer",
+      "Apex"
+    ],
+    "status": "MASTER_APPROVED",
+    "sourceMethod": "Original local Blender modeling only",
+    "candidateFiles": [
+      "Blender\\Candidates\\M03_TrackCoupe_candidate.blend"
+    ],
+    "reviewEvidence": [
+      "Previews\\M03\\clay.png",
+      "Previews\\M03\\front.png",
+      "Previews\\M03\\rear.png",
+      "Previews\\M03\\reference_comparison.png",
+      "Previews\\M03\\side.png",
+      "Previews\\M03\\three_quarter.png",
+      "Previews\\M03\\top.png",
+      "Previews\\M03\\unity_rear.png",
+      "Previews\\M03\\unity_side.png",
+      "Previews\\M03\\unity_three_quarter.png",
+      "Previews\\M03\\wireframe.png"
+    ],
+    "dependentSkus": [
+      "TR-TC-01-S-01",
+      "TR-TC-01-S-02",
+      "TR-TC-01-S-03",
+      "TR-TC-01-S-04",
+      "TR-TC-01-S-05",
+      "TR-TC-01-C-01",
+      "TR-TC-01-C-02",
+      "TR-TC-01-C-03",
+      "TR-TC-01-C-04",
+      "TR-TC-01-C-05",
+      "TR-TC-05-S-01",
+      "TR-TC-05-S-02",
+      "TR-TC-05-S-03",
+      "TR-TC-05-S-04",
+      "TR-TC-05-S-05",
+      "TR-TC-05-C-01",
+      "TR-TC-05-C-02",
+      "TR-TC-05-C-03",
+      "TR-TC-05-C-04",
+      "TR-TC-05-C-05"
+    ],
+    "review": {
+      "masterId": "M03",
+      "status": "MASTER_APPROVED",
+      "scope": "Original Blue Racer foundation approved for identity/build development; no dependent SKU is released yet.",
+      "reviewedAt": "2026-10-14",
+      "sourceProvenance": "Original authored Blender geometry and locally drawn printed artwork based on the user-supplied Blue Racer direction; no external meshes or image generation.",
+      "evidence": [
+        "three_quarter.png",
+        "front.png",
+        "side.png",
+        "rear.png",
+        "top.png",
+        "clay.png",
+        "wireframe.png",
+        "reference_comparison.png",
+        "technical_audit.json",
+        "unity_three_quarter.png",
+        "unity_rear.png",
+        "unity_audit.json"
+      ],
+      "verified": [
+        "Rear cap closed",
+        "Nonmirrored readable number 23",
+        "No tire/body intersections",
+        "Zero wheel ground height",
+        "Supported wing",
+        "Root and attachment hierarchy exported",
+        "9310 triangles in both Blender and Unity, reduced from 17584",
+        "Collapsed bevel faces repaired and audited",
+        "26 imported Unity meshes with correct scale and UV0",
+        "Evaluated wireframe inspected",
+        "Printed artwork disappears in clay"
+      ],
+      "remainingDefects": [],
+      "limitations": [
+        "The 9310-triangle foundation needs crowd LOD and batching for large displays.",
+        "Apex identity, physical build distinctions, five curated liveries per build, matching packages and SKU prefabs remain unfinished.",
+        "Unity studio lighting differs from the Cycles softbox render."
+      ],
+      "dependentSkusReleased": []
+    },
+    "approvedSourceFiles": [
+      {
+        "path": "Blender\\Masters\\M03_approved.blend",
+        "sha256": "ab36ffdb980bc551e6b5ad4ae2550ccf6c6ce692b0fba0b05632797a694ba623"
+      },
+      {
+        "path": "Exports\\Masters\\M03_master.fbx",
+        "sha256": "095b2fd41d65ee7cfedf8b91789625a9a7fd1ad4022c934ff2f736e660c28fda"
+      }
+    ]
+  }
+]
