@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1873466591198913402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7985376792532784531}
+  m_Layer: 0
+  m_Name: ThemeAccessories
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7985376792532784531
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1873466591198913402}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7557056375919738033}
+  m_Father: {fileID: 5116759524037985888}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5751955594393096537
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -194,12 +226,20 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7d9ede7f2b9484f42bb1c3b37fcf70cc, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 635408380264879929, guid: b894b89f91b1eb044a1d9c17e4e7aa02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7985376792532784531}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 592257314652969218, guid: b894b89f91b1eb044a1d9c17e4e7aa02, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6199416839884582821}
   m_SourcePrefab: {fileID: 100100000, guid: b894b89f91b1eb044a1d9c17e4e7aa02, type: 3}
+--- !u!4 &5116759524037985888 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 635408380264879929, guid: b894b89f91b1eb044a1d9c17e4e7aa02, type: 3}
+  m_PrefabInstance: {fileID: 5751955594393096537}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5182257513858025563 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 592257314652969218, guid: b894b89f91b1eb044a1d9c17e4e7aa02, type: 3}
@@ -221,4 +261,78 @@ MonoBehaviour:
   baseCarId: C003
   themeId: TH_BEACH
   colorwayId: V01
-  contentRevision: 2
+  contentRevision: 3
+--- !u!1001 &9081916087039889269
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7985376792532784531}
+    m_Modifications:
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.8712466
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.8712466
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.8712466
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.8085452
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9993265
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.03669401
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -2.5461584e-17
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -6.934221e-16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6460124539457503633, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+      propertyPath: m_Name
+      value: KIT_TH_BEACH
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+--- !u!4 &7557056375919738033 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1650987266922836932, guid: bf7e778394451e94dbb77d8721f89227, type: 3}
+  m_PrefabInstance: {fileID: 9081916087039889269}
+  m_PrefabAsset: {fileID: 0}

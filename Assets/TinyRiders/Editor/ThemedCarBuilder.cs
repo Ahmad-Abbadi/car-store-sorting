@@ -76,6 +76,10 @@ namespace TinyRiders.Editor
         public static void BuildAll() { Build(false); }
         static void Build(bool sample,string onlyTheme=null)
         {
+            // R03 keeps the R02 body foundation; the legacy builder cannot recreate its accessory overrides.
+            var currentCatalogPath=Root+"/Data/Themes/variant_catalog.json";
+            if(File.Exists(currentCatalogPath)&&JsonUtility.FromJson<Catalog>(File.ReadAllText(currentCatalogPath)).entries.Any(e=>e.contentRevision>=3))
+                throw new InvalidOperationException("This collection contains R03 accessory fits. Use ThemeAccessoryBuilder.Apply to regenerate them; the R02 builder would replace their overrides. See TinyRidersProduction/ThemeAccessoryPass/integration_notes.md.");
             var recipes=JsonUtility.FromJson<RecipeSet>(File.ReadAllText(Root+"/Data/Themes/theme_recipes.json"));
             var records=new List<Record>();var entries=new List<ThemedCarCatalog.Entry>();
             if(onlyTheme!=null)
