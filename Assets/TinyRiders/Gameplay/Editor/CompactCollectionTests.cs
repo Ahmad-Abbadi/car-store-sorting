@@ -82,7 +82,7 @@ public class CompactCollectionTests
 
     static IEnumerator Exercise()
     {
-        Assert.AreEqual(600, Session.ActiveDefinitions.Count()); Assert.AreEqual(1200, Session.Total); Assert.AreEqual(1440, Session.Capacity);
+        Assert.AreEqual(600, Session.ActiveDefinitions.Count()); Assert.AreEqual(1200, Session.Total); Assert.AreEqual(1200, Session.Capacity);
         Assert.AreEqual(1200, Session.LivePileCount);
         var initial = WorldItemBase.All.Where(w => w.gameObject.activeInHierarchy).ToArray();
         Assert.AreEqual(600, initial.Select(w => w.Data.SaveId).Distinct().Count());
@@ -140,12 +140,16 @@ public class CompactCollectionTests
         Assert.False(Shelf(egypt[0].themeId).CanAccept(egypt[1].sortingItem, 0, out _));
         Pick(egypt[0]); Place(Shelf(egypt[0].themeId), 1); yield return Tick(.3f);
         Assert.AreEqual(2, Session.Sorted); Assert.AreEqual(1, Session.UniqueDiscovered);
-        for (int i = 1; i < 15; i++) { Pick(egypt[i]); Place(Shelf(egypt[i].themeId), i + 1); yield return null; }
-        Pick(egypt[1]); Place(Shelf(egypt[0].themeId), 16);
-        Pick(egypt[2]); Place(Shelf(egypt[0].themeId), 17); yield return Tick(.4f);
+        for (int i = 1; i < 14; i++) { Pick(egypt[i]); Place(Shelf(egypt[i].themeId), i + 1); yield return null; }
+        yield return Tick(.4f);
         Assert.True(Shelf(egypt[0].themeId).IsCompleted);
-        Pick(egypt[3]); Place(Shelf(egypt[0].themeId, 1), 0); yield return Tick(.3f);
-        Note("Pickup/drop/repick, identity retention, wrong-theme acceptance without credit, takeback, occupied-slot rejection, 15 designs, duplicate discovery, 18-slot full shelf and overflow");
+        Assert.False(Shelf(egypt[0].themeId).HasFreeSpot);
+        Assert.False(Shelf(egypt[0].themeId).CanAccept(egypt[14].sortingItem, 15, out _));
+        Pick(egypt[14]); Place(Shelf(egypt[0].themeId, 1), 0); yield return Tick(.3f);
+        Pick(egypt[1]); Place(Shelf(egypt[0].themeId, 1), 1);
+        Pick(egypt[2]); Place(Shelf(egypt[0].themeId, 1), 2);
+        Pick(egypt[3]); Place(Shelf(egypt[0].themeId, 1), 3); yield return Tick(.3f);
+        Note("Pickup/drop/repick, identity retention, wrong-theme acceptance without credit, takeback, occupied-slot rejection, 15 designs, duplicate discovery, 15-slot full shelf and second-shelf placement");
 
         foreach (var theme in Session.ActiveDefinitions.GroupBy(e => e.themeId).Where(g => g.Key != egypt[0].themeId))
         { var entry = theme.First(); Pick(entry); Place(Shelf(entry.themeId), 0); yield return null; }
@@ -201,25 +205,37 @@ public class CompactCollectionTests
             Note("Room revision migration retains sorted/discovered/held IDs, relocates old world cars and player once, and preserves moved cars/player on second reload");
         }
 
-        // Check completion counters without performing another 1142 manual placements.
-        var seen = new System.Collections.Generic.HashSet<string>(Session.State.instances.Where(r => r.state == "sorted").Select(r => r.collectibleId));
-        for (int batch = 0; batch < 14 && Session.State.instances.Any(r => r.state == "pending" || r.state == "world"); batch++)
+        // Physically sort every remaining instance into an actual slot; no injected completion states.
+        Session.suspendPersistenceForTests = true;
+        var allShelves = UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None).OrderBy(s => s.SaveId).ToArray();
+        ExactShelfCapacityTests.CaptureShelves("before_completion", Shelf(egypt[0].themeId));
+        int placedCount = 0;
+        foreach (var record in Session.State.instances.Where(r => r.state == "world" || r.state == "pending").ToArray())
         {
-            foreach (var world in WorldItemBase.All.ToArray())
-            {
-                string id = ThemedWorldInstance.Read(world); var record = Session.State.instances.FirstOrDefault(r => r.id == id);
-                if (record == null || record.state != "world") continue;
-                seen.Add(record.collectibleId); Session.Held(id); if (!Session.Recycle(world)) UnityEngine.Object.Destroy(world.gameObject); record.state = "sorted";
-            }
-            yield return null;
+            var entry = Session.ActiveDefinitions.Single(e => e.collectibleId == record.collectibleId);
+            var shelf = allShelves.First(s => s.GetComponent<ThemeShelfBinding>().themeId == entry.themeId && s.HasFreeSpot);
+            int slot = Enumerable.Range(0, shelf.SpotCount).First(shelf.IsSpotFree);
+            Pick(entry); Place(shelf, slot);
+            if (++placedCount % 20 == 0) yield return Tick(.25f);
         }
-        Assert.AreEqual(600, seen.Count); Assert.AreEqual(1200, Session.Sorted);
-        typeof(ThemedCollectionSession).GetMethod("Publish", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Session, null);
-        yield return Tick(.8f);
-        var save = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); Assert.True(save.StoreCompleted);
+        yield return Tick(.9f); // The completion screen waits 0.6 seconds for the final jump.
+        Assert.AreEqual(1200, Session.Sorted); Assert.AreEqual(600, Session.UniqueDiscovered);
+        Assert.AreEqual(0, Session.LivePileCount);
+        Assert.True(allShelves.All(s => !s.HasFreeSpot && s.IsCompleted));
+        var occupants = allShelves.SelectMany(s => Enumerable.Range(0,s.SpotCount).Select(s.GetOccupant)).ToArray();
+        Assert.AreEqual(1200, occupants.Length);
+        Assert.AreEqual(1200, occupants.Select(ThemedWorldInstance.Read).Distinct().Count());
+        Assert.True(occupants.All(o => o != null && !o.IsWrong));
+        ExactShelfCapacityTests.CaptureShelves("filled", Shelf(egypt[0].themeId));
+        Session.suspendPersistenceForTests = false;
+        var save = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); save.Save();
+        Assert.True(save.StoreCompleted);
         Assert.AreEqual(GameFlowManager.GameState.LevelFinished, GameFlowManager.Instance.currentState);
         Assert.True(JsonUtility.FromJson<LevelSaveData>(PlayerPrefs.GetString(Key)).completed);
-        Note("All 1200 cars / 600 varieties were present at startup; completion threshold/UI/save flag verified with injected sorted states after physical-car removal");
+        yield return ReloadWorld(0);
+        Assert.AreEqual(1200,Session.Sorted); Assert.AreEqual(600,Session.UniqueDiscovered);
+        Assert.True(UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None).All(s=>s.IsCompleted&&!s.HasFreeSpot));
+        Note("All 1200 cars physically placed into 1200 slots, all 80 shelves full, 40 themes complete; completion UI/save and fully occupied reload verified");
 
         // Replay resets upgrades by design; preserve the user's real upgrade preferences around that test.
         var upgrades = UpgradeManager.Instance.Upgrades;

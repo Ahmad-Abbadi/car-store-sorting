@@ -1,0 +1,15 @@
+{
+  "authoredCapacity": {"themes": 40, "shelves": 80, "slotsPerShelf": 15, "slotsPerTheme": 30, "cars": 1200, "slots": 1200},
+  "passed": [
+    "AuthoredRoom_ExactlyMatchesEveryThemeAndVisibleCompartment",
+    "CapacityAudit_RejectsPerThemeMismatchEvenWhenTotalMatches",
+    "CapacityAudit_UsesSessionEligibilityAndCopyCount",
+    "OldSixColumnSaves_PreserveSortedHeldMisplacedAndCompletedProgress",
+    "CompactRoom_CollectionSortingSaveCompletionAndReplay"
+  ],
+  "physicalCompletion": "All 1200 distinct cars placed into actual slots; all 80 shelves full and correct, 40 themes complete, zero remaining pile cars.",
+  "saveMigration": "Partial and completed six-column saves preserve sorted, held, misplaced, discovered and completed progress; coins unchanged; second reload stable.",
+  "replay": "Completed collection reload and replay/menu entry passed.",
+  "visualInspection": ["empty.png", "filled.png"],
+  "preservation": "See preservation.json: shelf IDs, existing transforms, renderer materials and session/pile configuration unchanged."
+}

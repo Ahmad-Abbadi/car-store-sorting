@@ -80,6 +80,7 @@ public static class CrowdedCollectorRoomBuilder
         upgrade.position=layout.origin+new Vector3(-.9f,0,-11.9f);upgrade.rotation=Quaternion.identity;
         PrefabUtility.RecordPrefabInstancePropertyModifications(upgrade);
         EditorUtility.SetDirty(session);EditorUtility.SetDirty(layout);AssetDatabase.SaveAssets();
+        ExactThemeShelfBuilder.ValidateScene();
         EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);Audit();
     }
 
@@ -295,10 +296,11 @@ public static class CrowdedCollectorRoomBuilder
     {
         var s=Object.FindFirstObjectByType<ThemedCollectionSession>();var l=s.roomLayout;var pile=JsonUtility.FromJson<CollectorRoomBuilder.Pile>(s.pileLayout.text);Validate(l,pile,s.catalog);
         var shelves=Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None);
-        if(shelves.Length!=80||shelves.Sum(v=>v.SpotCount)!=1440)throw new InvalidOperationException("Shelf capacity mismatch");
+        ThemedShelfCapacity.Validate(s.catalog,s.copiesPerDesign,shelves);
+        if(shelves.Length!=80||shelves.Any(v=>v.SpotCount!=ExactThemeShelfBuilder.SlotsPerShelf))throw new InvalidOperationException("Shelf capacity mismatch");
         foreach(var pose in l.shelves)if(Vector3.Distance(shelves.Single(v=>v.SaveId==pose.saveId).transform.position,l.origin+pose.position)>.01f)throw new InvalidOperationException("Shelf pose mismatch");
         Directory.CreateDirectory(Evidence);
-        File.WriteAllText(Evidence+"/layout_audit.json",JsonUtility.ToJson(new AuditReport{passed=true,designs=600,cars=1200,shelves=80,slots=1440,perimeterShelves=48,islandShelves=32,roomSize=l.roomSize,ceilingHeight=l.ceilingHeight,revision=l.revision},true));
+        File.WriteAllText(Evidence+"/layout_audit.json",JsonUtility.ToJson(new AuditReport{passed=true,designs=600,cars=1200,shelves=80,slots=shelves.Sum(v=>v.SpotCount),perimeterShelves=48,islandShelves=32,roomSize=l.roomSize,ceilingHeight=l.ceilingHeight,revision=l.revision},true));
     }
     [Serializable] class AuditReport {public bool passed;public int designs,cars,shelves,slots,perimeterShelves,islandShelves,revision;public Vector2 roomSize;public float ceilingHeight;}
 }

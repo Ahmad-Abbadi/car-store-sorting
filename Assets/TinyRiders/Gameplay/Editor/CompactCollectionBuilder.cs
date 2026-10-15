@@ -155,28 +155,28 @@ public static class CompactCollectionBuilder
         session.seed = 73481; session.worldScale = 1; session.boundedPile = true; session.pileAreaSize = new Vector2(31.5f,27);
         session.pileCellSpacing = .75f; session.pileSpacing = new Vector3(.75f,.3f,.75f); session.completeStoreWhenSorted = true;
         var pile = new GameObject("Mixed 600 Design Pile").transform; pile.SetParent(collection.transform, false); pile.position = new Vector3(500,0,0); session.pileOrigin = pile;
-        var shelfArt = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TinyRiders/Art/Shelves/BaseShelf_01/Prefabs/TR_Shelf_Base_01.prefab");
+        var shelfArt = ExactThemeShelfBuilder.EnsurePrefab();
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/00_Project/04_ِArt/UI/Fonts/Fredoka-SemiBold SDF.asset");
         int index = 0;
-        foreach (var theme in catalog.themes.OrderBy(t => t.id, StringComparer.Ordinal))
+        foreach (var theme in catalog.themes.Where(t => t.enabled).OrderBy(t => t.id, StringComparer.Ordinal))
         for (int unit = 1; unit <= 2; unit++, index++)
         {
             Vector3 position; float yaw;
             ShelfPose(index, out position, out yaw);
             var shelfObject = new GameObject(theme.displayName + " - " + unit); shelfObject.layer = 8; shelfObject.transform.SetParent(collection.transform, false);
             shelfObject.transform.SetPositionAndRotation(position, Quaternion.Euler(0,yaw,0));
-            var art = (GameObject)PrefabUtility.InstantiatePrefab(shelfArt, scene); art.transform.SetParent(shelfObject.transform, false); art.transform.localScale = Vector3.one * ShelfScale;
+            var art = (GameObject)PrefabUtility.InstantiatePrefab(shelfArt, scene); art.name = "TR_Shelf_Base_01"; art.transform.SetParent(shelfObject.transform, false); art.transform.localScale = Vector3.one * ShelfScale;
             foreach (var t in art.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 2;
             foreach (var collider in art.GetComponentsInChildren<Collider>(true)) UnityEngine.Object.DestroyImmediate(collider);
-            var markers = art.GetComponentsInChildren<Transform>(true).Where(t => t.name.StartsWith("Slot_R", StringComparison.Ordinal)).OrderBy(t => t.name, StringComparer.Ordinal).ToArray();
-            if (markers.Length != 18) throw new InvalidOperationException("Expected 18 authored shelf markers.");
+            var markers = ExactThemeShelfBuilder.Markers(art);
+            if (markers.Length != ExactThemeShelfBuilder.SlotsPerShelf) throw new InvalidOperationException("Expected 15 authored shelf markers.");
             var shelf = shelfObject.AddComponent<SortingShelf>(); var so = new SerializedObject(shelf);
             so.FindProperty("_catagory").objectReferenceValue = categories[theme.id]; so.FindProperty("acceptedItem").objectReferenceValue = null;
             so.FindProperty("saveId").stringValue = "COMPACT-" + theme.id + "-S" + unit.ToString("D3");
             so.FindProperty("jumpDuration").floatValue = .2f; so.FindProperty("jumpPower").floatValue = .08f;
             so.FindProperty("fullPunchScale").vector3Value = Vector3.one * .003f;
-            var slots = so.FindProperty("placingSpots"); slots.arraySize = 18; for (int slot = 0; slot < 18; slot++) slots.GetArrayElementAtIndex(slot).objectReferenceValue = markers[slot]; so.ApplyModifiedPropertiesWithoutUndo();
-            var binding = shelfObject.AddComponent<ThemeShelfBinding>(); binding.themeId = theme.id; binding.clearance = new Vector3(.464f,.54f,.648f)*ShelfScale;
+            var slots = so.FindProperty("placingSpots"); slots.arraySize = markers.Length; for (int slot = 0; slot < markers.Length; slot++) slots.GetArrayElementAtIndex(slot).objectReferenceValue = markers[slot]; so.ApplyModifiedPropertiesWithoutUndo();
+            var binding = shelfObject.AddComponent<ThemeShelfBinding>(); binding.themeId = theme.id; binding.clearance = ExactThemeShelfBuilder.Clearance * ShelfScale;
             var body = shelfObject.AddComponent<BoxCollider>(); body.center = new Vector3(0,.29f,0)*ShelfScale; body.size = new Vector3(3.55f,.58f,.86f)*ShelfScale;
             var surface = new GameObject("Theme Placement Surface"); surface.layer = 8; surface.transform.SetParent(shelfObject.transform, false);
             surface.transform.localPosition = new Vector3(0,1.82f,.49f)*ShelfScale;
@@ -195,6 +195,7 @@ public static class CompactCollectionBuilder
         { var lens=camera.Lens; lens.FarClipPlane=10000; camera.Lens=lens; EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera); }
         foreach(var interaction in UnityEngine.Object.FindObjectsByType<InteractionHandler>(FindObjectsSortMode.None))
         { var so=new SerializedObject(interaction); so.FindProperty("triggerInteraction").enumValueIndex=(int)QueryTriggerInteraction.Collide; so.ApplyModifiedPropertiesWithoutUndo(); }
+        ExactThemeShelfBuilder.ValidateScene();
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
         var menu=EditorSceneManager.OpenScene("Assets/00_Project/00_Scenes/MainMenu Scene.unity",OpenSceneMode.Additive);
         foreach(var m in menu.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<MainMenu>(true))) Text(m,"levelScene","Level");
@@ -203,7 +204,7 @@ public static class CompactCollectionBuilder
         {var data=AssetDatabase.LoadAssetAtPath<WorldData>(AssetDatabase.GUIDToAssetPath(guid)); data.SceneNames=data.SceneNames.Select(n=>n=="ThemedSorting"?"Level":n).ToList(); EditorUtility.SetDirty(data);}
         AssetDatabase.SaveAssets();
         ArrangeShelves();
-        Debug.Log("COMPACT_COLLECTION_READY 600 designs / 1200 copies / 80 shelves / 1440 slots; original room and player preserved");
+        Debug.Log("COMPACT_COLLECTION_READY 600 designs / 1200 copies / 80 shelves / 1200 slots; original room and player preserved");
     }
 
     static void ShelfPose(int index, out Vector3 position, out float yaw)
@@ -224,7 +225,8 @@ public static class CompactCollectionBuilder
         var session=UnityEngine.Object.FindFirstObjectByType<ThemedCollectionSession>();
         if(session.GetComponent<ThemedPerformanceProbe>()==null)session.gameObject.AddComponent<ThemedPerformanceProbe>();
         for(int i=0;i<shelves.Length;i++){ShelfPose(i,out var p,out var yaw);shelves[i].transform.SetPositionAndRotation(p,Quaternion.Euler(0,yaw,0));}
-        ThemedShelfBatcher.Apply(shelves);
+        ExactThemeShelfBuilder.ValidateScene();
+        ThemedShelfBatcher.Apply(shelves, ExactThemeShelfBuilder.PrefabPath);
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
     }
 

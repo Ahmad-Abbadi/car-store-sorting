@@ -28,10 +28,10 @@ public static class ThemedShelfBatcher
         if(!found)throw new Exception("Shelf geometry is empty");
         return bounds;
     }
-    public static void Apply(SortingShelf[] shelves)
+    public static void Apply(SortingShelf[] shelves, string sourcePath = Source)
     {
         Directory.CreateDirectory(Cache);AssetDatabase.Refresh();
-        var source=PrefabUtility.LoadPrefabContents(Source);var parts=new List<Part>();int originalRenderers=0, trianglesBefore=0;
+        var source=PrefabUtility.LoadPrefabContents(sourcePath);var parts=new List<Part>();int originalRenderers=0, trianglesBefore=0;
         try
         {
             var renderers=source.GetComponentsInChildren<MeshRenderer>(false).Where(r=>r.enabled).ToArray();originalRenderers=renderers.Length;
@@ -47,7 +47,7 @@ public static class ThemedShelfBatcher
                     combine.Add(new CombineInstance{mesh=filter.sharedMesh,subMeshIndex=0,transform=source.transform.worldToLocalMatrix*filter.transform.localToWorldMatrix});
                 }
                 string materialGuid=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(group.Key.material));
-                string path=Cache+"/Shelf_"+materialGuid+"_"+(int)group.Key.shadowCastingMode+"_"+group.Key.receiveShadows+".asset";
+                string path=Cache+"/Shelf_"+(sourcePath == Source ? "" : AssetDatabase.AssetPathToGUID(sourcePath)+"_")+materialGuid+"_"+(int)group.Key.shadowCastingMode+"_"+group.Key.receiveShadows+".asset";
                 var mesh=new Mesh{name="Approved Shelf · "+group.Key.material.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(combine.ToArray(),true,true,false);mesh.RecalculateBounds();
                 var saved=AssetDatabase.LoadAssetAtPath<Mesh>(path);
                 if(saved==null){AssetDatabase.CreateAsset(mesh,path);saved=mesh;}else{EditorUtility.CopySerialized(mesh,saved);UnityEngine.Object.DestroyImmediate(mesh);EditorUtility.SetDirty(saved);}
@@ -59,14 +59,15 @@ public static class ThemedShelfBatcher
         foreach(var shelf in shelves)
         {
             var art=shelf.transform.Find("TR_Shelf_Base_01");if(art==null)throw new Exception("Approved shelf instance missing");
-            var original=art.GetComponentsInChildren<MeshRenderer>(true);
+            var original=art.GetComponentsInChildren<MeshRenderer>(false);
             Bounds before=GeometryBounds(original);
             var batch=shelf.transform.Find("Batched Shelf Art");if(batch==null){batch=new GameObject("Batched Shelf Art").transform;batch.SetParent(shelf.transform,false);}
+            var sectionPaint=batch.GetComponentsInChildren<MeshRenderer>().Select(r=>r.sharedMaterial).FirstOrDefault(m=>m!=null&&m.name.StartsWith("Section Paint"));
             batch.localPosition=art.localPosition;batch.localRotation=art.localRotation;batch.localScale=art.localScale;
             int i=0;foreach(var part in parts)
             {
                 string name="Shared Geometry "+i++;var t=batch.Find(name);if(t==null){t=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer)).transform;t.SetParent(batch,false);}
-                t.gameObject.layer=2;t.GetComponent<MeshFilter>().sharedMesh=part.mesh;var renderer=t.GetComponent<MeshRenderer>();renderer.sharedMaterial=part.material;renderer.shadowCastingMode=part.shadow;renderer.receiveShadows=part.receive;renderer.enabled=true;
+                t.gameObject.layer=2;t.GetComponent<MeshFilter>().sharedMesh=part.mesh;var renderer=t.GetComponent<MeshRenderer>();renderer.sharedMaterial=sectionPaint!=null&&part.material.name.Contains("SidePanels")?sectionPaint:part.material;renderer.shadowCastingMode=part.shadow;renderer.receiveShadows=part.receive;renderer.enabled=true;
             }
             var batched=batch.GetComponentsInChildren<MeshRenderer>();Bounds after=GeometryBounds(batched);
             if(Vector3.Distance(before.min,after.min)>.002f||Vector3.Distance(before.max,after.max)>.002f)throw new Exception("Shelf batching changed bounds: "+shelf.SaveId);

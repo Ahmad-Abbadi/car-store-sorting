@@ -101,6 +101,7 @@ public static class CollectorRoomBuilder
             PrefabUtility.RecordPrefabInstancePropertyModifications(upgrade);
         }
         EditorUtility.SetDirty(layout); AssetDatabase.SaveAssets();
+        ExactThemeShelfBuilder.ValidateScene();
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
         Audit();
         Debug.Log("COLLECTOR_ROOM_READY: 36x44 / 8 sections / 80 shelves / 1200 mixed cars. " + backup);
@@ -313,14 +314,15 @@ public static class CollectorRoomBuilder
         if(s.roomLayout.revision>=3) { CrowdedCollectorRoomBuilder.Audit(); return; }
         var p=JsonUtility.FromJson<Pile>(s.pileLayout.text);ValidateDefinition(s.roomLayout,p,s.catalog);
         var shelves=Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None);
-        if(shelves.Length!=80||shelves.Sum(v=>v.SpotCount)!=1440)throw new InvalidOperationException("Shelf capacity changed");
+        ThemedShelfCapacity.Validate(s.catalog,s.copiesPerDesign,shelves);
+        if(shelves.Length!=80||shelves.Any(v=>v.SpotCount!=ExactThemeShelfBuilder.SlotsPerShelf))throw new InvalidOperationException("Shelf capacity changed");
         foreach(var pose in s.roomLayout.shelves)
         {
             var shelf=shelves.Single(v=>v.SaveId==pose.saveId);
             if(Vector3.Distance(shelf.transform.position,s.roomLayout.origin+pose.position)>.01f)throw new InvalidOperationException("Shelf pose mismatch");
         }
         Directory.CreateDirectory(Evidence);
-        File.WriteAllText(Evidence+"/layout_audit.json",JsonUtility.ToJson(new AuditReport{passed=true,sections=8,designs=600,copies=1200,shelves=80,slots=1440,roomSize=s.roomLayout.roomSize},true));
+        File.WriteAllText(Evidence+"/layout_audit.json",JsonUtility.ToJson(new AuditReport{passed=true,sections=8,designs=600,copies=1200,shelves=80,slots=shelves.Sum(v=>v.SpotCount),roomSize=s.roomLayout.roomSize},true));
         Debug.Log("COLLECTOR_ROOM_AUDIT_PASSED");
     }
     [Serializable] class AuditReport { public bool passed;public int sections,designs,copies,shelves,slots;public Vector2 roomSize; }

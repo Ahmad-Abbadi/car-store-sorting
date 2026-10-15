@@ -98,9 +98,7 @@ namespace TinyRiders
         {
             pileOrder = null;
             definitions.Clear();
-            foreach (var e in catalog.entries ?? Array.Empty<ThemedCarCatalog.Entry>())
-                if (e != null && e.enabled && e.prefab != null && e.sortingItem != null &&
-                    catalog.themes.Any(t => t.id == e.themeId && t.enabled))
+            foreach (var e in ThemedShelfCapacity.EligibleDefinitions(catalog))
                 {
                     if (!definitions.TryAdd(e.collectibleId, e)) Debug.LogError("Duplicate collectible ID: " + e.collectibleId);
                 }
@@ -330,23 +328,7 @@ namespace TinyRiders
                 }
             State.pileLayoutRevision = Mathf.Max(save.pileLayoutRevision, authoredLayoutRevision);
             State.instances = records.Values.ToList(); MergeContent();
-            var usedSlots = new HashSet<string>();
-            foreach (var r in records.Values.Where(r => (r.state == "sorted" || r.state == "misplaced") && definitions.ContainsKey(r.collectibleId)))
-            {
-                if (shelves.TryGetValue(r.shelfId ?? "", out var s))
-                {
-                    int spot = -1;
-                    for (int i = 0; i < s.SpotCount; i++) if (s.GetSpot(i).name == r.slotId) { spot = i; break; }
-                    string slotKey = s.SaveId + "/" + r.slotId;
-                    if (spot >= 0 && !usedSlots.Contains(slotKey) && s.CanAccept(definitions[r.collectibleId].sortingItem, spot, out _) &&
-                        s.RestoreItem(spot, definitions[r.collectibleId].sortingItem))
-                    {
-                        r.state = s.IsCorrectItem(definitions[r.collectibleId].sortingItem) ? "sorted" : "misplaced";
-                        ThemedWorldInstance.Stamp(s.GetOccupant(spot), r.id); usedSlots.Add(slotKey); continue;
-                    }
-                }
-                r.state = "pending"; r.shelfId = null; r.slotId = null;
-            }
+            RestoreShelfRecords();
             var held = new List<ItemDataSO>(); var heldIds = new List<string>();
             foreach (string id in save.heldOrder ?? new List<string>())
                 if (!heldIds.Contains(id ?? "") && records.TryGetValue(id ?? "", out var r) && r.state == "held" && definitions.TryGetValue(r.collectibleId, out var e))
@@ -355,6 +337,56 @@ namespace TinyRiders
             var stash = Player.Instance?.StashHandler;
             stash?.LoadFromSave(held, save.selection); stash?.Inventory?.SetInstanceIds(heldIds);
             Publish();
+        }
+
+        private bool RestorePlacement(ThemedInstanceRecord record, SortingShelf shelf, int spot, bool requireCorrect)
+        {
+            var item = definitions[record.collectibleId].sortingItem;
+            if (shelf == null || (requireCorrect && !shelf.IsCorrectItem(item)) || !shelf.RestoreItem(spot, item)) return false;
+            string state = shelf.IsCorrectItem(item) ? "sorted" : "misplaced";
+            string slot = shelf.GetSpot(spot).name;
+            if (record.shelfId != shelf.SaveId || record.slotId != slot || record.state != state) LevelSaveManager.MarkDirty();
+            record.shelfId = shelf.SaveId; record.slotId = slot; record.state = state;
+            ThemedWorldInstance.Stamp(shelf.GetOccupant(spot), record.id);
+            return true;
+        }
+
+        private void RestoreShelfRecords()
+        {
+            // Reserve all surviving sorted slots before filling holes. Misplaced cars cannot
+            // displace correctly sorted progress when an old 18-slot shelf becomes a 15-slot shelf.
+            var placed = records.Values.Where(r => (r.state == "sorted" || r.state == "misplaced") && definitions.ContainsKey(r.collectibleId))
+                .OrderBy(r => r.id, StringComparer.Ordinal).ToArray();
+            var sorted = placed.Where(r => r.state == "sorted").ToArray();
+            var misplaced = placed.Where(r => r.state == "misplaced").ToArray();
+            var orderedShelves = shelves.Values.OrderBy(s => s.SaveId, StringComparer.Ordinal).ToArray();
+            foreach (var group in new[] { sorted, misplaced })
+            {
+                bool requireCorrect = ReferenceEquals(group, sorted);
+                var unplaced = new List<ThemedInstanceRecord>();
+                foreach (var record in group)
+                {
+                    shelves.TryGetValue(record.shelfId ?? "", out var shelf);
+                    int spot = shelf == null ? -1 : Enumerable.Range(0, shelf.SpotCount).Where(i => shelf.GetSpot(i).name == record.slotId).DefaultIfEmpty(-1).First();
+                    if (!RestorePlacement(record, shelf, spot, requireCorrect)) unplaced.Add(record);
+                }
+                foreach (var record in unplaced)
+                {
+                    var candidates = requireCorrect
+                        ? orderedShelves.Where(s => s.GetComponent<ThemeShelfBinding>().themeId == definitions[record.collectibleId].themeId)
+                        : orderedShelves.Where(s => s.SaveId == record.shelfId);
+                    bool restored = false;
+                    foreach (var shelf in candidates)
+                    {
+                        for (int spot = 0; spot < shelf.SpotCount && !restored; spot++)
+                            restored = RestorePlacement(record, shelf, spot, requireCorrect);
+                        if (restored) break;
+                    }
+                    if (restored) continue;
+                    record.state = "pending"; record.shelfId = null; record.slotId = null;
+                    LevelSaveManager.MarkDirty();
+                }
+            }
         }
     }
 }
