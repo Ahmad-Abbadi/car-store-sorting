@@ -30,6 +30,8 @@ public static class CarStoreLocalization
             for (int i = 0; i < Codes.Length; i++) tables[Codes[i]][key] = values[i];
         }
 
+        Add("feedback.great_job", "Great job!", "¡Muy bien!", "Muito bem!", "Bagus sekali!",
+            "Harika!", "Świetnie!", "Giỏi lắm!", "أحسنت!");
         Add("store.progress", "Cars sorted: {0} / 525", "Coches ordenados: {0} / 525",
             "Carros organizados: {0} / 525", "Mobil tersortir: {0} / 525", "Sıralanan arabalar: {0} / 525",
             "Posortowane auta: {0} / 525", "Xe đã xếp: {0} / 525", "السيارات المرتبة: {0} / 525");

@@ -151,19 +151,27 @@ namespace TinyRiders
                     Physics.IgnoreCollision(Player.Instance.Motor.Capsule, collider, roomLayout.walkThroughLooseCars);
             r.shelfId = null; r.slotId = null; LevelSaveManager.MarkDirty(); Publish();
         }
-        public bool CanPlace(string id) => !string.IsNullOrEmpty(id) && records.TryGetValue(id, out var r) && r.state != "sorted";
+        public bool CanPlace(string id) => !string.IsNullOrEmpty(id) && records.TryGetValue(id, out var r) &&
+            r.state != "sorted" && r.state != "misplaced";
         public void Placed(PlacedOnShelfItemBase item, SortingShelf shelf, int spot)
         {
             string id = ThemedWorldInstance.Read(item);
             if (!CanPlace(id)) return;
-            var r = records[id]; r.state = "sorted"; r.shelfId = shelf.SaveId; r.slotId = shelf.GetSpot(spot).name;
-            live.Remove(id); bool first = discovered.Add(r.collectibleId);
-            State.discovered = discovered.OrderBy(x => x, StringComparer.Ordinal).ToList();
-            var e = definitions[r.collectibleId];
-            Report(first ? "Discovered " + e.displayName : "Sorted · " + ThemeName(e.themeId));
-            int themeTotal = ThemeCounts(e.themeId).total;
-            if (themeTotal > 0 && ThemeCounts(e.themeId).sorted == themeTotal && completed.Add(e.themeId))
-                Report("Collection complete · " + ThemeName(e.themeId));
+            bool correct = shelf.IsCorrectItem(item.Data);
+            var r = records[id]; r.state = correct ? "sorted" : "misplaced";
+            r.shelfId = shelf.SaveId; r.slotId = shelf.GetSpot(spot).name;
+            live.Remove(id);
+            if (correct)
+            {
+                bool first = discovered.Add(r.collectibleId);
+                State.discovered = discovered.OrderBy(x => x, StringComparer.Ordinal).ToList();
+                var e = definitions[r.collectibleId];
+                Report(first ? "Discovered " + e.displayName : "Sorted · " + ThemeName(e.themeId));
+                int themeTotal = ThemeCounts(e.themeId).total;
+                if (themeTotal > 0 && ThemeCounts(e.themeId).sorted == themeTotal && completed.Add(e.themeId))
+                    Report("Collection complete · " + ThemeName(e.themeId));
+            }
+            else Report(Localizer.FromEnglish("feedback", "Wrong Section"));
             State.completedThemes = completed.OrderBy(x => x, StringComparer.Ordinal).ToList();
             Publish(); LevelSaveManager.MarkDirty();
             // Occupancy is claimed before this checkpoint; animation interruption cannot duplicate it.
@@ -323,7 +331,7 @@ namespace TinyRiders
             State.pileLayoutRevision = Mathf.Max(save.pileLayoutRevision, authoredLayoutRevision);
             State.instances = records.Values.ToList(); MergeContent();
             var usedSlots = new HashSet<string>();
-            foreach (var r in records.Values.Where(r => r.state == "sorted" && definitions.ContainsKey(r.collectibleId)))
+            foreach (var r in records.Values.Where(r => (r.state == "sorted" || r.state == "misplaced") && definitions.ContainsKey(r.collectibleId)))
             {
                 if (shelves.TryGetValue(r.shelfId ?? "", out var s))
                 {
@@ -332,7 +340,10 @@ namespace TinyRiders
                     string slotKey = s.SaveId + "/" + r.slotId;
                     if (spot >= 0 && !usedSlots.Contains(slotKey) && s.CanAccept(definitions[r.collectibleId].sortingItem, spot, out _) &&
                         s.RestoreItem(spot, definitions[r.collectibleId].sortingItem))
-                    { ThemedWorldInstance.Stamp(s.GetOccupant(spot), r.id); usedSlots.Add(slotKey); continue; }
+                    {
+                        r.state = s.IsCorrectItem(definitions[r.collectibleId].sortingItem) ? "sorted" : "misplaced";
+                        ThemedWorldInstance.Stamp(s.GetOccupant(spot), r.id); usedSlots.Add(slotKey); continue;
+                    }
                 }
                 r.state = "pending"; r.shelfId = null; r.slotId = null;
             }

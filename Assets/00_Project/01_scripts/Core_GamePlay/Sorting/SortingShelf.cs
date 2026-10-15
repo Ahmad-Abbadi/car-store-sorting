@@ -215,9 +215,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     /// <summary> Instantly places a saved item. No jump, sounds or coin events. </summary>
     public bool RestoreItem(int spot, SortableItem_SO data)
     {
-        if (GetComponent<TinyRiders.ThemeShelfBinding>() != null && !CanAccept(data, spot, out _)) return false;
-        if (data == null || data.PlacedOnShelfPrefab == null) return false;
-        if (spot < 0 || spot >= _occupants.Length || _occupants[spot] != null || placingSpots[spot] == null) return false;
+        if (!CanAccept(data, spot, out _)) return false;
 
         PlacedOnShelfItemBase item = Instantiate(data.PlacedOnShelfPrefab);
         item.Init(data);
@@ -394,7 +392,6 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         if (!sorting.TryGetPlacedItemFromHand(out PlacedOnShelfItemBase placed)) return;
         ClearHologram();
         AddItem(placed, spot);
-        if (!IsCorrectCatagory(data)) OnWrongCatagory(placed);
     }
 
     /// <summary> Shelves a world item that hits this shelf. </summary>
@@ -428,17 +425,16 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         Destroy(item.gameObject);
 
         AddItem(placed, spot);
-        if (!IsCorrectCatagory(data)) OnWrongCatagory(placed);
         return true;
     }
 
     /// <summary> Claims the spot and jumps the item onto it. </summary>
     public void AddItem(PlacedOnShelfItemBase item, int spot)
     {
-        if (item == null || spot < 0 || spot >= _occupants.Length || _occupants[spot] != null) return;
+        if (item == null || !CanAccept(item.Data, spot, out _)) return;
         bool themed = GetComponent<TinyRiders.ThemeShelfBinding>() != null;
-        if (themed && (!CanAccept(item.Data, spot, out _) ||
-            !(TinyRiders.ThemedCollectionSession.Instance?.CanPlace(TinyRiders.ThemedWorldInstance.Read(item)) ?? false))) return;
+        if (themed && !(TinyRiders.ThemedCollectionSession.Instance?.CanPlace(TinyRiders.ThemedWorldInstance.Read(item)) ?? false)) return;
+        bool correct = IsCorrectCatagory(item.Data);
 
         _occupants[spot] = item;
         _placeOrder.Add(item);
@@ -446,11 +442,12 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         NotifyRightItemPlaced(item.Data);
 
         item.AttachTo(this);
+        if (!correct) OnWrongCatagory(item);
         LevelSaveManager.MarkDirty();
         Transform t = item.transform;
         t.SetParent(placingSpots[spot], true);
         if (themed) TinyRiders.ThemedCollectionSession.Instance?.Placed(item, this, spot);
-        PlayPlacementSFX(placingSpots[spot].position);
+        if (correct) PlayPlacementSFX(placingSpots[spot].position);
 
         DOTween.Sequence()
             .Join(t.DOLocalJump(Vector3.zero, jumpPower, 1, jumpDuration).SetEase(jumpEase))
@@ -460,7 +457,8 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
             {
                 item.Settle();
                 item.OnPlaceFeedback();
-                item.PlayWrongLanded();
+                if (correct) item.PlayCorrectLanded();
+                else item.PlayWrongLanded();
                 RefreshStatus();
                 if (!IsFullOfOneType()) return;
                 OnShelfCompleted();

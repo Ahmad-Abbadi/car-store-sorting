@@ -27,7 +27,17 @@ public class CameraStateMachine : MonoBehaviour
     [Tooltip("Seconds to settle vertically. 0 = no damping.")]
     [SerializeField] private float verticalDampTime = 0.1f;
 
+    [Header("Loose car contact smoothing")]
+    [Tooltip("Seconds to smooth horizontal collision corrections while pushing loose cars. 0 = exact follow.")]
+    [SerializeField, Min(0f)] private float contactDampTime = 0.05f;
+
+    [Tooltip("Maximum horizontal distance the camera may lag behind its target.")]
+    [SerializeField, Min(0f)] private float maxContactLag = 0.05f;
+
     [Header("Feel")]
+    [Tooltip("Enable walking/sprint bob, jump bob, and idle breathing. Off keeps the pivot at its authored rest position.")]
+    [SerializeField] private bool enableHeadBob = false;
+
     [Tooltip("How quickly the pivot eases toward its bob target.")]
     [SerializeField] private float bobSmoothing = 10f;
 
@@ -53,6 +63,10 @@ public class CameraStateMachine : MonoBehaviour
 
     private float _smoothY;
     private float _velY;
+    private Vector3 _lastTargetPosition;
+    private Vector3 _horizontalOffset;
+    private Vector3 _horizontalVelocity;
+    private bool _wasCarContact;
 
     private void Awake()
     {
@@ -71,24 +85,85 @@ public class CameraStateMachine : MonoBehaviour
 
     private void Start() => ChangeState(idle);
 
+    private void OnEnable() => ResetFollow();
+
+    private void ResetFollow()
+    {
+        _horizontalOffset = Vector3.zero;
+        _horizontalVelocity = Vector3.zero;
+        _velY = 0f;
+        _wasCarContact = false;
+        if (pitchPivot == null) return;
+
+        _lastTargetPosition = pitchPivot.position;
+        _smoothY = _lastTargetPosition.y;
+        transform.SetPositionAndRotation(_lastTargetPosition, pitchPivot.rotation);
+    }
+
     private void LateUpdate()
     {
         FollowPitchPivot();
         SyncToPlayer();
-        CurrentState?.OnStateUpdate();
+        if (enableHeadBob)
+        {
+            CurrentState?.OnStateUpdate();
+        }
+        else if (cameraPivot != null)
+        {
+            cameraPivot.localPosition = RestLocalPosition;
+        }
     }
 
-    /// <summary> Follow the pivot's X/Z and rotation exactly; damp only Y. </summary>
+    /// <summary> Smooth contact corrections in X/Z, damp Y, and follow look rotation exactly. </summary>
     private void FollowPitchPivot()
     {
         if (pitchPivot == null) return;
 
         Vector3 target = pitchPivot.position;
-        _smoothY = verticalDampTime > 0f
-            ? Mathf.SmoothDamp(_smoothY, target.y, ref _velY, verticalDampTime)
-            : target.y;
+        if ((target - _lastTargetPosition).sqrMagnitude > 1f)
+        {
+            ResetFollow();
+            return;
+        }
 
-        transform.SetPositionAndRotation(new Vector3(target.x, _smoothY, target.z), pitchPivot.rotation);
+        bool carContact = player != null && player.Character != null && player.Character.HasRecentLooseCarContact;
+        if (contactDampTime <= 0f || maxContactLag <= 0f)
+        {
+            _horizontalOffset = Vector3.zero;
+            _horizontalVelocity = Vector3.zero;
+        }
+        else if (Time.deltaTime > 0f)
+        {
+            if (carContact)
+            {
+                Vector3 horizontalTarget = new Vector3(target.x, 0f, target.z);
+                Vector3 previous = new Vector3(_lastTargetPosition.x, 0f, _lastTargetPosition.z) + _horizontalOffset;
+                _horizontalOffset = Vector3.SmoothDamp(previous, horizontalTarget,
+                    ref _horizontalVelocity, contactDampTime) - horizontalTarget;
+            }
+            else
+            {
+                // Recover the offset, rather than damping the moving target forever after contact.
+                if (_wasCarContact) _horizontalVelocity = Vector3.zero;
+                _horizontalOffset = Vector3.SmoothDamp(_horizontalOffset, Vector3.zero,
+                    ref _horizontalVelocity, contactDampTime);
+                if (_horizontalOffset.sqrMagnitude < 0.00000001f)
+                {
+                    _horizontalOffset = Vector3.zero;
+                    _horizontalVelocity = Vector3.zero;
+                }
+            }
+        }
+
+        _horizontalOffset = Vector3.ClampMagnitude(_horizontalOffset, Mathf.Max(0f, maxContactLag));
+        _lastTargetPosition = target;
+        _wasCarContact = carContact;
+        if (verticalDampTime <= 0f)
+            _smoothY = target.y;
+        else if (Time.deltaTime > 0f)
+            _smoothY = Mathf.SmoothDamp(_smoothY, target.y, ref _velY, verticalDampTime);
+
+        transform.SetPositionAndRotation(new Vector3(target.x, _smoothY, target.z) + _horizontalOffset, pitchPivot.rotation);
     }
 
     /// <summary> Exit the current state and enter <paramref name="next"/>. </summary>

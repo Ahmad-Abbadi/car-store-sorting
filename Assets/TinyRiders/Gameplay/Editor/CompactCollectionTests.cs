@@ -22,7 +22,11 @@ public class CompactCollectionTests
     {
         SetKey(UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(), "saveKey", Key);
         SetKey(UnityEngine.Object.FindFirstObjectByType<PlayerSavePosition>(), "saveKey", Key + ".position");
-        SetKey(UnityEngine.Object.FindFirstObjectByType<CoinsManager>(), "saveKey", Key + ".coins");
+        var coins = UnityEngine.Object.FindFirstObjectByType<CoinsManager>();
+        SetKey(coins, "saveKey", Key + ".coins");
+        // Scene callbacks run after Awake, so also load the isolated wallet balance.
+        if (coins != null) typeof(CoinsManager).GetProperty(nameof(CoinsManager.Coins))
+            .SetValue(coins, Mathf.Max(0, PlayerPrefs.GetInt(Key + ".coins", 0)));
     }
     static IEnumerator Tick(float seconds)
     { float until = Time.realtimeSinceStartup + seconds; while (Time.realtimeSinceStartup < until) yield return null; }
@@ -110,8 +114,17 @@ public class CompactCollectionTests
         Assert.AreEqual(1199,Session.LivePileCount,"Pickup must not spawn a replacement");
         Assert.AreEqual(0,Session.State.instances.Count(r=>r.state=="pending"));
         int count = Player.Instance.StashHandler.Inventory.Count;
-        Shelf("TH_ALIEN").OnInteractSecondary(null);
-        Assert.AreEqual(count, Player.Instance.StashHandler.Inventory.Count); Assert.AreEqual(0, Session.Sorted);
+        var wrongShelf = Shelf("TH_ALIEN");
+        int coinsBeforeWrong = CoinsManager.Instance.Coins;
+        wrongShelf.OnInteractSecondary(null);
+        Assert.AreEqual(count - 1, Player.Instance.StashHandler.Inventory.Count); Assert.AreEqual(0, Session.Sorted);
+        Assert.AreEqual(0, Session.UniqueDiscovered); Assert.AreEqual(coinsBeforeWrong, CoinsManager.Instance.Coins);
+        Assert.True(wrongShelf.GetOccupant(0).IsWrong);
+        Assert.AreEqual("misplaced", Session.State.instances.Single(r => r.id == firstId).state);
+        yield return Tick(.6f);
+        Assert.True(wrongShelf.TryTakeBack(wrongShelf.GetOccupant(0)));
+        Assert.AreEqual(count, Player.Instance.StashHandler.Inventory.Count);
+        Assert.AreEqual(firstId, ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped));
         typeof(ItemsHandler).GetMethod("ExecuteThrow", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Player.Instance.ItemHandler, new object[] { 0f });
         yield return Tick(.5f);
         var dropped = WorldItemBase.All.Single(w => ThemedWorldInstance.Read(w) == firstId);
@@ -132,7 +145,7 @@ public class CompactCollectionTests
         Pick(egypt[2]); Place(Shelf(egypt[0].themeId), 17); yield return Tick(.4f);
         Assert.True(Shelf(egypt[0].themeId).IsCompleted);
         Pick(egypt[3]); Place(Shelf(egypt[0].themeId, 1), 0); yield return Tick(.3f);
-        Note("Pickup/drop/repick, identity retention, wrong-theme and occupied-slot rejection, 15 designs, duplicate discovery, 18-slot full shelf and overflow");
+        Note("Pickup/drop/repick, identity retention, wrong-theme acceptance without credit, takeback, occupied-slot rejection, 15 designs, duplicate discovery, 18-slot full shelf and overflow");
 
         foreach (var theme in Session.ActiveDefinitions.GroupBy(e => e.themeId).Where(g => g.Key != egypt[0].themeId))
         { var entry = theme.First(); Pick(entry); Place(Shelf(entry.themeId), 0); yield return null; }

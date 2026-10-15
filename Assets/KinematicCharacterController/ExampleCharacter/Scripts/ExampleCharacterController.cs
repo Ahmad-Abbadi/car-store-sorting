@@ -75,6 +75,14 @@ namespace KinematicCharacterController.Examples
 
         public CharacterState CurrentCharacterState { get; private set; }
 
+        [Header("Loose car contact")]
+        [Tooltip("Seconds camera smoothing remains active after movement contact with a loose car.")]
+        [SerializeField, Min(0f)] private float looseCarContactDuration = 0.1f;
+
+        private float _lastLooseCarContactTime = float.NegativeInfinity;
+        public bool HasRecentLooseCarContact => isActiveAndEnabled &&
+            Time.time - _lastLooseCarContactTime <= looseCarContactDuration;
+
         private Collider[] _probedColliders = new Collider[8];
         private RaycastHit[] _probedHits = new RaycastHit[8];
         private Vector3 _moveInputVector;
@@ -516,6 +524,8 @@ namespace KinematicCharacterController.Examples
 
         public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
         {
+            if (hitCollider != null && hitCollider.GetComponentInParent<WorldItemBase>() != null)
+                _lastLooseCarContactTime = Time.time;
         }
 
         public void AddVelocity(Vector3 velocity)

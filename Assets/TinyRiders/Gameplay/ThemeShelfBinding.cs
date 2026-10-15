@@ -11,7 +11,6 @@ namespace TinyRiders
             reason = null;
             var entry = ThemedCollectionSession.Instance?.Definition(item);
             if (entry == null || !entry.enabled || entry.prefab == null) reason = "Collectible unavailable";
-            else if (entry.themeId != themeId) reason = "Match the car's theme to this shelf";
             else if (entry.displaySize.x > clearance.x || entry.displaySize.y > clearance.y || entry.displaySize.z > clearance.z)
                 reason = "This accessory needs more display clearance";
             return reason == null;

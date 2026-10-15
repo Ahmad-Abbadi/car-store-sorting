@@ -19,7 +19,14 @@ public class ThemedSortingPlayModeTests
  const string Key="TinyRiders.Integration.QA.Temp";
  static readonly List<string> passed=new List<string>();
  static void SetKey(UnityEngine.Object o,string name,string key) {if(o==null)return;var f=o.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic);f.SetValue(o,key);}
- internal static void Isolate(Scene s,LoadSceneMode m) {SetKey(UnityEngine.Object.FindFirstObjectByType<CoinsManager>(),"saveKey",Key+".coins");SetKey(UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(),"saveKey",Key);SetKey(UnityEngine.Object.FindFirstObjectByType<PlayerSavePosition>(),"saveKey",Key+".position");}
+ internal static void Isolate(Scene s,LoadSceneMode m)
+ {
+  var coins=UnityEngine.Object.FindFirstObjectByType<CoinsManager>();SetKey(coins,"saveKey",Key+".coins");
+  // Awake reads the normal wallet before sceneLoaded assigns the isolated key.
+  if(coins!=null)typeof(CoinsManager).GetProperty(nameof(CoinsManager.Coins)).SetValue(coins,Mathf.Max(0,PlayerPrefs.GetInt(Key+".coins",0)));
+  SetKey(UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(),"saveKey",Key);
+  SetKey(UnityEngine.Object.FindFirstObjectByType<PlayerSavePosition>(),"saveKey",Key+".position");
+ }
  static void Pass(string test) {passed.Add(test);File.WriteAllLines("IntegrationEvidence/playmode_passed.txt",passed);}
  static ThemedCollectionSession Session=>ThemedCollectionSession.Instance;
  static WorldItemBase World(ThemedCarCatalog.Entry e)
@@ -52,7 +59,7 @@ public class ThemedSortingPlayModeTests
  [UnityTest,Timeout(180000)]
  public IEnumerator ContinuousThemedCollection_A_Through_L()
  {
-  SessionState.SetBool("TinyRiders.QA.Active",true);passed.Clear();PlayerPrefs.DeleteKey(Key);PlayerPrefs.DeleteKey(Key+".position");
+  SessionState.SetBool("TinyRiders.QA.Active",true);passed.Clear();PlayerPrefs.DeleteKey(Key);PlayerPrefs.DeleteKey(Key+".position");PlayerPrefs.DeleteKey(Key+".coins");
   EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);Isolate(default,LoadSceneMode.Single);
   yield return new EnterPlayMode();UnityEngine.Application.runInBackground=true;yield return new WaitUntil(()=>UnityEngine.Time.frameCount>5 && Player.Instance!=null);yield return null;
   yield return ExerciseScenarios();
@@ -118,15 +125,59 @@ public class ThemedSortingPlayModeTests
   File.AppendAllText("IntegrationEvidence/save_test_diagnostics.txt","\nsettled="+pirateShelf.GetOccupant(0).IsSettled+" timeScale="+Time.timeScale+" active="+pirateShelf.GetOccupant(0).gameObject.activeInHierarchy+" frame="+Time.frameCount);
   Assert.True(pirateShelf.GetOccupant(0).IsSettled,"Placement animation must settle");
   Pass("B: correct theme reserves slot, snaps, counts and checkpoints");
-  Pick(pirate[1]);string held=ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped);Shelf("TH_SPACE").OnInteractSecondary(null);
-  Assert.AreEqual(held,ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped));Assert.AreEqual(1,Session.Sorted);
-  Pass("C: wrong theme rejected without consuming held car or progress");
+  Pick(pirate[1]);string held=ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped);
+  int coinsBeforeWrong=CoinsManager.Instance.Coins;
+  var wrongShelf=Shelf("TH_SPACE");
+  Assert.True(wrongShelf.CanAccept(pirate[1].sortingItem,0,out _));
+  Assert.False(wrongShelf.CanAccept(null,0,out _));Assert.False(wrongShelf.CanAccept(pirate[1].sortingItem,-1,out _));
+  var binding=wrongShelf.GetComponent<ThemeShelfBinding>();Vector3 clearance=binding.clearance;
+  try { binding.clearance=Vector3.zero;Assert.False(wrongShelf.CanAccept(pirate[1].sortingItem,0,out _)); }
+  finally { binding.clearance=clearance; }
+  wrongShelf.OnHoverEnter();
+  Assert.NotNull(typeof(SortingShelf).GetField("_hologram",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(wrongShelf));
+  wrongShelf.OnHoverExit();wrongShelf.OnInteractSecondary(null);
+  var wrong=wrongShelf.GetOccupant(0);
+  Assert.NotNull(wrong);Assert.AreEqual(held,ThemedWorldInstance.Read(wrong));Assert.True(wrong.IsWrong);
+  Assert.AreEqual(1,Session.Sorted);Assert.AreEqual(1,Session.UniqueDiscovered);Assert.AreEqual(coinsBeforeWrong,CoinsManager.Instance.Coins);
+  Assert.AreEqual("misplaced",Session.State.instances.Single(r=>r.id==held).state);Assert.False(Session.CanPlace(held));
+  Assert.False(wrongShelf.IsCompleted);Assert.False(wrongShelf.CanAccept(pirate[1].sortingItem,0,out _));
+  // Reload the checkpoint before the wrong car finishes its landing animation.
+  Assert.False(wrong.IsSettled);manager.Save();
+  yield return SceneManager.LoadSceneAsync("ThemedSorting");UnityEngine.Application.runInBackground=true;
+  yield return null;yield return null;yield return TickFor(.4f);
+  wrongShelf=Shelf("TH_SPACE");wrong=wrongShelf.GetOccupant(0);pirateShelf=Shelf("TH_PIRATE");
+  Assert.NotNull(wrong);Assert.True(wrong.IsSettled);Assert.True(wrong.IsWrong);Assert.AreEqual(held,ThemedWorldInstance.Read(wrong));
+  Assert.AreEqual(1,Session.Sorted);Assert.AreEqual(1,Session.UniqueDiscovered);Assert.AreEqual(coinsBeforeWrong,CoinsManager.Instance.Coins);
+  Assert.False(WorldItemBase.All.Any(w=>ThemedWorldInstance.Read(w)==held));
+  Assert.Less(Vector3.Distance(wrong.transform.position,wrongShelf.GetSpot(0).position),.01f);
+  Assert.True(wrongShelf.TryTakeBack(wrong));Assert.True(wrongShelf.IsSpotFree(0));
+  Assert.AreEqual(held,ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped));
+  Assert.AreEqual("held",Session.State.instances.Single(r=>r.id==held).state);Assert.True(Session.CanPlace(held));
+  Assert.AreEqual(coinsBeforeWrong,CoinsManager.Instance.Coins);
+  // The collision/distance path must apply the same wrong-placement feedback as hand placement.
+  typeof(ItemsHandler).GetMethod("ExecuteThrow",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(Player.Instance.ItemHandler,new object[]{0f});
+  yield return TickFor(.5f);
+  bool distanceEnabled=SortingShelf.DistanceShelfingEnabled;
+  try
+  {
+   SortingShelf.SetDistanceShelfingEnabled(true);
+   Assert.True(wrongShelf.TryDistanceShelf(WorldItemBase.All.Single(w=>ThemedWorldInstance.Read(w)==held)));
+  }
+  finally { SortingShelf.SetDistanceShelfingEnabled(distanceEnabled); }
+  Assert.True(wrongShelf.GetOccupant(0).IsWrong);Assert.AreEqual("misplaced",Session.State.instances.Single(r=>r.id==held).state);
+  Assert.AreEqual(1,Session.Sorted);Assert.AreEqual(1,Session.UniqueDiscovered);Assert.AreEqual(coinsBeforeWrong,CoinsManager.Instance.Coins);
+  yield return TickFor(.6f);Assert.True(wrongShelf.TryTakeBack(wrongShelf.GetOccupant(0)));
+  Pass("C: wrong theme accepted with feedback, no rewards, interrupted-save restoration and identity-preserving takeback");
   Assert.False(pirateShelf.CanAccept(pirate[1].sortingItem,0,out _));Assert.AreEqual(id,ThemedWorldInstance.Read(pirateShelf.GetOccupant(0)));
   Pass("D: occupied slot rejects another physical copy");
   Assert.GreaterOrEqual(WorldItemBase.All.Select(w=>(w.Data as SortableItem_SO)?.Catagory?.CatagoryID).Distinct().Count(),8);
   Assert.True(WorldItemBase.All.All(w=>w.GetComponentInChildren<ThemedCarIdentity>()?.collectibleId==w.Data.SaveId));
   Pass("E: mixed live pile uses matching catalog identities across themes");
   Place(pirateShelf,1);yield return TickFor(.3f);Assert.AreEqual(2,Session.UniqueDiscovered);
+  Assert.False(pirateShelf.GetOccupant(1).IsWrong);Assert.AreEqual("sorted",Session.State.instances.Single(r=>r.id==held).state);
+  Assert.Greater(CoinsManager.Instance.Coins,coinsBeforeWrong);
+  Assert.True(UnityEngine.Object.FindObjectsByType<FloatingTextEffect>(FindObjectsSortMode.None)
+   .Any(f=>f.GetComponent<TMPro.TMP_Text>().text==Localizer.FromEnglish("feedback","Great job!")));
   Pass("F: distinct Pirate designs retain their own visuals and metadata");
   Pick(pirate[0]);Place(pirateShelf,2);yield return TickFor(.3f);Assert.AreEqual(3,Session.Sorted);Assert.AreEqual(2,Session.UniqueDiscovered);
   Pass("G: duplicate copies increase cleanup without duplicate discovery");
@@ -144,7 +195,9 @@ public class ThemedSortingPlayModeTests
   var expansion=Session.ActiveDefinitions.Where(e=>e.releaseId=="themes_expansion_01").GroupBy(e=>e.themeId).First(g=>g.Count()>=13).ToArray();
   var full=Shelf(expansion[0].themeId);for(int i=0;i<18;i++){Pick(expansion[i%13]);Place(full,i);yield return null;}
   yield return TickFor(.4f);Assert.True(full.IsCompleted);Assert.False(full.HasFreeSpot);Assert.False(full.CanAccept(expansion[0].sortingItem,0,out _));
-  Pick(expansion[5]);Place(Shelf(expansion[0].themeId,1),0);yield return TickFor(.3f);
+  Pick(expansion[5]);string fullHeld=ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped);
+  full.OnInteractSecondary(null);Assert.AreEqual(fullHeld,ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped));
+  Place(Shelf(expansion[0].themeId,1),0);yield return TickFor(.3f);
   Pass("I: all 18 slots fill with mixed designs; second shelf accepts overflow without overwriting");
   var big=Session.ActiveDefinitions.OrderByDescending(e=>e.displaySize.y).First();Pick(big);var bigShelf=Shelf(big.themeId);int bigSpot=Enumerable.Range(0,bigShelf.SpotCount).First(i=>bigShelf.IsSpotFree(i));Place(bigShelf,bigSpot);yield return TickFor(.3f);
   Assert.True(Session.ActiveDefinitions.All(e=>e.displaySize.x<=.464f*9&&e.displaySize.y<=.54f*9&&e.displaySize.z<=.648f*9));
@@ -162,7 +215,7 @@ public class ThemedSortingPlayModeTests
  {
   SessionState.SetBool("TinyRiders.QA.Active",false);SceneManager.sceneLoaded-=Isolate;
   if(EditorApplication.isPlaying){if(Session!=null)Session.suspendPersistenceForTests=true;yield return new ExitPlayMode();}
-  PlayerPrefs.DeleteKey(Key);PlayerPrefs.DeleteKey(Key+".position");
+  PlayerPrefs.DeleteKey(Key);PlayerPrefs.DeleteKey(Key+".position");PlayerPrefs.DeleteKey(Key+".coins");
   if(File.Exists(ScenePath))EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Single);
  }
 }
