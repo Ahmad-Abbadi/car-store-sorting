@@ -1,0 +1,454 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 778d10033fa6f5947b2b475a4f1c176f, type: 3}
+  m_Name: CollectorRoomLayout
+  m_EditorClassIdentifier: Assembly-CSharp::TinyRiders.CollectorRoomLayout
+  revision: 2
+  roomSize: {x: 36, y: 44}
+  origin: {x: 500, y: 0, z: 0}
+  spawn: {x: 500, y: 0.05, z: -20.5}
+  centralAisle: 4
+  minimumAisle: 1.8
+  sections:
+  - title: Wild Wonders
+    themes:
+    - TH_JUNGLE
+    - TH_FARM
+    - TH_HONEY_BEE
+    - TH_BUTTERFLY_GARDEN
+    - TH_MUSHROOM_GROVE
+    color: {r: 0.23, g: 0.52, b: 0.35, a: 1}
+    center: {x: -9, y: 0, z: -15.75}
+    sortingAreas:
+    - m_Center: {x: -13.3, y: 0.7, z: -15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: -4.7, y: 0.7, z: -15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Coast & Climate
+    themes:
+    - TH_BEACH
+    - TH_OCEAN
+    - TH_ICE
+    - TH_FIRE
+    - TH_THUNDERSTORM
+    color: {r: 0.12, g: 0.53, b: 0.68, a: 1}
+    center: {x: 9, y: 0, z: -15.75}
+    sortingAreas:
+    - m_Center: {x: 4.7, y: 0.7, z: -15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: 13.3, y: 0.7, z: -15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Cosmic Workshop
+    themes:
+    - TH_SPACE
+    - TH_ALIEN
+    - TH_ROBOT
+    - TH_SCIENCE_LAB
+    - TH_STEAMPUNK
+    color: {r: 0.34, g: 0.36, b: 0.62, a: 1}
+    center: {x: -9, y: 0, z: -5.25}
+    sortingAreas:
+    - m_Center: {x: -13.3, y: 0.7, z: -5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: -4.7, y: 0.7, z: -5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Legends & Magic
+    themes:
+    - TH_PIRATE
+    - TH_ROYAL
+    - TH_WIZARD
+    - TH_VIKING_LEGENDS
+    - TH_ANCIENT_EGYPT
+    color: {r: 0.58, g: 0.32, b: 0.55, a: 1}
+    center: {x: 9, y: 0, z: -5.25}
+    sortingAreas:
+    - m_Center: {x: 4.7, y: 0.7, z: -5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: 13.3, y: 0.7, z: -5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Busy Town
+    themes:
+    - TH_CONSTRUCTION
+    - TH_RESCUE
+    - TH_POST_OFFICE
+    - TH_RAILWAY
+    - TH_AVIATION
+    color: {r: 0.77, g: 0.44, b: 0.18, a: 1}
+    center: {x: -9, y: 0, z: 5.25}
+    sortingAreas:
+    - m_Center: {x: -13.3, y: 0.7, z: 5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: -4.7, y: 0.7, z: 5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Creative Corner
+    themes:
+    - TH_ART_STUDIO
+    - TH_MUSIC
+    - TH_CINEMA
+    - TH_PHOTOGRAPHY
+    - TH_BARBERSHOP
+    color: {r: 0.2, g: 0.52, b: 0.5, a: 1}
+    center: {x: 9, y: 0, z: 5.25}
+    sortingAreas:
+    - m_Center: {x: 4.7, y: 0.7, z: 5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: 13.3, y: 0.7, z: 5.25}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Party & Treats
+    themes:
+    - TH_FOOD
+    - TH_CANDY
+    - TH_PARTY
+    - TH_WINTER_HOLIDAYS
+    - TH_SPORT
+    color: {r: 0.76, g: 0.35, b: 0.36, a: 1}
+    center: {x: -9, y: 0, z: 15.75}
+    sortingAreas:
+    - m_Center: {x: -13.3, y: 0.7, z: 15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: -4.7, y: 0.7, z: 15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  - title: Grand Adventures
+    themes:
+    - TH_PREHISTORIC
+    - TH_WILD_WEST
+    - TH_NINJA
+    - TH_DETECTIVE
+    - TH_SPOOKY
+    color: {r: 0.48, g: 0.46, b: 0.28, a: 1}
+    center: {x: 9, y: 0, z: 15.75}
+    sortingAreas:
+    - m_Center: {x: 4.7, y: 0.7, z: 15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+    - m_Center: {x: 13.3, y: 0.7, z: 15.75}
+      m_Extent: {x: 1.55, y: 0.7, z: 4.325}
+  shelves:
+  - saveId: COMPACT-TH_JUNGLE-S001
+    section: 0
+    position: {x: -9.25, y: 0, z: -19.19}
+    yaw: -90
+  - saveId: COMPACT-TH_JUNGLE-S002
+    section: 0
+    position: {x: -8.75, y: 0, z: -19.19}
+    yaw: 90
+  - saveId: COMPACT-TH_FARM-S001
+    section: 0
+    position: {x: -9.25, y: 0, z: -17.47}
+    yaw: -90
+  - saveId: COMPACT-TH_FARM-S002
+    section: 0
+    position: {x: -8.75, y: 0, z: -17.47}
+    yaw: 90
+  - saveId: COMPACT-TH_HONEY_BEE-S001
+    section: 0
+    position: {x: -9.25, y: 0, z: -15.75}
+    yaw: -90
+  - saveId: COMPACT-TH_HONEY_BEE-S002
+    section: 0
+    position: {x: -8.75, y: 0, z: -15.75}
+    yaw: 90
+  - saveId: COMPACT-TH_BUTTERFLY_GARDEN-S001
+    section: 0
+    position: {x: -9.25, y: 0, z: -14.03}
+    yaw: -90
+  - saveId: COMPACT-TH_BUTTERFLY_GARDEN-S002
+    section: 0
+    position: {x: -8.75, y: 0, z: -14.03}
+    yaw: 90
+  - saveId: COMPACT-TH_MUSHROOM_GROVE-S001
+    section: 0
+    position: {x: -9.25, y: 0, z: -12.309999}
+    yaw: -90
+  - saveId: COMPACT-TH_MUSHROOM_GROVE-S002
+    section: 0
+    position: {x: -8.75, y: 0, z: -12.309999}
+    yaw: 90
+  - saveId: COMPACT-TH_BEACH-S001
+    section: 1
+    position: {x: 8.75, y: 0, z: -19.19}
+    yaw: -90
+  - saveId: COMPACT-TH_BEACH-S002
+    section: 1
+    position: {x: 9.25, y: 0, z: -19.19}
+    yaw: 90
+  - saveId: COMPACT-TH_OCEAN-S001
+    section: 1
+    position: {x: 8.75, y: 0, z: -17.47}
+    yaw: -90
+  - saveId: COMPACT-TH_OCEAN-S002
+    section: 1
+    position: {x: 9.25, y: 0, z: -17.47}
+    yaw: 90
+  - saveId: COMPACT-TH_ICE-S001
+    section: 1
+    position: {x: 8.75, y: 0, z: -15.75}
+    yaw: -90
+  - saveId: COMPACT-TH_ICE-S002
+    section: 1
+    position: {x: 9.25, y: 0, z: -15.75}
+    yaw: 90
+  - saveId: COMPACT-TH_FIRE-S001
+    section: 1
+    position: {x: 8.75, y: 0, z: -14.03}
+    yaw: -90
+  - saveId: COMPACT-TH_FIRE-S002
+    section: 1
+    position: {x: 9.25, y: 0, z: -14.03}
+    yaw: 90
+  - saveId: COMPACT-TH_THUNDERSTORM-S001
+    section: 1
+    position: {x: 8.75, y: 0, z: -12.309999}
+    yaw: -90
+  - saveId: COMPACT-TH_THUNDERSTORM-S002
+    section: 1
+    position: {x: 9.25, y: 0, z: -12.309999}
+    yaw: 90
+  - saveId: COMPACT-TH_SPACE-S001
+    section: 2
+    position: {x: -9.25, y: 0, z: -8.690001}
+    yaw: -90
+  - saveId: COMPACT-TH_SPACE-S002
+    section: 2
+    position: {x: -8.75, y: 0, z: -8.690001}
+    yaw: 90
+  - saveId: COMPACT-TH_ALIEN-S001
+    section: 2
+    position: {x: -9.25, y: 0, z: -6.9700003}
+    yaw: -90
+  - saveId: COMPACT-TH_ALIEN-S002
+    section: 2
+    position: {x: -8.75, y: 0, z: -6.9700003}
+    yaw: 90
+  - saveId: COMPACT-TH_ROBOT-S001
+    section: 2
+    position: {x: -9.25, y: 0, z: -5.25}
+    yaw: -90
+  - saveId: COMPACT-TH_ROBOT-S002
+    section: 2
+    position: {x: -8.75, y: 0, z: -5.25}
+    yaw: 90
+  - saveId: COMPACT-TH_SCIENCE_LAB-S001
+    section: 2
+    position: {x: -9.25, y: 0, z: -3.53}
+    yaw: -90
+  - saveId: COMPACT-TH_SCIENCE_LAB-S002
+    section: 2
+    position: {x: -8.75, y: 0, z: -3.53}
+    yaw: 90
+  - saveId: COMPACT-TH_STEAMPUNK-S001
+    section: 2
+    position: {x: -9.25, y: 0, z: -1.81}
+    yaw: -90
+  - saveId: COMPACT-TH_STEAMPUNK-S002
+    section: 2
+    position: {x: -8.75, y: 0, z: -1.81}
+    yaw: 90
+  - saveId: COMPACT-TH_PIRATE-S001
+    section: 3
+    position: {x: 8.75, y: 0, z: -8.690001}
+    yaw: -90
+  - saveId: COMPACT-TH_PIRATE-S002
+    section: 3
+    position: {x: 9.25, y: 0, z: -8.690001}
+    yaw: 90
+  - saveId: COMPACT-TH_ROYAL-S001
+    section: 3
+    position: {x: 8.75, y: 0, z: -6.9700003}
+    yaw: -90
+  - saveId: COMPACT-TH_ROYAL-S002
+    section: 3
+    position: {x: 9.25, y: 0, z: -6.9700003}
+    yaw: 90
+  - saveId: COMPACT-TH_WIZARD-S001
+    section: 3
+    position: {x: 8.75, y: 0, z: -5.25}
+    yaw: -90
+  - saveId: COMPACT-TH_WIZARD-S002
+    section: 3
+    position: {x: 9.25, y: 0, z: -5.25}
+    yaw: 90
+  - saveId: COMPACT-TH_VIKING_LEGENDS-S001
+    section: 3
+    position: {x: 8.75, y: 0, z: -3.53}
+    yaw: -90
+  - saveId: COMPACT-TH_VIKING_LEGENDS-S002
+    section: 3
+    position: {x: 9.25, y: 0, z: -3.53}
+    yaw: 90
+  - saveId: COMPACT-TH_ANCIENT_EGYPT-S001
+    section: 3
+    position: {x: 8.75, y: 0, z: -1.81}
+    yaw: -90
+  - saveId: COMPACT-TH_ANCIENT_EGYPT-S002
+    section: 3
+    position: {x: 9.25, y: 0, z: -1.81}
+    yaw: 90
+  - saveId: COMPACT-TH_CONSTRUCTION-S001
+    section: 4
+    position: {x: -9.25, y: 0, z: 1.81}
+    yaw: -90
+  - saveId: COMPACT-TH_CONSTRUCTION-S002
+    section: 4
+    position: {x: -8.75, y: 0, z: 1.81}
+    yaw: 90
+  - saveId: COMPACT-TH_RESCUE-S001
+    section: 4
+    position: {x: -9.25, y: 0, z: 3.53}
+    yaw: -90
+  - saveId: COMPACT-TH_RESCUE-S002
+    section: 4
+    position: {x: -8.75, y: 0, z: 3.53}
+    yaw: 90
+  - saveId: COMPACT-TH_POST_OFFICE-S001
+    section: 4
+    position: {x: -9.25, y: 0, z: 5.25}
+    yaw: -90
+  - saveId: COMPACT-TH_POST_OFFICE-S002
+    section: 4
+    position: {x: -8.75, y: 0, z: 5.25}
+    yaw: 90
+  - saveId: COMPACT-TH_RAILWAY-S001
+    section: 4
+    position: {x: -9.25, y: 0, z: 6.9700003}
+    yaw: -90
+  - saveId: COMPACT-TH_RAILWAY-S002
+    section: 4
+    position: {x: -8.75, y: 0, z: 6.9700003}
+    yaw: 90
+  - saveId: COMPACT-TH_AVIATION-S001
+    section: 4
+    position: {x: -9.25, y: 0, z: 8.690001}
+    yaw: -90
+  - saveId: COMPACT-TH_AVIATION-S002
+    section: 4
+    position: {x: -8.75, y: 0, z: 8.690001}
+    yaw: 90
+  - saveId: COMPACT-TH_ART_STUDIO-S001
+    section: 5
+    position: {x: 8.75, y: 0, z: 1.81}
+    yaw: -90
+  - saveId: COMPACT-TH_ART_STUDIO-S002
+    section: 5
+    position: {x: 9.25, y: 0, z: 1.81}
+    yaw: 90
+  - saveId: COMPACT-TH_MUSIC-S001
+    section: 5
+    position: {x: 8.75, y: 0, z: 3.53}
+    yaw: -90
+  - saveId: COMPACT-TH_MUSIC-S002
+    section: 5
+    position: {x: 9.25, y: 0, z: 3.53}
+    yaw: 90
+  - saveId: COMPACT-TH_CINEMA-S001
+    section: 5
+    position: {x: 8.75, y: 0, z: 5.25}
+    yaw: -90
+  - saveId: COMPACT-TH_CINEMA-S002
+    section: 5
+    position: {x: 9.25, y: 0, z: 5.25}
+    yaw: 90
+  - saveId: COMPACT-TH_PHOTOGRAPHY-S001
+    section: 5
+    position: {x: 8.75, y: 0, z: 6.9700003}
+    yaw: -90
+  - saveId: COMPACT-TH_PHOTOGRAPHY-S002
+    section: 5
+    position: {x: 9.25, y: 0, z: 6.9700003}
+    yaw: 90
+  - saveId: COMPACT-TH_BARBERSHOP-S001
+    section: 5
+    position: {x: 8.75, y: 0, z: 8.690001}
+    yaw: -90
+  - saveId: COMPACT-TH_BARBERSHOP-S002
+    section: 5
+    position: {x: 9.25, y: 0, z: 8.690001}
+    yaw: 90
+  - saveId: COMPACT-TH_FOOD-S001
+    section: 6
+    position: {x: -9.25, y: 0, z: 12.309999}
+    yaw: -90
+  - saveId: COMPACT-TH_FOOD-S002
+    section: 6
+    position: {x: -8.75, y: 0, z: 12.309999}
+    yaw: 90
+  - saveId: COMPACT-TH_CANDY-S001
+    section: 6
+    position: {x: -9.25, y: 0, z: 14.03}
+    yaw: -90
+  - saveId: COMPACT-TH_CANDY-S002
+    section: 6
+    position: {x: -8.75, y: 0, z: 14.03}
+    yaw: 90
+  - saveId: COMPACT-TH_PARTY-S001
+    section: 6
+    position: {x: -9.25, y: 0, z: 15.75}
+    yaw: -90
+  - saveId: COMPACT-TH_PARTY-S002
+    section: 6
+    position: {x: -8.75, y: 0, z: 15.75}
+    yaw: 90
+  - saveId: COMPACT-TH_WINTER_HOLIDAYS-S001
+    section: 6
+    position: {x: -9.25, y: 0, z: 17.47}
+    yaw: -90
+  - saveId: COMPACT-TH_WINTER_HOLIDAYS-S002
+    section: 6
+    position: {x: -8.75, y: 0, z: 17.47}
+    yaw: 90
+  - saveId: COMPACT-TH_SPORT-S001
+    section: 6
+    position: {x: -9.25, y: 0, z: 19.19}
+    yaw: -90
+  - saveId: COMPACT-TH_SPORT-S002
+    section: 6
+    position: {x: -8.75, y: 0, z: 19.19}
+    yaw: 90
+  - saveId: COMPACT-TH_PREHISTORIC-S001
+    section: 7
+    position: {x: 8.75, y: 0, z: 12.309999}
+    yaw: -90
+  - saveId: COMPACT-TH_PREHISTORIC-S002
+    section: 7
+    position: {x: 9.25, y: 0, z: 12.309999}
+    yaw: 90
+  - saveId: COMPACT-TH_WILD_WEST-S001
+    section: 7
+    position: {x: 8.75, y: 0, z: 14.03}
+    yaw: -90
+  - saveId: COMPACT-TH_WILD_WEST-S002
+    section: 7
+    position: {x: 9.25, y: 0, z: 14.03}
+    yaw: 90
+  - saveId: COMPACT-TH_NINJA-S001
+    section: 7
+    position: {x: 8.75, y: 0, z: 15.75}
+    yaw: -90
+  - saveId: COMPACT-TH_NINJA-S002
+    section: 7
+    position: {x: 9.25, y: 0, z: 15.75}
+    yaw: 90
+  - saveId: COMPACT-TH_DETECTIVE-S001
+    section: 7
+    position: {x: 8.75, y: 0, z: 17.47}
+    yaw: -90
+  - saveId: COMPACT-TH_DETECTIVE-S002
+    section: 7
+    position: {x: 9.25, y: 0, z: 17.47}
+    yaw: 90
+  - saveId: COMPACT-TH_SPOOKY-S001
+    section: 7
+    position: {x: 8.75, y: 0, z: 19.19}
+    yaw: -90
+  - saveId: COMPACT-TH_SPOOKY-S002
+    section: 7
+    position: {x: 9.25, y: 0, z: 19.19}
+    yaw: 90

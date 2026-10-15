@@ -1,0 +1,37 @@
+{
+  "scenario": "Full 1200-car collection, idle entrance, Medium, WebGL development player, same in-app Chromium tab, Unity Editor in Edit mode",
+  "canvas": {"width":1280,"height":682},
+  "before": {
+    "build":"ThemedSortingWebGL_Playable", "origin":"http://127.0.0.1:8194/",
+    "mode":"idle", "platform":"WebGLPlayer", "unity":"6000.3.22f1", "scene":"Level",
+    "samples":127, "seconds":10.07000732421875, "fps":12.611708641052246,
+    "averageFrameMs":79.2834701538086, "p95FrameMs":102,
+    "maxWorldObjects":1200, "maxDynamicBodies":0, "totalRecords":1200,
+    "loadedRendererComponents":19714, "enabledRendererComponents":15394,
+    "peakUnityAllocatedBytes":192587819, "drawCalls":34170, "wasmHeapBytes":663683072,
+    "startupRealtime":322.3710021972656
+  },
+  "after": {
+    "build":"CollectorShopWebGL", "origin":"http://127.0.0.1:8193/",
+    "mode":"idle", "platform":"WebGLPlayer", "unity":"6000.3.22f1", "scene":"Level",
+    "samples":150, "seconds":10.023000717163086, "fps":14.965578079223633,
+    "averageFrameMs":67.10000610351562, "p95FrameMs":72,
+    "maxWorldObjects":1200, "maxDynamicBodies":0, "totalRecords":1200,
+    "loadedRendererComponents":19888, "enabledRendererComponents":15568,
+    "peakUnityAllocatedBytes":192027340, "drawCalls":31336, "wasmHeapBytes":661520384,
+    "startupRealtime":18.070999145507812
+  },
+  "interruptedFirstAfterSample": {
+    "samples":116, "seconds":40.12300109863281, "fps":2.8911097049713135,
+    "averageFrameMs":346.0431213378906, "p95FrameMs":87.99999237060547,
+    "maxWorldObjects":1200, "maxDynamicBodies":0, "totalRecords":1200,
+    "loadedRendererComponents":19888, "enabledRendererComponents":15568,
+    "peakUnityAllocatedBytes":193907935, "drawCalls":31328, "wasmHeapBytes":662372352,
+    "startupRealtime":173.39500427246094,
+    "excludedReason":"The ten-second probe spanned 40.12 seconds with an Editor state query during collection. Repeated without Editor calls or other application interaction; raw interrupted result retained."
+  },
+  "observedGameConsoleErrorsOrWarnings":[],
+  "freshHud":{"sorted":0,"total":1200,"designs":0,"designTotal":600},
+  "frameTimeRegressionObserved":false,
+  "limits":"Local entrance samples, not a whole-route benchmark or target-device guarantee. Renderer components increased by 174 for room styling. No distance hiding was added. The earlier 9.21 FPS recording ran alongside Editor Play mode and is not directly comparable. Rendering performance remains a substantial issue."
+}

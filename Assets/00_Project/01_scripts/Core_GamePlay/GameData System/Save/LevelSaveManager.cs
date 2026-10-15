@@ -147,6 +147,7 @@ public class LevelSaveManager : MonoBehaviour
         if (TinyRiders.ThemedCollectionSession.Instance != null)
         {
             data.themed = TinyRiders.ThemedCollectionSession.Instance.Capture();
+            data.completed = _storeCompleted;
             data.elapsedSeconds = _elapsedSeconds;
             return data;
         }

@@ -136,3 +136,109 @@ The inherited pause-menu helper checkbox still displays its untranslated `pause.
 The Car Collection editor window (`Tools > Tiny Riders > Review > Collection Navigator`) and the Play-mode panel provide theme search, previous/next theme, 15 individual car buttons, theme framing and a full overview. Existing flight and keyboard controls remain available. Navigation moves the view without hiding other cars. The runtime panel uses its own UI Toolkit assets, isolated from gameplay UI.
 
 `IntegrationEvidence/review_navigation_editor.json` and `review_navigation_runtime.json` pass: 600 active unique cars, all 600 individual focus views, 40 searchable theme buttons, previous/next/car/overview button actions, and 871 distant-car samples within the frustum beyond the former 85-unit cutoff across opposite collection views. Runtime frames advanced from 1 to 766 during the smoke check. Theme-list scrolling reaches its last entries, and the final composited panel was visually inspected in `Assets/IntegrationEvidence/review_navigation_runtime.png`. No new runtime errors remained after the initialization fix.
+
+### Current room: 600-design gameplay replacement (initial staged version)
+
+The original `Assets/00_Project/00_Scenes/Level.unity` now uses all 600 reviewed designs (15 shapes across 40 themes), with two physical copies per design and 1,200 sortable records. Its original room, lighting, player setup, movement, controls and upgrade references are retained. The old 525-car pile and model/color shelves are replaced with a 108-car mixed staging area and 80 theme shelves (1,440 slots). The bounded refill queue makes every design available twice. Each theme has two adjacent shelves, and the entrance remains clear.
+
+The compact catalog, item database and 1,800 world/held/shelf prefabs live under `Assets/TinyRiders/Gameplay/Compact`. They reference the reviewed source artwork without changing it. Shelf colliders support taking cars back individually. Source-art and larger-showroom preservation checks are in `compact_protected_assets_check.json`; all three protected assets remain unchanged. The original Level backup is `IntegrationEvidence/Level_before_compact_collection.unity`.
+
+Main-menu Play and world progression now load Level. The collection save uses `TinyRiders.Compact.Collection.v1`, with a separate player-position key. Existing legacy-store and larger-showroom saves are retained. The HUD and completion/replay flow use the actual 1,200-car/600-design counts. Instantiated cars retain their meshes throughout the room without distance hiding or silhouette replacement. Shelf batching preserves the original shelf geometry.
+
+Validation: `compact_collection_audit.json` passes all 600 designs, 1,800 wrappers, per-slot clearance, 80 shelf IDs, 1,440 slots, and initial diversity across all 40 themes and 15 shapes. `compact_collection_tests.json` passes the isolated gameplay scenario: pickup/drop/repick, take-back, wrong-theme rejection, all 15 Egyptian shapes, a full shelf and overflow, real placements across all 40 themes, scene reload, replay, and main-menu loading. Queue coverage checks all 1,200 records and 600 designs; the final completion threshold/UI/save check injects sorted states after draining the real queue rather than rendering all 1,200 placements.
+
+The WebGL development build succeeded with zero errors and six warnings in 345 seconds, then passed gzip round-trip verification. The normal initializer/menu/loading/Level sequence is included. The 58.44 MB local package is served at `http://127.0.0.1:8190/`. Browser verification confirmed the menu Play route, 0/1,200 and 0/600 HUD counts, movement, and real E pickup of Moon Magic C013 with its themed held artwork and label. No game runtime errors were observed; this in-app browser reports a mouse-capture warning, while drag look and keyboard input worked. The ten-second local idle sample recorded about 80 fps; this is not a target-device performance guarantee. Evidence: `compact_browser_validation.json`, `webgl_build_final.json`, and `Assets/IntegrationEvidence/compact_gameplay.png`.
+
+### Current room: entire collection present at startup (latest)
+
+The staged 108-car behavior above is superseded. Level now creates all **1,200 physical cars at startup: 600 varieties, exactly two copies each**. No records remain pending and no timed refill runs in this mode. Reload restores unsorted world cars, held cars and sorted progress without duplicate IDs; existing saves keep their progress. The larger showroom retains its separate settings and save.
+
+The bounded 31.5-by-27-unit staging grid uses 0.75-unit spacing and two-meter central walking aisles. The room and perimeter racks remain unchanged. Gameplay and Cinemachine cameras persist a 10,000-unit far plane with occlusion culling off and zero layer-distance limits. Distance-hiding components are absent; the live check found all 14,644 car renderer components enabled.
+
+`IntegrationEvidence/full_starting_pile_tests.json` passes the complete gameplay regression, including all 600 varieties twice on startup, no replacement after pickup, opposite-room distance checks, correct/wrong shelf placement, reload, replay and the main-menu Play route. The completion threshold remains a synthetic state test after removing live cars; it does not claim 1,200 manual placements. `IntegrationEvidence/compact_collection_audit.json` passes all 600 designs, 1,800 wrappers and 1,440 shelf slots.
+
+The updated WebGL build succeeded with zero errors and six inherited warnings in 286.58 seconds. The gzip package is 58,508,201 bytes with verified round-trip decoding. Browser launch through the normal menu showed 0/1,200 sorted and 0/600 designs, with instrumentation confirming 1,200 world cars and no game console errors or warnings. The ten-second local browser sample measured 9.21 fps and 34,170 draw calls while Unity Editor also ran the full collection. This exposes a substantial rendering cost in this development environment; no distance hiding was introduced to reduce it. Earlier 108-car performance readings do not describe this configuration.
+
+Latest evidence: `IntegrationEvidence/full_starting_pile_runtime.json`, `webgl_build_final.json`, `webgl_package.json`, and `Assets/IntegrationEvidence/full_starting_pile.png`. The updated local build is served at `http://localhost:8190/`.
+
+### Collector toy shop room redesign (2026-10-15)
+
+The active `Level` is now a connected 36 × 44 collector shop (1,584 square units, 20.8% smaller than the previous 40 × 50 room). Eight numbered departments occupy two columns of four. A four-unit central aisle, cross aisles, shelf approach lanes and a continuous perimeter route connect the displays. All 80 original shelf identities and 1,440 slot identities remain. The source car/shelf geometry, car scales, movement, reach and sorting rules are retained.
+
+The room uses matte warm-gray flooring, ivory walls, pale oak trim, teal details, soft lights, section accent colors, readable theme headers, car posters, boxed stock and a collector counter. The entrance faces the main aisle. The directory and existing upgrade interaction occupy the front arrival area. The design takes the gradual stock-to-collection transformation from [Sort Them Ducks](https://store.steampowered.com/app/4992070/Sort_Them_Ducks/) and the readable arrangements of [A Little to the Left](https://store.steampowered.com/app/1629520/A_Little_to_the_Left/) as references; their artwork is not used.
+
+`CollectorRoomLayout.asset` stores dimensions, spawn, revision, section/theme assignments, shelf poses and sorting bounds. `Tools > Tiny Riders > Collector Shop > Apply Room Redesign` applies it through Unity and validates the deterministic pile before editing geometry. The existing compact-room builder delegates to this layout when configured. `CollectorPile.json` contains all 1,200 physical IDs, distributed as eight mixed areas of 150 (38–40 themes per area). Two shallow layers keep all stock reachable. There is no refill queue or distance hiding.
+
+Revision 2 extends the existing pile migration. Old unsorted world cars move to the new baked poses once; held IDs, sorted shelf/slot records, discoveries and completed themes survive. Old player positions reset to the new spawn; current-revision positions load normally. The collection key remains `TinyRiders.Compact.Collection.v1`. Currency and upgrade keys are unchanged. Protected larger-showroom/review scenes and the source catalog match their recorded hashes. The pre-redesign Level snapshot is retained at `IntegrationEvidence/CollectorRoom/Level_before_20261015_182309.unity`.
+
+Validation evidence in `IntegrationEvidence/CollectorRoom`:
+
+- `layout_audit.json`: 600 designs, exactly two copies each, 1,200 unique physical IDs, 80 shelves, 1,440 slots, in-bounds car geometry and no initial car AABB overlaps. Every car fits a sorting area and clears the central aisle.
+- `gameplay_access_audit.json`: 650 capsule-clearance samples pass at 1.8-unit width. All 1,440 slots are within the existing three-unit reach. All 1,200 settled world cars are reachable in two progressive raycast passes. This simulates removal of pick colliders, restoring them afterward; it does not claim 1,200 manual pickups.
+- `walk_validation.json`: the existing 0.3-radius, 1.75-height player motor traversed all 12 main, perimeter, shelf and cross routes without jumping. Test movement was fed through the existing movement-stick input because unfocused Editor keyboard injection did not reach the action map. The test restored the input component afterward.
+- `shelf_interactions.json`: actual pickup, placement and take-back passed at every one of the 80 shelves; all 1,200 cars remained afterward.
+- `gameplay_tests.json`: the complete regression passed, including fresh counts, opposite-room visibility, wrong-theme/occupied-slot rejection, a full shelf and overflow, pickup/drop/take-back, real sorting across 40 themes, reload, partially sorted/held save migration, second reload without relocation, replay and main-menu loading. Completion counters/UI/save flags use injected sorted states after physical-car removal, not 1,200 manual shelf placements.
+- `upgrades.json`: all seven purchase/spend checks pass; original upgrade preferences and the test wallet balance are restored.
+- `route_comparison.json`: 320 representative aisle-to-shelf route calculations give a median of 30.83 units before and 20.05 after, a 34.96% reduction. This is an aisle-constrained geometric comparison, not a timed human study.
+
+Entrance, junction, sorting-area, overhead and an actual 18-car completed-shelf capture are under `Assets/IntegrationEvidence/CollectorRoom`. The 720p captures include the existing HUD; 1080p camera renders check native-resolution room/sign readability without overlay UI. The overhead capture hides the ceiling only for the capture. These captures use isolated test progress, so some HUD discovery counters reflect validation activity.
+
+The new WebGL development build at `Builds/CollectorShopWebGL` succeeded in 289.34 seconds with zero errors and six warnings (`webgl_build.json`). The normal initializer/menu/loading/Level route was verified in the browser, showing 0/1,200 sorted and 0/600 designs. The measured game console returned no errors or warnings.
+
+`browser_comparison.json` compares the full collection at the entrance in the same in-app Chromium tab, Medium detail, 1280 × 682 canvas and Unity Editor in Edit mode:
+
+| Measurement | Previous room | Collector shop |
+| --- | ---: | ---: |
+| Physical world cars / total records | 1,200 / 1,200 | 1,200 / 1,200 |
+| Sample duration | 10.07 s | 10.02 s |
+| Average FPS | 12.61 | 14.97 |
+| Average frame time | 79.28 ms | 67.10 ms |
+| 95th percentile frame time | 102 ms | 72 ms |
+| Draw calls | 34,170 | 31,336 |
+| Peak Unity allocation | 192.59 MB | 192.03 MB |
+| WASM heap buffer | 663.68 MB | 661.52 MB |
+
+No frame-time regression was observed in this comparison. An initial redesigned-room probe spanned 40.12 seconds while an Editor state query ran and reported 2.89 FPS; its raw values are retained as an interrupted sample. The repeat ran without Editor calls or other application interaction. These are short local entrance samples, not a whole-route benchmark or target-device guarantee. The earlier 9.21 FPS recording included simultaneous Editor Play mode. Room changes do **not** solve the substantial rendering cost of the full collection. The 174 additional enabled renderer components belong to the room styling; no car distance hiding was introduced.
+
+Play the redesigned build at `http://127.0.0.1:8193/`. The localhost server is running. To restart it from this project: `C:\Python314\python.exe IntegrationEvidence/serve_webgl.py CollectorShopWebGL 8193`. The previous build remains intact. The build script is `IntegrationEvidence/CollectorRoom/BuildCollectorWeb.cs`; the editor room tool can reapply the saved layout. Unity is left in Edit mode on the saved Level with normal background settings restored. Existing user progress was preserved through isolated test saves.
+
+## Compact crowded shop — revision 3 (2026-10-15)
+
+The active `Level` is now 24 × 26 units with a 3.2-unit ceiling: 624 square units, 60.6% less than the preceding 36 × 44 shop. It retains the original player and car scales, movement, reach, controls, 600 designs, two physical copies per design, 80 shelf IDs and 1,440 slot IDs. Forty-eight shelves wrap clockwise around the perimeter; thirty-two form two low, back-to-back islands. Theme pairs share an adjacent display face. The original eight category groups remain in the wall directory and compact category markers.
+
+The four-unit aisle, sorting mats and department pile boundaries are removed. The floor-wide, mixed stock uses seeded full yaw, varied tilt and occasional side-resting poses, then an editor-only physics settlement. The entrance landing and shelf approaches remain clear. Cars occupy the routes between displays; player collision is ignored only for loose themed stock in this configured scene, both in the KCC sweep predicate and in PhysX capsule contacts. Proximity no longer wakes stock in this mode. Pickup/drop still wakes surrounding cars and resting bodies freeze again, including near the player.
+
+The room configuration, baked poses and materials are under `Assets/TinyRiders/Gameplay/Compact/CrowdedRoom`. `CrowdedCollectorRoomBuilder` is reached from the existing compact room tool. Architecture dimensions come from the configuration. The builder validates a candidate before replacing the scene layout and saves a pre-change copy. The first backup is `IntegrationEvidence/CrowdedRoom/Level_before_20261015_193530.unity`. The previous room assets and separate larger showroom remain available.
+
+Save migration advances the existing pile revision to 3, relocates only unsorted stock, preserves held and sorted identities, and resets an old player position once. The collection save key, currency and upgrade saves are unchanged. A fresh or migrated entry looks down 12 degrees toward the nearby stock; normal saved camera poses restore afterward.
+
+### Validation evidence
+
+Evidence is under `IntegrationEvidence/CrowdedRoom`:
+
+- `layout_audit.json`: 1,200 unique physical IDs, 600 designs with exactly two copies, 80 shelves, 1,440 slots, 48 perimeter / 32 island shelves, revision 3.
+- `physics_bake.json` and `contact_validation.json`: 1,200 settled bodies after 181 fixed simulation steps; all 1,200 have a direct or connected support contact. Bake colliders are conservative oriented boxes derived from each design's actual rendered mesh bounds, rather than a single nominal car size or triangle-exact meshes. PhysX resting contact tolerance is 12 mm (measured maximum 11.355 mm); support checks use a 20 mm envelope. Persisted poses are checked again before applying or building.
+- `access_audit.json`: all 2,045 standable floor samples connect to the entrance using the existing 0.3-radius capsule; all shelf approaches and 1,440 slot reach distances pass. Progressive pickup raycasts reach all 1,200 cars. This is a geometry/raycast access check, not 1,200 simulated hand animations. Highest rendered car point is 0.815 units; 1,199 cars stay below 0.8 units.
+- `walk_validation.json`: twelve actual input-driven longitudinal and cross-room traversals pass without jumping, with **0.0 units maximum car displacement**. The initial test exposed proximity waking and PhysX pushing; the saved result is the corrected retest.
+- `shelf_interactions.json`: actual collect/place/take-back at all 80 shelves, returning to zero sorted and 1,200 live cars.
+- `gameplay_tests.json` and `gameplay_test_details.txt`: the collection regression passed in 54.49 seconds. It checks pickup/drop/repick identity, wrong-theme/occupied/full-shelf rejection, real sorting across all forty themes, persistence, partially sorted/held migration, second reload, completion/replay and menu-to-Level loading. Completion uses injected sorted states after real interaction coverage rather than manually sorting all 1,200 copies.
+- `upgrades.json`: all seven upgrade purchase paths pass with test wallet and preference restoration.
+
+`Assets/IntegrationEvidence/CrowdedRoom` contains entrance, overhead, floor-pile and shelf-approach views at 720p and 1080p, plus a filled 18-car shelf. The entrance 720p image includes the HUD; camera captures show room/sign detail without overlay UI. Only the overhead capture hides the ceiling. Test saves were isolated from existing progress and cleaned up afterward.
+
+### WebGL build and comparison
+
+`Builds/CrowdedCollectorWebGL` built successfully in 226.32 seconds: zero errors, six warnings. The normal language/menu/loading/Level path was verified in the browser, showing 0/1,200 sorted and 0/600 designs. The game browser console returned no errors or warnings.
+
+`IntegrationEvidence/CrowdedRoom/browser_comparison.json` records the preceding 36 x 44 room and the new 24 x 26 room in the same Chromium tab, Medium detail, 1280 x 682 canvas, Editor idle in Edit mode. Both views retain all 1,200 cars and use the same 24-body activation probe. Dense-view movement is 900 ms forward and 450 ms left from each entrance. Cameras use each layout's intended entrance pitch, so this compares the playable scenes rather than identical world-space framing.
+
+| Ten-second sample | Previous entrance | Compact entrance | Previous pile view | Compact pile view |
+| --- | ---: | ---: | ---: | ---: |
+| Average FPS | 14.87 | 15.15 | 17.28 | 20.83 |
+| Average frame time | 67.69 ms | 66.42 ms | 58.18 ms | 48.21 ms |
+| 95th percentile | 75 ms | 76 ms | 67 ms | 57 ms |
+| Draw calls | 31,329 | 29,219 | 25,488 | 20,038 |
+
+No average frame-time regression was observed in either view. Entrance p95 changed by 1 ms; Unity allocation increased about 2.35 MB, while the WASM heap decreased about 2.23 MB. An interrupted background-tab sample and ceiling-facing sample were discarded; repeated screenshot observations kept the accepted dense-view samples rendering continuously. These are short local comparisons, not a target-device or whole-route guarantee. Full-collection rendering remains expensive and is **not solved** by this redesign.
+
+Play at `http://127.0.0.1:8195/`. Restart the local server with `C:\Python314\python.exe IntegrationEvidence/serve_webgl.py CrowdedCollectorWebGL 8195`. The previous build remains intact, and temporary benchmark host modifications were removed. Unity is left in Edit mode on the saved Level. The report's earlier 36 x 44 layout sections describe the superseded revision 2 implementation.

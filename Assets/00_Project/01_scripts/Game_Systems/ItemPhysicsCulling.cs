@@ -19,10 +19,6 @@ public class ItemPhysicsCulling : MonoBehaviour
     [Tooltip("Extra distance before a resting item turns kinematic; stops flicker at the edge.")]
     [SerializeField, Min(0f)] private float freezeBuffer = 2f;
 
-    [Header("Kinematic")]
-    [Tooltip("Outside the radius, a item slower than this (or asleep) turns kinematic.")]
-    [SerializeField, Min(0f)] private float kinematicSpeed = 0.1f;
-
     [Tooltip("Radius around a picked-up item whose neighbours are woken so they fall.")]
     [SerializeField] private float wakeRadius = 0.8f;
 
@@ -32,6 +28,11 @@ public class ItemPhysicsCulling : MonoBehaviour
     private readonly List<WorldItemBase> _dynamic = new List<WorldItemBase>();
     private readonly List<(float distSqr, WorldItemBase item)> _candidates = new List<(float, WorldItemBase)>();
     private readonly Collider[] _contactHits = new Collider[128];
+    private readonly Queue<Vector3> _pendingWake = new Queue<Vector3>();
+
+    private bool WalkThroughStock => TinyRiders.ThemedCollectionSession.Instance is { } session &&
+        session.gameObject.scene == gameObject.scene && session.roomLayout != null &&
+        session.roomLayout.walkThroughLooseCars;
 
     /// <summary> Number of items currently dynamic. </summary>
     public int DynamicCount => _dynamic.Count;
@@ -56,14 +57,19 @@ public class ItemPhysicsCulling : MonoBehaviour
     {
         if (_instance == null) return;
 
-        Collider[] hits = Physics.OverlapSphere(position, _instance.wakeRadius, ~0, QueryTriggerInteraction.Ignore);
+        _instance._pendingWake.Enqueue(position);
+    }
+
+    private void WakeNeighbours(Vector3 position)
+    {
+        Collider[] hits = Physics.OverlapSphere(position, wakeRadius, ~0, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < hits.Length; i++)
         {
             Rigidbody body = hits[i].attachedRigidbody;
             if (body == null) continue;
             WorldItemBase item = body.GetComponent<WorldItemBase>();
             if (item == null || item.ThrowControlled) continue;
-            if (item.Frozen) _instance.TryMakeDynamic(item, position, true);
+            if (item.Frozen) TryMakeDynamic(item, position, true);
             if (!body.isKinematic) body.WakeUp();
         }
     }
@@ -77,24 +83,30 @@ public class ItemPhysicsCulling : MonoBehaviour
         if (!_instance._dynamic.Contains(item)) _instance._dynamic.Add(item);
     }
 
-    private void Update()
-    {
-        if (player == null) return;
-
-        Vector3 center = player.position;
-        UnfreezeInRadius(center);
-        UpdateDynamic(center);
-    }
-
     private void FixedUpdate()
     {
         if (player == null) return;
 
+        Vector3 center = player.position;
+        while (_pendingWake.Count > 0) WakeNeighbours(_pendingWake.Dequeue());
+        if (!WalkThroughStock) UnfreezeInRadius(center);
+        UpdateDynamic(center);
+        ActivateContacts();
+    }
+
+    private void ActivateContacts()
+    {
+        if (player == null || WalkThroughStock) return;
+
         // The motor cannot push a kinematic car. Activate everything touching its
         // capsule before KCC's FixedUpdate, including when the normal budget is full.
-        Vector3 center = player.position;
-        int count = Physics.OverlapCapsuleNonAlloc(center + Vector3.down * 0.65f,
-            center + Vector3.up * 0.8f, 1.15f, _contactHits, ~0, QueryTriggerInteraction.Ignore);
+        var motor = Player.Instance != null ? Player.Instance.Motor : null;
+        if (motor == null) return;
+        var capsule = motor.Capsule;
+        Vector3 center = capsule.transform.TransformPoint(capsule.center);
+        Vector3 axis = capsule.transform.up * Mathf.Max(0, capsule.height * .5f - capsule.radius);
+        int count = Physics.OverlapCapsuleNonAlloc(center - axis,
+            center + axis, capsule.radius + .15f, _contactHits, ~0, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < count; i++)
         {
             Rigidbody body = _contactHits[i].attachedRigidbody;
@@ -102,7 +114,6 @@ public class ItemPhysicsCulling : MonoBehaviour
             WorldItemBase item = body.GetComponent<WorldItemBase>();
             if (item == null || item.ThrowControlled) continue;
             if (item.Frozen) TryMakeDynamic(item, center, true);
-            if (!body.isKinematic) body.WakeUp();
         }
     }
 
@@ -134,13 +145,12 @@ public class ItemPhysicsCulling : MonoBehaviour
     {
         float freezeDist = activeRadius + freezeBuffer;
         float freezeSqr = freezeDist * freezeDist;
-        float speedSqr = kinematicSpeed * kinematicSpeed;
 
         for (int i = _dynamic.Count - 1; i >= 0; i--)
         {
             WorldItemBase item = _dynamic[i];
             Rigidbody body = item != null ? item.Body : null;
-            if (body == null || item.Frozen)
+            if (body == null || !item.IsRegistered || item.Frozen)
             {
                 SwapRemove(i);
                 continue;
@@ -158,7 +168,9 @@ public class ItemPhysicsCulling : MonoBehaviour
                 item.Moved = true;
             }
 
-            bool resting = sleeping || (lin <= speedSqr && ang <= speedSqr);
+            // A slow body may be at the apex of a fall or briefly supported by an
+            // unsettled neighbour. Only PhysX sleep establishes a settled pose.
+            bool resting = sleeping;
             if (!resting) continue;
 
             if (item.WasMoving)
@@ -167,7 +179,7 @@ public class ItemPhysicsCulling : MonoBehaviour
                 LevelSaveManager.MarkDirty(); // it settled somewhere new
             }
 
-            if ((body.position - center).sqrMagnitude < freezeSqr) continue;
+            if (!WalkThroughStock && (body.position - center).sqrMagnitude < freezeSqr) continue;
 
             SetKinematic(item);
             SwapRemove(i);
@@ -180,35 +192,16 @@ public class ItemPhysicsCulling : MonoBehaviour
         Rigidbody body = item.Body;
         if (body == null || !item.Frozen) return;
 
-        if (_dynamic.Count >= maxDynamic)
+        if (_dynamic.Count >= maxDynamic && !force)
         {
-            int evict = -1;
-            float farthest = force ? -1f : (item.RestPosition - center).sqrMagnitude;
-            for (int i = 0; i < _dynamic.Count; i++)
-            {
-                WorldItemBase other = _dynamic[i];
-                Rigidbody otherBody = other != null ? other.Body : null;
-                if (otherBody == null || other.ThrowControlled || otherBody.isKinematic) continue;
-                if (!otherBody.IsSleeping() &&
-                    (otherBody.linearVelocity.sqrMagnitude > 0.01f || otherBody.angularVelocity.sqrMagnitude > 0.01f)) continue;
-                float distance = (otherBody.position - center).sqrMagnitude;
-                if (distance <= farthest) continue;
-                farthest = distance;
-                evict = i;
-            }
-            if (evict >= 0)
-            {
-                SetKinematic(_dynamic[evict]);
-                SwapRemove(evict);
-            }
-            else if (!force || TinyRiders.ThemedCollectionSession.Instance != null) return;
+            return; // Contact and support-loss activation may exceed the soft budget.
         }
 
         item.Frozen = false;
         body.isKinematic = false;
         if (force) body.WakeUp();
         else body.Sleep();
-        _dynamic.Add(item);
+        if (!_dynamic.Contains(item)) _dynamic.Add(item);
     }
 
     /// <summary> Freezes a resting item where it is. </summary>

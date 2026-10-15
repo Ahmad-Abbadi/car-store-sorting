@@ -489,7 +489,7 @@ public class ItemsHandler : MonoBehaviour
     {
         Rigidbody body = GetThrowBody(thrown);
         body.isKinematic = true; // hold still while the pull drives it
-        if (thrown.TryGetComponent(out WorldItemBase thrownItem)) thrownItem.ThrowControlled = true; // culling keeps off
+        if (thrown.TryGetComponent(out WorldItemBase thrownItem)) thrownItem.BeginPowerControl(this, true);
 
         if (throwPullDuration <= 0f)
         {
@@ -519,13 +519,14 @@ public class ItemsHandler : MonoBehaviour
     {
         if (thrown != null)
         {
-            LaunchThrown(body, GetThrowDirection(), force);
+            if (thrown.TryGetComponent(out WorldItemBase controlled))
+                controlled.EndThrowControl(GetThrowDirection().normalized * force, Random.insideUnitSphere * throwSpin);
+            else LaunchThrown(body, GetThrowDirection(), force);
             PlayThrowSFX();
 
             if (thrown.TryGetComponent(out WorldItemBase thrownItem))
             {
-                thrownItem.ThrowControlled = false;
-                ItemPhysicsCulling.Track(thrownItem); // culling freezes it once it rests
+                if (!thrownItem.ThrowControlled) ItemPhysicsCulling.Track(thrownItem);
             }
         }
 

@@ -52,7 +52,12 @@ public sealed class CarStoreUI : MonoBehaviour
         sections = FindObjectsByType<Section>(FindObjectsSortMode.None);
         shelves = FindObjectsByType<SortingShelf>(FindObjectsSortMode.None);
         save = FindFirstObjectByType<LevelSaveManager>();
-        if (themed) { Refresh(); yield break; }
+        if (themed)
+        {
+            Refresh();
+            if (TinyRiders.ThemedCollectionSession.Instance.completeStoreWhenSorted && save != null && save.StoreCompleted) ShowCompletion();
+            yield break;
+        }
         if (save != null && save.StoreCompleted) ShowCompletion();
         else if (SortingProgressTracker.Instance != null && SortingProgressTracker.Instance.Collected == 0)
         {
@@ -79,7 +84,12 @@ public sealed class CarStoreUI : MonoBehaviour
     private void OnProgress(int collected, int total)
     {
         Refresh();
-        if (TinyRiders.ThemedCollectionSession.Instance != null) return;
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            var session = TinyRiders.ThemedCollectionSession.Instance;
+            if (session.completeStoreWhenSorted && total > 0 && collected == total) StartCoroutine(CheckCompletion());
+            return;
+        }
         if (total == 525 && collected == total) StartCoroutine(CheckCompletion());
     }
 
@@ -94,6 +104,12 @@ public sealed class CarStoreUI : MonoBehaviour
     private IEnumerator CheckCompletion()
     {
         yield return new WaitForSeconds(0.6f); // wait for the final jump to settle
+        var session = TinyRiders.ThemedCollectionSession.Instance;
+        if (session != null)
+        {
+            if (shownComplete || !session.completeStoreWhenSorted || session.Total == 0 || session.Sorted != session.Total) yield break;
+            LevelSaveManager.MarkStoreCompleted(); ShowCompletion(); yield break;
+        }
         if (shownComplete || shelves == null || shelves.Length != 75) yield break;
         SortingProgressTracker progress = SortingProgressTracker.Instance;
         if (progress == null || progress.Total != 525 || progress.Collected != 525) yield break;
@@ -140,6 +156,8 @@ public sealed class CarStoreUI : MonoBehaviour
         if (session != null)
         {
             overall.text = $"Sorted {session.Sorted} / {session.Total}  ·  Designs {session.UniqueDiscovered} / {System.Linq.Enumerable.Count(session.ActiveDefinitions)}";
+            if (finishText != null) finishText.text = $"COLLECTION COMPLETE\n{session.Sorted} cars sorted\n{session.UniqueDiscovered} unique designs · {session.catalog.themes.Length} themes";
+            if (replayLabel != null) replayLabel.text = "Play again";
             nearby.fontSize = 19;
             directoryTitle.text = "THEME COLLECTIONS";
             var held = Player.Instance?.ItemHandler?.CurrentEquipped;

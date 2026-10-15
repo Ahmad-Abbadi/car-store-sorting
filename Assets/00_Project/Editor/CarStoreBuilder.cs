@@ -42,6 +42,11 @@ public static class CarStoreBuilder
     [MenuItem("Tools/Car Store/Generate Complete Store")]
     public static void Generate()
     {
+        if (System.IO.File.Exists(CompactCollectionBuilder.CatalogPath))
+        {
+            CompactCollectionBuilder.Build();
+            return;
+        }
         EnsureFolder(Root);
         EnsureFolder(Root + "/Items");
         EnsureFolder(Root + "/Prefabs");
@@ -163,13 +168,11 @@ public static class CarStoreBuilder
             SerializedObject serialized = new SerializedObject(world);
             serialized.FindProperty("data").objectReferenceValue = item;
             serialized.ApplyModifiedPropertiesWithoutUndo();
-            BoxCollider collider = root.AddComponent<BoxCollider>();
-            collider.center = new Vector3(0, 0.16f, 0);
-            collider.size = new Vector3(0.42f, 0.28f, 0.42f);
+            TinyRiders.LooseCarPhysics.Fit(root.AddComponent<CapsuleCollider>(),
+                new Bounds(new Vector3(0, .16f, 0), new Vector3(.42f, .28f, .58f)));
             Rigidbody body = root.AddComponent<Rigidbody>();
             body.isKinematic = physics;
-            body.mass = 0.2f;
-            body.interpolation = RigidbodyInterpolation.None;
+            TinyRiders.LooseCarPhysics.Configure(body);
         }
         else if (kind == "Held")
         {
@@ -455,6 +458,7 @@ public static class CarStoreBuilder
                     {
                         SerializedObject motor = new SerializedObject(player.Motor);
                         motor.FindProperty("InteractiveRigidbodyHandling").boolValue = true;
+                        motor.FindProperty("SimulatedCharacterMass").floatValue = 60f;
                         motor.FindProperty("RigidbodyInteractionType").enumValueIndex =
                             (int)KinematicCharacterController.RigidbodyInteractionType.SimulatedDynamic;
                         motor.FindProperty("AllowSteppingOnDynamicRigidbodies").boolValue = false;
@@ -534,12 +538,11 @@ public static class CarStoreBuilder
                             (float)(random.NextDouble() * 50 - 25),
                             (float)(random.NextDouble() * 360),
                             (float)(random.NextDouble() * 50 - 25));
-                        BoxCollider box = proxy.AddComponent<BoxCollider>();
-                        box.center = new Vector3(0, 0.16f, 0);
-                        box.size = new Vector3(0.42f, 0.28f, 0.42f);
+                        CapsuleCollider box = proxy.AddComponent<CapsuleCollider>();
+                        TinyRiders.LooseCarPhysics.Fit(box, new Bounds(new Vector3(0, .16f, 0), new Vector3(.42f, .28f, .58f)));
                         box.sharedMaterial = grip;
                         Rigidbody body = proxy.AddComponent<Rigidbody>();
-                        body.mass = 0.2f;
+                        TinyRiders.LooseCarPhysics.Configure(body);
                         bodies[index++] = body;
                 }
                 for (int step = 0; step < 75; step++) physicsScene.Simulate(0.02f);

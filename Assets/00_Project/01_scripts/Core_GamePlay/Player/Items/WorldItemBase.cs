@@ -81,6 +81,7 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
     private bool[] _authoredTrigger;
     private Tween _powerTween;
     private readonly object _powerOutlineKey = new object(); // separate from the hover outline
+    private readonly Collider[] _releaseHits = new Collider[128];
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics() => AllItems.Clear();
@@ -91,6 +92,12 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         _model = GetComponentInChildren<MeshRenderer>();
         if (_visualGroup == null) ItemDetail.ApplyTo(_model); // the old single-mesh item path
         Body = GetComponent<Rigidbody>();
+        // These native solver properties are not serialized in Rigidbody prefabs.
+        if (Body != null && TryGetComponent<CapsuleCollider>(out var capsule))
+        {
+            TinyRiders.LooseCarPhysics.Configure(Body);
+            capsule.contactOffset = .002f;
+        }
         Frozen = Body != null && Body.isKinematic; // prefab items start kinematic
         RestPosition = transform.position;
         ShowHint(false);
@@ -118,6 +125,9 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         // can propagate through the pile.
         if (Body == null || Body.isKinematic || Body.IsSleeping() ||
             collision.relativeVelocity.sqrMagnitude < 0.25f) return;
+        // Landing on the floor is not an impact on stock. Waking a radius on
+        // every landing repeatedly disturbs cars that were already settled.
+        if (collision.collider.GetComponentInParent<WorldItemBase>() == null) return;
         if (collision.contactCount > 0)
             ItemPhysicsCulling.WakeAround(collision.GetContact(0).point);
     }
@@ -127,6 +137,7 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         RemoveFromAll();
         SetOutline(false);
         ClearPowerControl();
+        _releaseImpulse = _releaseTorque = Vector3.zero;
         ItemChunkRenderer.Unregister(ChunkMember);
         ChunkMember = null;
         LevelSaveManager.MarkDirty();
@@ -136,6 +147,8 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
     internal void BeginPowerControl(object owner, bool asTrigger)
     {
         bool wasControlled = PowerOwner != null;
+        _releasePending = false;
+        _releaseImpulse = _releaseTorque = Vector3.zero;
         PowerOwner = owner;
         KillPowerTween(); // the old owner sees it lost control
 
@@ -148,7 +161,9 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
             if (Body != null) Body.isKinematic = true;
         }
 
-        SetCollidersTrigger(asTrigger);
+        // Scripted flight must not inject kinematic impulses into the pile.
+        // Pick queries include triggers, so floating cars remain selectable.
+        SetCollidersTrigger(true);
     }
 
     /// <summary> Stores the tween driving this item, killed if another power takes over. </summary>
@@ -159,6 +174,8 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
     {
         if (PowerOwner == null) return;
 
+        _releaseSpeed = dropSpeed;
+        if (!TryFindReleasePose()) return; // Retry next physics step if fully enclosed.
         ClearPowerControl();
         Moved = true;
         if (Body == null) return;
@@ -166,7 +183,59 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         Body.isKinematic = false;
         Body.WakeUp();
         Body.linearVelocity = Vector3.down * dropSpeed; // still bodies get frozen mid-air by culling
+        Body.angularVelocity = Vector3.zero;
+        Body.AddForce(_releaseImpulse, ForceMode.Impulse);
+        Body.AddTorque(_releaseTorque, ForceMode.Impulse);
+        _releaseImpulse = _releaseTorque = Vector3.zero;
         ItemPhysicsCulling.Track(this); // culling freezes it once it lands
+    }
+
+    private bool _releasePending;
+    private float _releaseSpeed;
+    private Vector3 _releaseImpulse, _releaseTorque;
+
+    internal void EndThrowControl(Vector3 impulse, Vector3 torque)
+    {
+        _releaseImpulse = impulse;
+        _releaseTorque = torque;
+        EndPowerControl(0f);
+    }
+
+    private void FixedUpdate()
+    {
+        if (_releasePending) EndPowerControl(_releaseSpeed);
+    }
+
+    private bool TryFindReleasePose()
+    {
+        var capsule = GetComponent<CapsuleCollider>();
+        if (capsule == null) return true;
+        Vector3 original = transform.position;
+        Vector3 position = original;
+        for (int pass = 0; pass < 16; pass++)
+        {
+            bool clear = true;
+            int count = Physics.OverlapSphereNonAlloc(position + transform.rotation * capsule.center,
+                capsule.height * .5f + .05f, _releaseHits, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                Collider other = _releaseHits[i];
+                if (other.attachedRigidbody == Body || other.transform.IsChildOf(transform)) continue;
+                if (!Physics.ComputePenetration(capsule, position, transform.rotation,
+                    other, other.transform.position, other.transform.rotation, out Vector3 direction, out float distance)) continue;
+                position += direction * (distance + .003f);
+                clear = false;
+            }
+            if (clear && count < _releaseHits.Length && (position - original).sqrMagnitude <= 1f)
+            {
+                transform.position = position;
+                if (Body != null) Body.position = position;
+                _releasePending = false;
+                return true;
+            }
+        }
+        _releasePending = true;
+        return false;
     }
 
     /// <summary> Shows or hides the power outline, separate from the hover one. </summary>
@@ -187,6 +256,7 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         if (PowerOwner == null) return;
 
         PowerOwner = null;
+        _releasePending = false;
         KillPowerTween();
         SetPowerOutline(false, default);
         SetCollidersTrigger(false);

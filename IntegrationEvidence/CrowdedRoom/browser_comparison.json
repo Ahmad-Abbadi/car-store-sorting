@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-15",
+  "platform": "WebGLPlayer",
+  "unity": "6000.3.22f1",
+  "canvas": [1280, 682],
+  "detail": "Medium",
+  "protocol": "Same in-app Chromium tab, sequential development builds, Editor idle in Edit mode. Full 1200 cars. SamplePilePhysics activates 24 bodies. Pause to fix camera, start sample, immediately Continue. Camera held for ten-second sample. Dense view uses 900ms W then 450ms A from entrance. Repeated screenshots prevent background tab suspension. Layouts use their intended entrance camera pitch. Short local samples, not target-device guarantees.",
+  "baselineEntrance": {"samples":149,"seconds":10.022003173828125,"fps":14.867287635803223,"averageFrameMs":67.69127655029297,"p95FrameMs":75,"drawCalls":31329,"maxWorldObjects":1200,"totalRecords":1200,"maxDynamicBodies":125,"loadedRendererComponents":19888,"enabledRendererComponents":15568,"peakUnityAllocatedBytes":193090039,"wasmHeapBytes":661520384},
+  "baselineDense": {"samples":173,"seconds":10.01104736328125,"fps":17.280908584594727,"averageFrameMs":58.17919158935547,"p95FrameMs":67,"drawCalls":25488,"maxWorldObjects":1200,"totalRecords":1200,"maxDynamicBodies":72,"loadedRendererComponents":19888,"enabledRendererComponents":15568,"peakUnityAllocatedBytes":193273686,"wasmHeapBytes":661520384},
+  "compactEntrance": {"samples":152,"seconds":10.035003662109375,"fps":15.146980285644531,"averageFrameMs":66.42105102539062,"p95FrameMs":76,"drawCalls":29219,"maxWorldObjects":1200,"totalRecords":1200,"maxDynamicBodies":83,"loadedRendererComponents":19739,"enabledRendererComponents":15419,"peakUnityAllocatedBytes":195444627,"wasmHeapBytes":659292160},
+  "compactDense": {"samples":209,"seconds":10.032997131347656,"fps":20.831262588500977,"averageFrameMs":48.20574188232422,"p95FrameMs":57,"drawCalls":20038,"maxWorldObjects":1200,"totalRecords":1200,"maxDynamicBodies":33,"loadedRendererComponents":19739,"enabledRendererComponents":15419,"peakUnityAllocatedBytes":195453190,"wasmHeapBytes":659292160},
+  "discardedBaselineDenseSuspended": {"samples":30,"seconds":21.81298828125,"fps":1.3753273487091064,"averageFrameMs":728.6333618164062,"p95FrameMs":79,"reason":"Background tab suspension; repeated with continuous screenshot observations."},
+  "browserErrorsAndWarnings": [],
+  "conclusion": "No average frame-time regression observed in either view. Entrance p95 differs by 1ms. Unity allocation grows about 2.35MB while WASM heap shrinks about 2.23MB. Rendering remains expensive; compaction does not solve it."
+}

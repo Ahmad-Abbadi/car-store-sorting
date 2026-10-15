@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController;
@@ -488,6 +488,15 @@ namespace KinematicCharacterController.Examples
 
         public bool IsColliderValidForCollisions(Collider coll)
         {
+            // Only loose cars in the active compact collection are walk-through.
+            // Their colliders still serve pickup rays and car-to-car physics.
+            var collection = TinyRiders.ThemedCollectionSession.Instance;
+            if (collection != null && collection.roomLayout != null && collection.roomLayout.walkThroughLooseCars &&
+                gameObject.scene == collection.gameObject.scene &&
+                coll.GetComponentInParent<WorldItemBase>() is WorldItemBase loose &&
+                loose.gameObject.scene == collection.gameObject.scene &&
+                loose.GetComponent<TinyRiders.ThemedWorldInstance>() != null)
+                return false;
             if (IgnoredColliders.Count == 0)
             {
                 return true;
@@ -523,6 +532,13 @@ namespace KinematicCharacterController.Examples
 
         public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
         {
+            // Loose stock must never become a step or a moving ground platform.
+            if (hitCollider.attachedRigidbody != null &&
+                hitCollider.attachedRigidbody.TryGetComponent<WorldItemBase>(out _))
+            {
+                hitStabilityReport.IsStable = false;
+                hitStabilityReport.ValidStepDetected = false;
+            }
         }
 
         protected void OnLanded()

@@ -12,6 +12,7 @@ public class PlayerSavePosition : MonoBehaviour
         public Vector3 position;
         public float yaw;
         public float pitch;
+        public int roomLayoutRevision;
     }
 
     [Tooltip("The player's component hub.")]
@@ -56,7 +57,8 @@ public class PlayerSavePosition : MonoBehaviour
             scene = gameObject.scene.name,
             position = player.Motor.TransientPosition,
             yaw = player.Look != null ? player.Look.Yaw : player.Motor.TransientRotation.eulerAngles.y,
-            pitch = player.Look != null ? player.Look.Pitch : 0f
+            pitch = player.Look != null ? player.Look.Pitch : 0f,
+            roomLayoutRevision = TinyRiders.ThemedCollectionSession.Instance?.roomLayout?.revision ?? 0
         };
 
         PlayerPrefs.SetString(saveKey, JsonUtility.ToJson(data));
@@ -84,7 +86,12 @@ public class PlayerSavePosition : MonoBehaviour
         if (player == null || player.Motor == null) return;
 
         string json = PlayerPrefs.GetString(saveKey, string.Empty);
-        if (string.IsNullOrEmpty(json)) return;
+        if (string.IsNullOrEmpty(json))
+        {
+            var initialLayout = TinyRiders.ThemedCollectionSession.Instance?.roomLayout;
+            if (initialLayout != null && player.Look != null) player.Look.SetLook(0, initialLayout.spawnPitch);
+            return;
+        }
 
         PositionSave data;
         try
@@ -104,6 +111,13 @@ public class PlayerSavePosition : MonoBehaviour
             return;
         }
 
+        var layout = TinyRiders.ThemedCollectionSession.Instance?.roomLayout;
+        if (layout != null && (data.roomLayoutRevision < layout.revision || !layout.Contains(data.position, .4f)))
+        {
+            data.position = layout.spawn;
+            data.yaw = 0;
+            data.pitch = layout.spawnPitch;
+        }
         player.Motor.SetPositionAndRotation(data.position, Quaternion.Euler(0f, data.yaw, 0f), true);
         player.Motor.BaseVelocity = Vector3.zero;
         if (player.Look != null) player.Look.SetLook(data.yaw, data.pitch);

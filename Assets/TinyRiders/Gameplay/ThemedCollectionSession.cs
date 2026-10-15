@@ -28,11 +28,20 @@ namespace TinyRiders
         public int seed = 73481;
         public float worldScale = 9f;
         [Min(1)] public int copiesPerDesign = 2;
-        [Range(12, 180)] public int visiblePileLimit = 72;
+        [Min(1)] public int visiblePileLimit = 72;
+        public bool spawnEntireCollectionAtStart;
         public Transform pileOrigin;
         public TextAsset pileLayout;
+        public CollectorRoomLayout roomLayout;
+        public bool LayoutMigrated { get; private set; }
+        private int authoredLayoutRevision = 1;
         public Vector3 pileSpacing = new Vector3(5.8f, 3f, 6.8f);
         public bool suspendPersistenceForTests;
+        public bool boundedPile;
+        public Vector2 pileAreaSize = new Vector2(10, 8);
+        public float pileCellSpacing = .75f;
+        public float pileCentralAisle;
+        public bool completeStoreWhenSorted;
         public string Message { get; private set; } = "Pick a car, then match its theme to a shelf";
         public event Action Changed;
         public ThemedSessionSave State { get; private set; } = new ThemedSessionSave();
@@ -51,7 +60,12 @@ namespace TinyRiders
         {
             if (item == null || Definition(item.Data) == null || pool.Count >= 24) return false;
             item.gameObject.SetActive(false);
-            if (item.Body != null) item.Body.isKinematic = true;
+            if (item.Body != null)
+            {
+                if (!item.Body.isKinematic)
+                { item.Body.linearVelocity = Vector3.zero; item.Body.angularVelocity = Vector3.zero; }
+                item.Body.isKinematic = true;
+            }
             item.GetComponent<ThemedWorldInstance>()?.SetId(null);
             pool.Add(item);
             return true;
@@ -69,9 +83,13 @@ namespace TinyRiders
             Instance = this;
             if (catalog == null) { Debug.LogError("Themed sorting catalog is missing", this); enabled = false; return; }
             State.seed = seed;
-            State.pileLayoutRevision = 1;
             if (pileLayout != null)
-                foreach (var pose in JsonUtility.FromJson<Layout>(pileLayout.text).placements) baked[pose.id] = pose;
+            {
+                var layout = JsonUtility.FromJson<Layout>(pileLayout.text);
+                authoredLayoutRevision = Mathf.Max(1, layout.revision);
+                foreach (var pose in layout.placements) baked[pose.id] = pose;
+            }
+            State.pileLayoutRevision = authoredLayoutRevision;
             RefreshContent();
             foreach (var s in FindObjectsByType<SortingShelf>(FindObjectsSortMode.None))
                 if (s.GetComponent<ThemeShelfBinding>() != null && !shelves.TryAdd(s.SaveId, s)) Debug.LogError("Duplicate shelf ID: " + s.SaveId);
@@ -87,6 +105,7 @@ namespace TinyRiders
                     if (!definitions.TryAdd(e.collectibleId, e)) Debug.LogError("Duplicate collectible ID: " + e.collectibleId);
                 }
             MergeContent();
+            if (ready && spawnEntireCollectionAtStart) Refill();
             Publish();
         }
         private System.Collections.IEnumerator Start()
@@ -124,6 +143,12 @@ namespace TinyRiders
         {
             if (item == null || string.IsNullOrEmpty(id) || !records.TryGetValue(id, out var r)) return;
             ThemedWorldInstance.Stamp(item, id); r.state = "world"; live[id] = item;
+            // KCC sweep filtering alone does not suppress PhysX contacts with its capsule.
+            if (roomLayout != null &&
+                item.gameObject.scene == gameObject.scene && Player.Instance != null &&
+                Player.Instance.gameObject.scene == gameObject.scene && Player.Instance.Motor != null)
+                foreach (var collider in item.GetComponentsInChildren<Collider>())
+                    Physics.IgnoreCollision(Player.Instance.Motor.Capsule, collider, roomLayout.walkThroughLooseCars);
             r.shelfId = null; r.slotId = null; LevelSaveManager.MarkDirty(); Publish();
         }
         public bool CanPlace(string id) => !string.IsNullOrEmpty(id) && records.TryGetValue(id, out var r) && r.state != "sorted";
@@ -165,10 +190,15 @@ namespace TinyRiders
             {
                 if (pair.Value == null) { live.Remove(pair.Key); continue; }
                 var t = pair.Value.transform;
-                if (t.position.y < -20f) { t.SetPositionAndRotation(pileOrigin.position + Vector3.up * 5, Quaternion.identity); if (pair.Value.Body != null) pair.Value.Body.isKinematic = true; }
+                if (t.position.y < -20f)
+                {
+                    var recovery = baked.TryGetValue(pair.Key, out var pose) ? pileOrigin.position + pose.position : pileOrigin.position + Vector3.up * 5;
+                    t.SetPositionAndRotation(recovery, Quaternion.identity);
+                    if (pair.Value.Body != null) pair.Value.Body.isKinematic = true;
+                }
                 records[pair.Key].position = t.position; records[pair.Key].euler = t.eulerAngles;
             }
-            Refill();
+            if (!spawnEntireCollectionAtStart) Refill();
         }
         private uint Rank(string id)
         {
@@ -176,6 +206,18 @@ namespace TinyRiders
         }
         private Vector3 PilePosition(int cell)
         {
+            if (boundedPile)
+            {
+                int columns = Mathf.Max(1, Mathf.FloorToInt(pileAreaSize.x / pileCellSpacing));
+                int rows = Mathf.Max(1, Mathf.FloorToInt(pileAreaSize.y / pileCellSpacing));
+                uint jitter = Rank("compact-cell" + cell);
+                float x = (cell % columns - (columns - 1) * .5f) * pileCellSpacing;
+                float z = (cell / columns % rows - (rows - 1) * .5f) * pileCellSpacing;
+                x += Mathf.Sign(x) * pileCentralAisle * .5f;
+                z += Mathf.Sign(z) * pileCentralAisle * .5f;
+                return pileOrigin.position + new Vector3(x, .05f, z) +
+                    new Vector3(((jitter & 255) / 255f - .5f) * .08f, 0, (((jitter >> 8) & 255) / 255f - .5f) * .08f);
+            }
             uint noise = Rank("cell" + cell);
             float angle = cell * 2.399963f;
             float radius = 25f + cell / 24 * 5.5f;
@@ -183,34 +225,66 @@ namespace TinyRiders
         }
         private void Refill()
         {
-            if (pileOrigin == null || live.Count >= visiblePileLimit) return;
+            int target = spawnEntireCollectionAtStart ? Total : visiblePileLimit;
+            if (pileOrigin == null || live.Count >= target) return;
             if (pileOrder == null || pileOrderSeed != State.seed)
             {
                 pileOrder = ThemedPileSequence.InstanceIds(definitions.Values, copiesPerDesign, State.seed)
                     .Select((id, index) => new { id, index }).ToDictionary(x => x.id, x => x.index);
                 pileOrderSeed = State.seed;
             }
-            foreach (var r in records.Values.Where(r => (r.state == "pending" || r.state == "world") &&
+            var candidates = records.Values.Where(r => (r.state == "pending" || r.state == "world") &&
                          !live.ContainsKey(r.id) && definitions.ContainsKey(r.collectibleId))
                          .OrderBy(r => r.state == "world" ? 0 : 1)
                          .ThenBy(r => pileOrder.TryGetValue(r.id, out var index) ? index : int.MaxValue)
-                         .ThenBy(r => r.id, StringComparer.Ordinal))
+                         .ThenBy(r => r.id, StringComparer.Ordinal).ToArray();
+            Queue<Vector3> freePositions = null;
+            if (boundedPile && candidates.Any(r => r.state == "pending"))
             {
-                if (live.Count >= visiblePileLimit) break;
+                freePositions = new Queue<Vector3>();
+                var reserved = live.Values.Where(w => w != null).Select(w => w.transform.position)
+                    .Concat(candidates.Where(r => r.state == "world").Select(r => r.position)).ToArray();
+                int cells = Mathf.Max(1, Mathf.FloorToInt(pileAreaSize.x / pileCellSpacing)) *
+                    Mathf.Max(1, Mathf.FloorToInt(pileAreaSize.y / pileCellSpacing));
+                float clearance = pileSpacing.x * pileSpacing.x * .65f;
+                for (int cell = 0; cell < cells; cell++)
+                {
+                    var position = PilePosition(cell);
+                    if (!reserved.Any(p => (p - position).sqrMagnitude < clearance)) freePositions.Enqueue(position);
+                }
+            }
+            foreach (var r in candidates)
+            {
+                if (live.Count >= target) break;
                 bool fresh = r.state == "pending";
-                int cell = 0;
-                // Never create an inaccessible copy underneath an existing car.
-                while (cell < visiblePileLimit * 3 && live.Values.Any(w => w != null &&
-                    (w.transform.position - PilePosition(cell)).sqrMagnitude < pileSpacing.x * pileSpacing.x * .65f)) cell++;
                 ThemedInstanceRecord pose = null;
                 bool hasBaked = fresh && baked.TryGetValue(r.id, out pose);
-                Vector3 p = hasBaked ? pileOrigin.position + pose.position : fresh ? PilePosition(cell) : r.position;
+                Vector3 p;
+                if (!fresh) p = r.position;
+                else if (hasBaked) p = pileOrigin.position + pose.position;
+                else if (boundedPile)
+                {
+                    if (freePositions.Count == 0) break;
+                    p = freePositions.Dequeue();
+                }
+                else
+                {
+                    int cell = 0;
+                    while (cell < visiblePileLimit * 3 && live.Values.Any(w => w != null &&
+                        (w.transform.position - PilePosition(cell)).sqrMagnitude < pileSpacing.x * pileSpacing.x * .65f)) cell++;
+                    p = PilePosition(cell);
+                }
                 Quaternion q = hasBaked ? Quaternion.Euler(pose.euler) : fresh ? Quaternion.Euler(0, (Rank(r.id) % 360), 0) : Quaternion.Euler(r.euler);
                 var source = definitions[r.collectibleId].sortingItem.WorldItem;
                 var item = pool.FirstOrDefault(w => w != null && w.Data == source.Data);
                 if (item != null)
                 {
                     pool.Remove(item); item.transform.SetPositionAndRotation(p, q);
+                    if (item.Body != null)
+                    {
+                        item.Body.isKinematic = true;
+                        item.Body.position = p; item.Body.rotation = q;
+                    }
                     item.Frozen = true; item.Moved = false; item.ThrowControlled = false; item.RestPosition = p;
                     item.gameObject.SetActive(true);
                 }
@@ -234,6 +308,7 @@ namespace TinyRiders
         {
             if (save == null) return;
             if (save.schema != 1) { Debug.LogWarning("Unsupported themed save retained without loading"); return; }
+            LayoutMigrated = roomLayout != null && save.pileLayoutRevision < authoredLayoutRevision;
             State = save; records.Clear(); discovered.Clear(); completed.Clear();
             foreach (string id in save.discovered ?? new List<string>()) discovered.Add(id);
             foreach (string id in save.completedThemes ?? new List<string>()) completed.Add(id);
@@ -241,11 +316,11 @@ namespace TinyRiders
                 if (r != null && !string.IsNullOrEmpty(r.id) && !records.ContainsKey(r.id))
                 {
                     // Upgrade only the old unsorted staging layout; held/sorted progress and identities remain intact.
-                    if (save.pileLayoutRevision < 1 && r.state == "world" && baked.TryGetValue(r.id, out var pose))
+                    if (save.pileLayoutRevision < authoredLayoutRevision && r.state == "world" && baked.TryGetValue(r.id, out var pose))
                     { r.position = pileOrigin.position + pose.position; r.euler = pose.euler; }
                     records.Add(r.id, r);
                 }
-            State.pileLayoutRevision = 1;
+            State.pileLayoutRevision = Mathf.Max(save.pileLayoutRevision, authoredLayoutRevision);
             State.instances = records.Values.ToList(); MergeContent();
             var usedSlots = new HashSet<string>();
             foreach (var r in records.Values.Where(r => r.state == "sorted" && definitions.ContainsKey(r.collectibleId)))
