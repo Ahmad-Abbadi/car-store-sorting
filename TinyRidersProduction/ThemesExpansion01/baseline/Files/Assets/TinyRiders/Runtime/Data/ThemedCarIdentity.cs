@@ -1,0 +1,13 @@
+using UnityEngine;
+namespace TinyRiders
+{
+    /// <summary>Permanent collectible identifiers. Contains no gameplay behavior.</summary>
+    public sealed class ThemedCarIdentity : MonoBehaviour
+    {
+        public string collectibleId;
+        public string baseCarId;
+        public string themeId;
+        public string colorwayId = "V01";
+        public int contentRevision = 1;
+    }
+}

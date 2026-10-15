@@ -1,0 +1,18 @@
+using System;
+using UnityEngine;
+namespace TinyRiders
+{
+    [CreateAssetMenu(menuName = "Tiny Riders/Themed Car Catalog")]
+    public sealed class ThemedCarCatalog : ScriptableObject
+    {
+        [Serializable] public class Entry
+        {
+            public string collectibleId, baseCarId, themeId, colorwayId, displayName;
+            public int contentRevision = 1;
+            public GameObject prefab;
+            public Texture2D preview;
+        }
+        public int schemaVersion = 1;
+        public Entry[] entries;
+    }
+}

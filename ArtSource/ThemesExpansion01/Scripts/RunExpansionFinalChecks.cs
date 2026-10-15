@@ -1,0 +1,45 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using TinyRiders.Editor;
+public class ExpansionFitQA {
+ const string D="TinyRidersProduction/ThemesExpansion01";
+ struct Tri {public Vector3 a,b,c; public Tri(Vector3 a,Vector3 b,Vector3 c){this.a=a;this.b=b;this.c=c;}}
+ static bool Ray(Vector3 o,Vector3 d,Tri t,out float hit){hit=0;var e1=t.b-t.a;var e2=t.c-t.a;var h=Vector3.Cross(d,e2);float det=Vector3.Dot(e1,h);if(Mathf.Abs(det)<1e-7)return false;float inv=1/det;var s=o-t.a;float u=inv*Vector3.Dot(s,h);if(u<0||u>1)return false;var q=Vector3.Cross(s,e1);float v=inv*Vector3.Dot(d,q);if(v<0||u+v>1)return false;hit=inv*Vector3.Dot(e2,q);return hit>=0;}
+ static bool Acc(Transform t){for(;t!=null;t=t.parent)if(t.name=="ThemeAccessories")return true;return false;}
+ public static void Run(){var records=new List<object>();var errors=new List<string>();var products=JArray.Parse(File.ReadAllText(D+"/products.json"));var profiles=JArray.Parse(File.ReadAllText(D+"/fitting_profiles.json"));
+ foreach(var p in products){var g=AssetDatabase.LoadAssetAtPath<GameObject>((string)p["prefabPath"]);var profile=profiles.First(x=>(string)x["baseCarId"]==(string)p["baseCarId"]);var anchor=(string)profile["anchorRenderer"];var roof=new List<Tri>();var glass=new List<Tri>();var accessory=new List<Tri>();var glassOwners=new Dictionary<int,string>();
+ foreach(var mf in g.GetComponentsInChildren<MeshFilter>()){var rr=mf.GetComponent<Renderer>();if(rr==null||!rr.enabled)continue;var m=mf.sharedMesh;if(m==null)continue;var vs=m.vertices.Select(mf.transform.TransformPoint).ToArray();bool acc=Acc(mf.transform);
+ for(int sub=0;sub<m.subMeshCount;sub++){var mat=rr.sharedMaterials[Math.Min(sub,rr.sharedMaterials.Length-1)];string name=mat==null?"":mat.name;bool glazing=name.IndexOf("Glass",StringComparison.OrdinalIgnoreCase)>=0;bool anchorSurface=mf.name==anchor&&!glazing&&!name.Contains("Decals");if(!acc&&!glazing&&!anchorSurface)continue;var ix=m.GetTriangles(sub);for(int i=0;i<ix.Length;i+=3){var tri=new Tri(vs[ix[i]],vs[ix[i+1]],vs[ix[i+2]]);if(acc)accessory.Add(tri);else if(glazing){glassOwners[glass.Count]=AnimationUtility.CalculateTransformPath(mf.transform,g.transform);glass.Add(tri);}else if(Vector3.Cross(tri.b-tri.a,tri.c-tri.a).normalized.y>.25f)roof.Add(tri);}}}
+ var points=accessory.SelectMany(t=>new[]{t.a,t.b,t.c}).Distinct().ToArray();float lowest=points.Min(v=>v.y);var low=points.Concat(accessory.Select(t=>(t.a+t.b+t.c)/3)).Concat(accessory.SelectMany(t=>new[]{(t.a+t.b)/2,(t.b+t.c)/2,(t.c+t.a)/2})).Where(v=>v.y<lowest+.10f).Distinct().ToArray();var gaps=new List<float>();foreach(var v in low){var origin=new Vector3(v.x,10,v.z);float best=100;foreach(var t in roof)if(Ray(origin,Vector3.down,t,out var hit)&&hit<best)best=hit;if(best<100)gaps.Add(v.y-(10-best));}
+ var crossingOwners=new HashSet<string>();int windowCrossings=0;foreach(var a in accessory){foreach(var pair in new[]{new[]{a.a,a.b},new[]{a.b,a.c},new[]{a.c,a.a}}){var delta=pair[1]-pair[0];float len=delta.magnitude;if(len<1e-5)continue;foreach(var t in glass)if(Ray(pair[0],delta/len,t,out var hit)&&hit>1e-4&&hit<len-1e-4){windowCrossings++;crossingOwners.Add(glassOwners[glass.IndexOf(t)]);break;}}}
+ float closest=gaps.Count==0?999:gaps.OrderBy(Mathf.Abs).First();bool support=gaps.Any(v=>v>=-.10f&&v<=.10f);if(!support)errors.Add((string)p["variantId"]+" no sampled roof contact");if(windowCrossings>0)errors.Add((string)p["variantId"]+" intersects glazing");records.Add(new{variantId=(string)p["variantId"],anchorRenderer=anchor,roofTriangles=roof.Count,glazingTriangles=glass.Count,accessoryTriangles=accessory.Count,lowVerticesSampled=low.Length,surfaceHits=gaps.Count,closestSurfaceGap=closest,supportedWithinTenCentimeters=support,glazingEdgeCrossings=windowCrossings,crossingOwners});
+ }
+ File.WriteAllText(D+"/Reports/geometric_fit_validation.json",JsonConvert.SerializeObject(new{records,errors,method="Exact imported mesh triangles; vertical probes from lowest accessory vertices against upward-facing painted anchor surfaces. Glazing checked by accessory-edge/triangle intersections. Small concealed mounting embed allowed; visual views are also required.",passed=errors.Count==0},Formatting.Indented));Debug.Log("FIT_AUDIT "+products.Count+" issues "+errors.Count);
+ }
+}
+public class ExpansionSceneQA {
+ const string D="TinyRidersProduction/ThemesExpansion01";
+ static Vector3 V(JToken j)=>new Vector3((float)j[0],(float)j[1],(float)j[2]);
+ static void Save(PreviewRenderUtility pr,string path,int w,int h){Directory.CreateDirectory(Path.GetDirectoryName(path));pr.BeginStaticPreview(new Rect(0,0,w,h));pr.camera.Render();var tex=pr.EndStaticPreview();File.WriteAllBytes(path,tex.EncodeToPNG());UnityEngine.Object.DestroyImmediate(tex);}
+ static void Light(PreviewRenderUtility pr){pr.camera.clearFlags=CameraClearFlags.SolidColor;pr.camera.backgroundColor=new Color(.91f,.93f,.95f);pr.camera.nearClipPlane=.01f;pr.camera.farClipPlane=100;pr.ambientColor=new Color(.48f,.48f,.48f);pr.lights[0].intensity=1.25f;pr.lights[0].transform.rotation=Quaternion.Euler(35,-35,0);pr.lights[1].intensity=.8f;pr.lights[1].transform.rotation=Quaternion.Euler(40,150,0);}
+ public static void Run(){
+  var products=JArray.Parse(File.ReadAllText(D+"/products.json"));var representatives=products.GroupBy(x=>(string)x["themeId"]).Select(g=>g.First(x=>(string)x["baseCarId"]=="C001")).ToArray();
+  var cameraData=JObject.Parse(File.ReadAllText("TinyRidersProduction/ThemeAccessoryPass/actual_camera_test.json"));var main=UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).FirstOrDefault(c=>c.name=="Main Camera");
+  foreach(var p in representatives){var pr=new PreviewRenderUtility();GameObject obj=null;try{obj=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>((string)p["prefabPath"]));pr.AddSingleGO(obj);obj.transform.position=V(cameraData["position"]);obj.transform.eulerAngles=V(cameraData["rotation"]);if(main!=null)pr.camera.CopyFrom(main);pr.camera.scene=obj.scene;Light(pr);pr.camera.orthographic=false;pr.camera.fieldOfView=(float)cameraData["fieldOfView"];pr.camera.aspect=(float)cameraData["aspect"];pr.camera.transform.position=V(cameraData["cameraPosition"]);pr.camera.transform.eulerAngles=V(cameraData["cameraRotation"]);Save(pr,D+"/Views/ActualCamera/"+p["variantId"]+".png",960,540);}finally{pr.Cleanup();if(obj!=null)UnityEngine.Object.DestroyImmediate(obj);}}
+  foreach(var p in representatives){
+   var obj=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>((string)p["prefabPath"]));var mats=new List<Material>();try{
+    foreach(var rr in obj.GetComponentsInChildren<Renderer>()){rr.sharedMaterials=rr.sharedMaterials.Select(m=>{var copy=new Material(m);copy.DisableKeyword("_EMISSION");if(copy.HasProperty("_EmissionMap"))copy.SetTexture("_EmissionMap",null);if(copy.HasProperty("_EmissionColor"))copy.SetColor("_EmissionColor",Color.black);mats.Add(copy);return copy;}).ToArray();}
+    var profile=JArray.Parse(File.ReadAllText(D+"/fitting_profiles.json")).First(x=>(string)x["baseCarId"]==(string)p["baseCarId"]);var bounds=new Bounds();bounds.SetMinMax(V(profile["sourceBoundsMin"]),V(profile["sourceBoundsMax"]));ThemeAccessoryBuilder.Render(obj,D+"/Views/NoEmission/"+p["variantId"]+".png",bounds);
+   }finally{UnityEngine.Object.DestroyImmediate(obj);foreach(var m in mats)UnityEngine.Object.DestroyImmediate(m);}
+  }
+  for(int batch=0;batch<3;batch++){var pr=new PreviewRenderUtility();var objects=new List<GameObject>();var placement=new JArray();try{Light(pr);int count=Math.Min(8,representatives.Length-batch*7);for(int j=0;j<count;j++){var p=representatives[batch*7+j];var obj=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>((string)p["prefabPath"]));pr.AddSingleGO(obj);objects.Add(obj);int row=j/4,col=j%4;obj.transform.position=new Vector3((col-1.5f)*2.25f,row==0?0:.85f,row*3.1f-1.5f);obj.transform.eulerAngles=new Vector3(row==0?0:13,(j%3-1)*28,row==0?0:(j%2==0?17:-15));placement.Add(new JObject{["variantId"]=(string)p["variantId"],["position"]=new JArray(obj.transform.position.x,obj.transform.position.y,obj.transform.position.z),["rotation"]=new JArray(obj.transform.eulerAngles.x,obj.transform.eulerAngles.y,obj.transform.eulerAngles.z)});}pr.camera.orthographic=true;pr.camera.orthographicSize=6.4f;var target=new Vector3(0,1.2f,0);pr.camera.transform.position=target+new Vector3(.40f,.65f,1.5f).normalized*22;pr.camera.transform.LookAt(target);Save(pr,D+"/ContactSheets/StaticMixedPile_"+batch+".png",1400,1000);File.WriteAllText(D+"/Reports/pile_"+batch+".json",placement.ToString());}finally{pr.Cleanup();foreach(var o in objects)if(o!=null)UnityEngine.Object.DestroyImmediate(o);}}
+  File.WriteAllText(D+"/Reports/actual_camera_test.json",cameraData.ToString());ThemeAccessoryBuilder.PreserveFoundationMaterialFlags();Debug.Log("EXPANSION_CAMERA_AND_PILE_COMPLETE");
+ }
+}
+public class RunExpansionFinalChecks {public static void Run(){ExpansionFitQA.Run();ExpansionSceneQA.Run();}}

@@ -1,0 +1,1 @@
+Themes Expansion 01 adds 20 themes and 260 products. Combined catalog: 40 themes / 410 products. The original READ_ME.txt describes the preserved earlier release. See TinyRidersProduction/ThemesExpansion01/INTEGRATION_README.md and Reports/validation_report.md. No gameplay or shelf integration is included.
