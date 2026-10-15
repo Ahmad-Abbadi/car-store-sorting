@@ -10,6 +10,18 @@ public class InventoryHandler : MonoBehaviour
 
     [Tooltip("Items currently held.")]
     [SerializeField] private List<ItemDataSO> items = new List<ItemDataSO>();
+    [SerializeField] private List<string> instanceIds = new List<string>();
+    public string InstanceIdAt(int index) => index >= 0 && index < instanceIds.Count ? instanceIds[index] : null;
+    public void SetInstanceIds(IEnumerable<string> ids)
+    {
+        instanceIds = new List<string>(ids);
+        while (instanceIds.Count < items.Count) instanceIds.Add(null);
+    }
+    public void SetLastInstanceId(string id)
+    {
+        while (instanceIds.Count < items.Count) instanceIds.Add(null);
+        if (items.Count > 0) instanceIds[items.Count - 1] = id;
+    }
 
     // Fired whenever the contents change.
     public event Action OnChanged;
@@ -45,6 +57,7 @@ public class InventoryHandler : MonoBehaviour
         if (item == null || IsFull) return false;
 
         items.Add(item);
+        instanceIds.Add(null);
         OnChanged?.Invoke();
         return true;
     }
@@ -53,8 +66,9 @@ public class InventoryHandler : MonoBehaviour
     public void SetItems(IEnumerable<ItemDataSO> newItems)
     {
         items.Clear();
+        instanceIds.Clear();
         foreach (ItemDataSO item in newItems)
-            if (item != null) items.Add(item);
+            if (item != null) { items.Add(item); instanceIds.Add(null); }
 
         OnChanged?.Invoke();
     }
@@ -62,7 +76,10 @@ public class InventoryHandler : MonoBehaviour
     // Removes the first matching item. False if absent.
     public bool RemoveItem(ItemDataSO item)
     {
-        if (item == null || !items.Remove(item)) return false;
+        int index = items.IndexOf(item);
+        if (item == null || index < 0) return false;
+        items.RemoveAt(index);
+        if (index < instanceIds.Count) instanceIds.RemoveAt(index);
 
         OnChanged?.Invoke();
         return true;
@@ -74,6 +91,7 @@ public class InventoryHandler : MonoBehaviour
         if (!InRange(index)) return false;
 
         items.RemoveAt(index);
+        if (index < instanceIds.Count) instanceIds.RemoveAt(index);
         OnChanged?.Invoke();
         return true;
     }
@@ -84,6 +102,8 @@ public class InventoryHandler : MonoBehaviour
         if (indexA == indexB || !InRange(indexA) || !InRange(indexB)) return false;
 
         (items[indexA], items[indexB]) = (items[indexB], items[indexA]);
+        while (instanceIds.Count < items.Count) instanceIds.Add(null);
+        (instanceIds[indexA], instanceIds[indexB]) = (instanceIds[indexB], instanceIds[indexA]);
         OnChanged?.Invoke();
         return true;
     }
@@ -97,6 +117,7 @@ public class InventoryHandler : MonoBehaviour
         if (items.Count == 0) return;
 
         items.Clear();
+        instanceIds.Clear();
         OnChanged?.Invoke();
     }
 

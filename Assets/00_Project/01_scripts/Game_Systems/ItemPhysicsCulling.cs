@@ -201,7 +201,7 @@ public class ItemPhysicsCulling : MonoBehaviour
                 SetKinematic(_dynamic[evict]);
                 SwapRemove(evict);
             }
-            else if (!force) return;
+            else if (!force || TinyRiders.ThemedCollectionSession.Instance != null) return;
         }
 
         item.Frozen = false;

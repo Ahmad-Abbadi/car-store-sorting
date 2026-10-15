@@ -1,0 +1,14 @@
+Migration: prior 820-car save expands to 1200 without changing existing instance IDs
+A: real Pirate pickup retains ID, materials/accessory prefab and blocks repeated pickup
+A/drop: throw releases exactly one physical copy and repick retains its ID
+B: correct theme reserves slot, snaps, counts and checkpoints
+C: wrong theme rejected without consuming held car or progress
+D: occupied slot rejects another physical copy
+E: mixed live pile uses matching catalog identities across themes
+F: distinct Pirate designs retain their own visuals and metadata
+G: duplicate copies increase cleanup without duplicate discovery
+H: real scene reload restores stable shelf markers, identities and interrupted placement without pile duplicates
+I: all 18 slots fill with mixed designs; second shelf accepts overflow without overwriting
+J: largest accessory survives pickup/placement and all 600 measured products fit fixed clearance
+K: 3000 logical records keep visible pile bounded (Editor correctness, not WebGL performance certification)
+L: validated expansion theme toggles through data; permanent records and existing sorted progress survive

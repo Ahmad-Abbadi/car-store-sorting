@@ -144,7 +144,8 @@ public class StashHandler : MonoBehaviour
     public bool TryRemove(ItemDataSO itemData)
     {
         if (itemData == null || inventory == null || itemsHandler == null) return false;
-        if (!inventory.RemoveItem(itemData)) return false;
+        int index = inventory.GetItemAt(selectedItem_Index) == itemData ? selectedItem_Index : -1;
+        if (index >= 0 ? !inventory.RemoveAt(index) : !inventory.RemoveItem(itemData)) return false;
 
         // List shrank: keep same index (item after it slid down), else fall back to last.
         selectedItem_Index = Mathf.Clamp(selectedItem_Index, 0, Mathf.Max(0, inventory.Count - 1));

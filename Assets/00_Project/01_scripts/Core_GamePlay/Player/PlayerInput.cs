@@ -31,6 +31,8 @@ public class PlayerInput : MonoBehaviour
     public bool IsEnabled { get; private set; }
 
     private GameControls _controls;
+    public bool CollectionPressed => IsEnabled && UnityEngine.InputSystem.Keyboard.current != null &&
+        UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame;
 
     /// <summary>The generated actions, created on first touch so Awake order never matters.</summary>
     private GameControls Controls
@@ -63,6 +65,7 @@ public class PlayerInput : MonoBehaviour
 
     private void OnDestroy()
     {
+        _controls?.Disable();
         _controls?.Dispose();
         _controls = null;
     }

@@ -30,6 +30,8 @@ public class PlayerSortingItemsBehaviour : MonoBehaviour
 
         placed = Instantiate(data.PlacedOnShelfPrefab, position, rotation);
         placed.Init(data);
+        TinyRiders.ThemedWorldInstance.Stamp(placed,
+            player.StashHandler?.Inventory?.InstanceIdAt(player.StashHandler.SelectedIndex));
 
         player.ItemHandler.Unequip(); // shelf form replaces it, so no sink
 
@@ -45,6 +47,8 @@ public class PlayerSortingItemsBehaviour : MonoBehaviour
         if (placed == null || placed.Data == null || player == null || player.ItemCollector == null) return false;
 
         placed.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
-        return player.ItemCollector.TryCollectItem(placed.Data, position, rotation);
+        if (!player.ItemCollector.TryCollectItem(placed.Data, position, rotation)) return false;
+        player.ItemCollector.StampCollectedInstance(TinyRiders.ThemedWorldInstance.Read(placed));
+        return true;
     }
 }

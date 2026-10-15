@@ -25,6 +25,7 @@ public class LevelSaveData
     public int total;
     public bool completed;
     public float elapsedSeconds;
+    public TinyRiders.ThemedSessionSave themed;
 }
 
 /// <summary> One shelf's placed items. </summary>

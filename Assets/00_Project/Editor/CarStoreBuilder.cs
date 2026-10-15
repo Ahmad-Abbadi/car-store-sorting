@@ -21,6 +21,7 @@ public static class CarStoreBuilder
     [InitializeOnLoadMethod]
     private static void QueueFirstBuild()
     {
+        if (System.IO.File.Exists("Assets/TinyRiders/Scenes/ThemedSorting.unity")) return;
         if (EditorPrefs.GetBool(Stamp, false)) return;
         EditorApplication.update += TryFirstBuild;
     }

@@ -87,7 +87,7 @@ def patch(t,ratio):
         for x in [W*.12,W*.88]:line([(x,H*.25),(x,H*.75)],t['paint'],16)
     elif k=='FARM':
         d.rounded_rectangle((12,18,W-12,H-18),radius=50,fill=a)
-        for x in range(20,W-18,65):
+        for x in range(20,W-20,65):
             d.rectangle((x,30,min(x+32,W-20),70),fill=b);d.rectangle((x,H-70,min(x+32,W-20),H-30),fill=b)
         for x in [W*.12,W*.88]:line([(x,H*.28),(x,H*.73)],b,12)
     else:

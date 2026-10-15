@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="CollectionNavigation.uss" />
+  <ui:VisualElement class="review-root" picking-mode="Ignore">
+    <ui:VisualElement name="navigationPanel" class="review-panel">
+      <ui:Label text="CAR COLLECTION" class="review-title" />
+      <ui:Label text="40 themes · 600 designs · All cars stay visible" class="review-caption" />
+      <ui:TextField name="themeSearch" label="Search themes" />
+      <ui:ScrollView name="themes" class="review-themes" />
+      <ui:Label name="currentTheme" class="review-title" />
+      <ui:VisualElement class="review-row">
+        <ui:Button name="previous" text="Previous" />
+        <ui:Button name="next" text="Next" />
+      </ui:VisualElement>
+      <ui:Button name="frameTheme" text="Frame theme" />
+      <ui:VisualElement name="cars" class="review-cars" />
+      <ui:Button name="overview" text="Overview · All 600 cars" />
+      <ui:Label text="PageUp / PageDown: theme&#10;Home: overview&#10;RMB + WASD / QE: fly&#10;Shift: faster · Wheel: zoom" class="review-caption" />
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

@@ -243,6 +243,9 @@ public class ItemsHandler : MonoBehaviour
 
         HandItemBase hand = Instantiate(prefab, socket);
         if (source != null) hand.SetData(source); // stamp so the item knows its data
+        if (player != null && player.StashHandler != null)
+            TinyRiders.ThemedWorldInstance.Stamp(hand,
+                player.StashHandler.Inventory?.InstanceIdAt(player.StashHandler.SelectedIndex));
         Transform t = hand.transform;
         t.localPosition = hand.Data.HeldPosition;
         t.localEulerAngles = hand.Data.HeldRotation;
@@ -470,8 +473,14 @@ public class ItemsHandler : MonoBehaviour
 
         Transform hand = _equipped.Item.transform;
         WorldItemBase thrown = Instantiate(data.WorldItem, hand.position, hand.rotation);
+        string instanceId = player.StashHandler?.Inventory?.InstanceIdAt(player.StashHandler.SelectedIndex);
+        TinyRiders.ThemedWorldInstance.Stamp(thrown, instanceId);
+        TinyRiders.ThemedCollectionSession.Instance?.Dropped(thrown, instanceId);
+        // Spend the selected physical copy immediately; saving during a throw cannot save it twice.
+        bool themedCopy = !string.IsNullOrEmpty(instanceId);
 
         Unequip(); // thrown copy replaces it, so no sink
+        if (themedCopy) player.StashHandler.TryRemove(data);
         PlayThrowPull(thrown.gameObject, data, force);
     }
 
@@ -520,7 +529,8 @@ public class ItemsHandler : MonoBehaviour
             }
         }
 
-        if (player.StashHandler != null) player.StashHandler.TryRemove(data); // re-equips what is left
+        if (player.StashHandler != null && string.IsNullOrEmpty(TinyRiders.ThemedWorldInstance.Read(thrown != null ? thrown.GetComponent<WorldItemBase>() : null)))
+            player.StashHandler.TryRemove(data); // themed copies were spent before the throw animation
         OnThrown?.Invoke(data);
     }
 

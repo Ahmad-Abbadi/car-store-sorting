@@ -94,7 +94,11 @@ public class AutoCollectPower : ItemPowerBase
         ItemCollectingBehaviour collector = Player.ItemCollector;
         item.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
         if (collector.TryCollectIntoHeld(item.Data) || collector.TryCollectItem(item.Data, position, rotation))
-            Destroy(item.gameObject);
+        {
+            collector.StampCollectedInstance(TinyRiders.ThemedWorldInstance.Read(item));
+            item.gameObject.SetActive(false);
+            if (!(TinyRiders.ThemedCollectionSession.Instance?.Recycle(item) ?? false)) Destroy(item.gameObject);
+        }
         else item.EndPowerControl(upgrade.dropSpeed);
     }
 

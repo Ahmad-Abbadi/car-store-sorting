@@ -121,7 +121,8 @@ public class UpgradeManager : MonoBehaviour
 
     private void ApplyReach()
     {
-        if (Interaction != null) Interaction.SetMaxDistance(reachUpgrade.CurrentValues.distance);
+        if (Interaction != null) Interaction.SetMaxDistance(reachUpgrade.CurrentValues.distance *
+            (TinyRiders.ThemedCollectionSession.Instance != null ? TinyRiders.ThemedCollectionSession.Instance.worldScale : 1f));
     }
 
     private void ApplySprint()

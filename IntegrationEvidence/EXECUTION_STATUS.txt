@@ -1,0 +1,11 @@
+Final integration status — 2026-10-15
+- Complete local playable integration: 40 verified themes, 410 original designs, 820 deterministic physical copies, bounded 108-car real pile, 60 approved shelves / 1080 stable slots.
+- User-approved fixed shelf scale 9; source cars keep scale 1. Camera 26.1, capsule 27, movement 49.5 persisted through prefab override recording. Camera-fixed carry pose verified visually and all 410 bounds fit normal 16:9 view.
+- Final A-L plus drop/repick regression passed; XML final run 10:38:35–10:38:42 UTC. Actual scene reload, interrupted placement, moved pose, sorted-ID exclusion, 18-slot overflow and 2050 logical records exercised.
+- Final reference validation passes 1230 wrapper forms, 23676 original mesh references and 1080 named slots. Original PNG/FBX/prefab/shelf/material files have no changes. 650 texture metadata edits are verified WebGL-only blocks with unchanged GUIDs/default/Standalone settings.
+- WebGL build succeeded 10:40:48 UTC, zero errors, two existing warnings. Raw export Builds/ThemedSortingWebGL_Final; portable gzip package Builds/ThemedSortingWebGL_Playable = 53,498,719 bytes.
+- Measured final desktop in-app Chromium, actual canvas1280x682: idle106.35 FPS, physics-wake106.27 FPS, p9511ms, max108world/24dynamic, Unity peak allocation120.34MB, WASM linear heap463.99MB (77.5% below prior2.064GB). Local loader-ready2.2s, not WAN/device certification.
+- Real browser controls verified: WASD, mouse look, E pickup of Aviation C001 with original accessory visible, F release, C directory, Tab pause/resume. No console errors/warnings in final measured origin.
+- INTEGRATION_REPORT.md contains implementation, full evidence, build/run instructions and limits. Final live Game-window PNGs in Assets/IntegrationEvidence include the optimized held Pirate and mixed pile.
+- Non-blocking inherited pause helper label still shows pause.disable_helper. Mobile/Safari usability, mobile GPU texture variants and CrazyGames publishing/release certification remain future work; no SDK/publishing performed.
+- Handoff browser server: localhost8190 serves final playable package. Temporary other benchmark origins may be stopped after returning to8190. No further gameplay changes required for this integration.

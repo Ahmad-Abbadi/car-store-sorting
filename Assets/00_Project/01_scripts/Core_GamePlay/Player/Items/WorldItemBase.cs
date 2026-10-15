@@ -274,7 +274,7 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
 
         Play(pickupSound);
         ItemPhysicsCulling.WakeAround(transform.position); // items resting on it fall
-        Destroy(gameObject);
+        // ItemCollector owns disposal or pooling after a successful pickup.
     }
 
     private void ShowHint(bool visible)

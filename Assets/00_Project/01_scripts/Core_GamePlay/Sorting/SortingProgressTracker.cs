@@ -60,6 +60,11 @@ public class SortingProgressTracker : MonoBehaviour
     /// <summary> Counts every item and right-placed item from the live level. </summary>
     private void Recount()
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            LoadFromSave(TinyRiders.ThemedCollectionSession.Instance.Sorted, TinyRiders.ThemedCollectionSession.Instance.Total);
+            return;
+        }
         int total = 0;
         int collected = 0;
 
@@ -87,12 +92,14 @@ public class SortingProgressTracker : MonoBehaviour
 
     private void HandleRightItemPlaced(SortingShelf shelf, SortableItem_SO data)
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null) return;
         Collected++;
         Notify();
     }
 
     private void HandleRightItemRemoved(SortingShelf shelf, SortableItem_SO data)
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null) return;
         Collected = Mathf.Max(0, Collected - 1);
         Notify();
     }

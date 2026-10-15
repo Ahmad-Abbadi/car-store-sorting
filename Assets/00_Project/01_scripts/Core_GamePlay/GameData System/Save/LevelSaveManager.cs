@@ -35,6 +35,7 @@ public class LevelSaveManager : MonoBehaviour
     private bool _dirty;         // something changed since the last save
     private bool _storeCompleted;
     private float _elapsedSeconds;
+    private bool _preserveUnreadableSave;
 
     public bool StoreCompleted => _storeCompleted;
     public float ElapsedSeconds => _elapsedSeconds;
@@ -110,7 +111,8 @@ public class LevelSaveManager : MonoBehaviour
     [ContextMenu("Save Now")]
     public void Save()
     {
-        if (!_ready || _levelFinished || database == null) return;
+        if (TinyRiders.ThemedCollectionSession.Instance != null && TinyRiders.ThemedCollectionSession.Instance.suspendPersistenceForTests) return;
+        if (!_ready || _levelFinished || database == null || _preserveUnreadableSave) return;
 
         PlayerPrefs.SetString(saveKey, JsonUtility.ToJson(Capture()));
         PlayerPrefs.Save();
@@ -130,6 +132,7 @@ public class LevelSaveManager : MonoBehaviour
     /// <summary> Wipes the save once the level is won; replays start fresh. </summary>
     private void HandleLevelCompleted(int levelNumber)
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null) { Save(); return; }
         _levelFinished = true;
         Clear();
     }
@@ -141,6 +144,12 @@ public class LevelSaveManager : MonoBehaviour
     {
         LevelSaveData data = new LevelSaveData { version = SaveVersion, scene = gameObject.scene.name };
         _indexById.Clear();
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            data.themed = TinyRiders.ThemedCollectionSession.Instance.Capture();
+            data.elapsedSeconds = _elapsedSeconds;
+            return data;
+        }
 
         CaptureWorld(data);
         CaptureShelves(data);
@@ -308,6 +317,8 @@ public class LevelSaveManager : MonoBehaviour
         }
         catch (ArgumentException e)
         {
+            if (TinyRiders.ThemedCollectionSession.Instance != null)
+            { _preserveUnreadableSave = true; Debug.LogWarning("Themed save could not be read; original data retained. " + e.Message); return; }
             Debug.LogWarning($"{name}: corrupt level save discarded. {e.Message}", this);
             Clear();
             return;
@@ -316,12 +327,19 @@ public class LevelSaveManager : MonoBehaviour
         // Only the current level and format are kept; anything else is stale.
         if (data == null || data.version != SaveVersion || data.scene != gameObject.scene.name)
         {
+            if (TinyRiders.ThemedCollectionSession.Instance != null) { _preserveUnreadableSave = true; return; }
             Clear();
             return;
         }
 
         _storeCompleted = data.completed;
         _elapsedSeconds = Mathf.Max(0f, data.elapsedSeconds);
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            if (data.themed != null && data.themed.schema != 1) { _preserveUnreadableSave = true; return; }
+            TinyRiders.ThemedCollectionSession.Instance.Restore(data.themed);
+            return;
+        }
 
         ItemDataSO[] items = ResolveIds(data.ids);
         RestoreWorld(data.removed, data.world, items);

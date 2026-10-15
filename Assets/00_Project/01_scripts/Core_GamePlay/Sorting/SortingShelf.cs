@@ -148,6 +148,15 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
 
     /// <summary> Transform of a placing spot, or null if out of range. </summary>
     public Transform GetSpot(int spot) => spot >= 0 && spot < placingSpots.Count ? placingSpots[spot] : null;
+    public PlacedOnShelfItemBase GetOccupant(int spot) => _occupants != null && spot >= 0 && spot < _occupants.Length ? _occupants[spot] : null;
+    public bool CanAccept(SortableItem_SO data, int spot, out string reason)
+    {
+        reason = null;
+        if (data == null || data.PlacedOnShelfPrefab == null) reason = "Collectible unavailable";
+        else if (!IsSpotFree(spot) || GetSpot(spot) == null) reason = "Choose an empty slot";
+        else if (TryGetComponent<TinyRiders.ThemeShelfBinding>(out var theme) && !theme.Accepts(data, out reason)) return false;
+        return reason == null;
+    }
 
     // Imported shelf markers already face the aisle. Keep that orientation for
     // placement, previews, and restored saves instead of turning cars back inward.
@@ -206,6 +215,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     /// <summary> Instantly places a saved item. No jump, sounds or coin events. </summary>
     public bool RestoreItem(int spot, SortableItem_SO data)
     {
+        if (GetComponent<TinyRiders.ThemeShelfBinding>() != null && !CanAccept(data, spot, out _)) return false;
         if (data == null || data.PlacedOnShelfPrefab == null) return false;
         if (spot < 0 || spot >= _occupants.Length || _occupants[spot] != null || placingSpots[spot] == null) return false;
 
@@ -282,6 +292,8 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         }
 
         int spot = GetAimedFreeSpot(GetInteraction());
+        if (GetComponent<TinyRiders.ThemeShelfBinding>() != null && !CanAccept(data, spot, out _))
+        { ClearHologram(); return; }
         if (spot < 0)
         {
             ClearHologram();
@@ -339,7 +351,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         float nearestDistance = float.PositiveInfinity;
         for (int i = 0; i < _occupants.Length; i++)
         {
-            if (_occupants[i] != null || placingSpots[i] == null) continue;
+            if (placingSpots[i] == null || (_occupants[i] != null && GetComponent<TinyRiders.ThemeShelfBinding>() == null)) continue;
             float distance = (placingSpots[i].position - point).sqrMagnitude;
             if (distance >= nearestDistance) continue;
             nearest = i;
@@ -367,6 +379,12 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         if (sorting == null || !sorting.TryGetHeldSortable(out SortableItem_SO data)) return;
 
         int spot = GetAimedFreeSpot(handler);
+        if (GetComponent<TinyRiders.ThemeShelfBinding>() != null && !CanAccept(data, spot, out string reason))
+        {
+            TinyRiders.ThemedCollectionSession.Instance?.Report(reason);
+            FloatingTextEffect.Show(reason, transform.position + Vector3.up * 3, new Color(1f, .65f, .4f));
+            return;
+        }
         if (spot < 0)
         {
             OnShelfFull();
@@ -398,10 +416,13 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
 
         int spot = GetNextFreeSpot();
         if (spot < 0) return false;
+        if (GetComponent<TinyRiders.ThemeShelfBinding>() != null &&
+            (!CanAccept(data, spot, out _) || !(TinyRiders.ThemedCollectionSession.Instance?.CanPlace(TinyRiders.ThemedWorldInstance.Read(item)) ?? false))) return false;
 
         item.transform.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
         PlacedOnShelfItemBase placed = Instantiate(data.PlacedOnShelfPrefab, position, rotation);
         placed.Init(data);
+        TinyRiders.ThemedWorldInstance.Stamp(placed, TinyRiders.ThemedWorldInstance.Read(item));
 
         item.gameObject.SetActive(false); // blocks repeat hits before Destroy runs
         Destroy(item.gameObject);
@@ -415,6 +436,9 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     public void AddItem(PlacedOnShelfItemBase item, int spot)
     {
         if (item == null || spot < 0 || spot >= _occupants.Length || _occupants[spot] != null) return;
+        bool themed = GetComponent<TinyRiders.ThemeShelfBinding>() != null;
+        if (themed && (!CanAccept(item.Data, spot, out _) ||
+            !(TinyRiders.ThemedCollectionSession.Instance?.CanPlace(TinyRiders.ThemedWorldInstance.Read(item)) ?? false))) return;
 
         _occupants[spot] = item;
         _placeOrder.Add(item);
@@ -425,6 +449,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         LevelSaveManager.MarkDirty();
         Transform t = item.transform;
         t.SetParent(placingSpots[spot], true);
+        if (themed) TinyRiders.ThemedCollectionSession.Instance?.Placed(item, this, spot);
         PlayPlacementSFX(placingSpots[spot].position);
 
         DOTween.Sequence()
@@ -482,6 +507,9 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     /// <summary> True when the item's category matches this shelf. </summary>
     protected virtual bool IsCorrectCatagory(SortableItem_SO data)
     {
+        var themed = GetComponent<TinyRiders.ThemeShelfBinding>();
+        if (themed != null)
+            return TinyRiders.ThemedCollectionSession.Instance?.Definition(data)?.themeId == themed.themeId;
         if (acceptedItem != null) return data == acceptedItem;
         return _catagory != null && data != null && data.Catagory == _catagory;
     }
@@ -537,7 +565,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
             PlacedOnShelfItemBase item = _occupants[i];
             if (item == null || !item.IsSettled || !IsCorrectCatagory(item.Data)) return false;
             if (i == 0) firstType = item.Data;
-            else if (item.Data != firstType) return false;
+            else if (GetComponent<TinyRiders.ThemeShelfBinding>() == null && item.Data != firstType) return false;
         }
         return true;
     }

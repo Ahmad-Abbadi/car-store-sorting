@@ -26,6 +26,7 @@ public sealed class CarStoreUI : MonoBehaviour
     private SortingShelf[] shelves;
     private LevelSaveManager save;
     private bool shownComplete;
+    private GameObject themeDirectory;
 
     private void OnEnable()
     {
@@ -43,13 +44,15 @@ public sealed class CarStoreUI : MonoBehaviour
 
     private IEnumerator Start()
     {
-        if (GetComponent<CarVisualCulling>() == null) gameObject.AddComponent<CarVisualCulling>();
+        bool themed = TinyRiders.ThemedCollectionSession.Instance != null;
+        if (!themed && GetComponent<CarVisualCulling>() == null) gameObject.AddComponent<CarVisualCulling>();
         BuildUI();
         yield return null; // save restore and progress recount happen first
         yield return null;
         sections = FindObjectsByType<Section>(FindObjectsSortMode.None);
         shelves = FindObjectsByType<SortingShelf>(FindObjectsSortMode.None);
         save = FindFirstObjectByType<LevelSaveManager>();
+        if (themed) { Refresh(); yield break; }
         if (save != null && save.StoreCompleted) ShowCompletion();
         else if (SortingProgressTracker.Instance != null && SortingProgressTracker.Instance.Collected == 0)
         {
@@ -63,6 +66,12 @@ public sealed class CarStoreUI : MonoBehaviour
 
     private void Update()
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            if (Player.Instance?.Input != null && Player.Instance.Input.CollectionPressed && themeDirectory != null)
+                themeDirectory.SetActive(!themeDirectory.activeSelf);
+            if (Time.frameCount % 20 == 0) Refresh(); return;
+        }
         if (sections == null || sections.Length == 0 || nearby == null) return;
         if (Time.frameCount % 20 == 0) RefreshNearby();
     }
@@ -70,12 +79,14 @@ public sealed class CarStoreUI : MonoBehaviour
     private void OnProgress(int collected, int total)
     {
         Refresh();
+        if (TinyRiders.ThemedCollectionSession.Instance != null) return;
         if (total == 525 && collected == total) StartCoroutine(CheckCompletion());
     }
 
     private void OnShelfFilled(SortingShelf shelf)
     {
         Refresh();
+        if (TinyRiders.ThemedCollectionSession.Instance != null) return;
         if (SortingProgressTracker.Instance != null && SortingProgressTracker.Instance.Collected == 525)
             StartCoroutine(CheckCompletion());
     }
@@ -125,6 +136,30 @@ public sealed class CarStoreUI : MonoBehaviour
     private void Refresh()
     {
         if (overall == null) return;
+        var session = TinyRiders.ThemedCollectionSession.Instance;
+        if (session != null)
+        {
+            overall.text = $"Sorted {session.Sorted} / {session.Total}  ·  Designs {session.UniqueDiscovered} / {System.Linq.Enumerable.Count(session.ActiveDefinitions)}";
+            nearby.fontSize = 19;
+            directoryTitle.text = "THEME COLLECTIONS";
+            var held = Player.Instance?.ItemHandler?.CurrentEquipped;
+            var entry = held != null ? session.Definition(held.Data) : null;
+            nearby.text = entry != null ? "Carrying: " + session.ThemeName(entry.themeId) + "\n" + session.Message : session.Message;
+            directoryLegend.text = entry != null ? "Carrying: " + session.ThemeName(entry.themeId) : "E / left click: pick up   ·   F / right click: place or drop";
+            if (themeDirectory != null && !themeDirectory.activeSelf) return;
+            var left = new StringBuilder(); var right = new StringBuilder(); int index = 0;
+            foreach (var theme in session.catalog.themes)
+            {
+                if (!theme.enabled) continue;
+                var counts = session.ThemeCounts(theme.id);
+                (index++ < 20 ? left : right).Append(theme.displayName).Append("  ").Append(counts.sorted).Append('/').Append(counts.total).Append('\n');
+            }
+            directory.text = left.ToString(); directoryRight.text = right.ToString();
+            directory.fontSize = directoryRight.fontSize = 18;
+            ((RectTransform)directory.transform.parent).sizeDelta = new Vector2(700, 525);
+            ((RectTransform)directory.transform).sizeDelta = ((RectTransform)directoryRight.transform).sizeDelta = new Vector2(320, 430);
+            return;
+        }
         SortingProgressTracker progress = SortingProgressTracker.Instance;
         int count = progress != null ? progress.Collected : 0;
         overall.SetLocalized(Localizer.FormatText(Localizer.GetOr("store.progress", "Cars sorted: {0} / 525"), count));
@@ -224,6 +259,21 @@ public sealed class CarStoreUI : MonoBehaviour
         directoryRect.anchoredPosition = new Vector2(12, 12);
         directoryRect.sizeDelta = new Vector2(700, 335);
         directoryPanel.GetComponent<Image>().color = new Color(0.03f, 0.09f, 0.15f, 0.88f);
+        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        {
+            themeDirectory = directoryPanel;
+            themeDirectory.SetActive(false);
+            var toggle = Button(root.transform, "Collection Toggle", Vector2.zero,
+                () => themeDirectory.SetActive(!themeDirectory.activeSelf));
+            toggle.text = "Collection [C]"; toggle.fontSize = 21;
+            var toggleRect = (RectTransform)toggle.transform.parent;
+            toggleRect.anchorMin = toggleRect.anchorMax = new Vector2(0, 0);
+            toggleRect.pivot = new Vector2(0, 0);
+            toggleRect.anchoredPosition = new Vector2(16, 16);
+            toggleRect.sizeDelta = new Vector2(240, 50);
+            ((RectTransform)toggle.transform).sizeDelta = new Vector2(235, 45);
+            directoryRect.anchoredPosition = new Vector2(12, 75);
+        }
         directoryTitle = Text(directoryPanel.transform, "Directory Title", new Vector2(18, -9),
             new Vector2(660, 33), 23, TextAlignmentOptions.TopLeft);
         directoryLegend = Text(directoryPanel.transform, "Zone Legend", new Vector2(18, -43),

@@ -38,7 +38,7 @@ public class ItemCollectingBehaviour : MonoBehaviour
     /// <summary> Stashes the world item, then flies its hand form into the hand. </summary>
     public bool TryCollectItem(WorldItemBase worldItem)
     {
-        if (worldItem == null) return false;
+        if (worldItem == null || !worldItem.gameObject.activeSelf) return false;
 
         // Pose is read before the world item goes away.
         worldItem.transform.GetPositionAndRotation(out Vector3 fromPosition, out Quaternion fromRotation);
@@ -48,8 +48,19 @@ public class ItemCollectingBehaviour : MonoBehaviour
             return false;
         }
 
-        Destroy(worldItem.gameObject);
+        string instanceId = TinyRiders.ThemedWorldInstance.Read(worldItem);
+        StampCollectedInstance(instanceId);
+        worldItem.gameObject.SetActive(false); // repeated input in the same frame cannot collect twice
+        if (!(TinyRiders.ThemedCollectionSession.Instance?.Recycle(worldItem) ?? false)) Destroy(worldItem.gameObject);
         return true;
+    }
+
+    public void StampCollectedInstance(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return;
+        player.StashHandler.Inventory.SetLastInstanceId(id);
+        TinyRiders.ThemedWorldInstance.Stamp(player.ItemHandler.CurrentEquipped, id);
+        TinyRiders.ThemedCollectionSession.Instance?.Held(id);
     }
 
     /// <summary> Stashes the item, then flies its hand form in from the given pose. </summary>
