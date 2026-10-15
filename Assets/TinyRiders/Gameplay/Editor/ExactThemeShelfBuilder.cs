@@ -78,9 +78,9 @@ public static class ExactThemeShelfBuilder
             throw new InvalidOperationException("This migration requires two shelves and 30 cars per theme.");
         Directory.CreateDirectory(Evidence);
         EditorSceneManager.SaveScene(scene, Evidence + "/Level_before_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".unity", true);
-        var prefab = EnsurePrefab();
         foreach (var shelf in shelves)
         {
+            var prefab = ThemedShelfArtBuilder.ArtForTheme(shelf.GetComponent<ThemeShelfBinding>().themeId);
             var old = shelf.transform.Find("TR_Shelf_Base_01");
             if (old == null) throw new InvalidOperationException("Missing shelf art: " + shelf.SaveId);
             var art = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);

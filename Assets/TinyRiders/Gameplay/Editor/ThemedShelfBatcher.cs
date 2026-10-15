@@ -30,6 +30,18 @@ public static class ThemedShelfBatcher
     }
     public static void Apply(SortingShelf[] shelves, string sourcePath = Source)
     {
+        var catalog=ThemedShelfArtBuilder.Catalog;
+        if(catalog!=null&&(sourcePath==Source||sourcePath==ExactThemeShelfBuilder.PrefabPath))
+        {
+            foreach(var group in shelves.GroupBy(s=>s.GetComponent<TinyRiders.ThemeShelfBinding>().themeId))
+            {
+                var entry=catalog.Find(group.Key);
+                if(entry==null||entry.prefab==null)throw new Exception("Missing themed shelf art: "+group.Key);
+                Apply(group.ToArray(),AssetDatabase.GetAssetPath(entry.prefab));
+            }
+            return;
+        }
+        bool themed=sourcePath.StartsWith(ThemedShelfArtBuilder.Root+"/",StringComparison.Ordinal);
         Directory.CreateDirectory(Cache);AssetDatabase.Refresh();
         var source=PrefabUtility.LoadPrefabContents(sourcePath);var parts=new List<Part>();int originalRenderers=0, trianglesBefore=0;
         try
@@ -50,7 +62,15 @@ public static class ThemedShelfBatcher
                 string path=Cache+"/Shelf_"+(sourcePath == Source ? "" : AssetDatabase.AssetPathToGUID(sourcePath)+"_")+materialGuid+"_"+(int)group.Key.shadowCastingMode+"_"+group.Key.receiveShadows+".asset";
                 var mesh=new Mesh{name="Approved Shelf · "+group.Key.material.name,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(combine.ToArray(),true,true,false);mesh.RecalculateBounds();
                 var saved=AssetDatabase.LoadAssetAtPath<Mesh>(path);
-                if(saved==null){AssetDatabase.CreateAsset(mesh,path);saved=mesh;}else{EditorUtility.CopySerialized(mesh,saved);UnityEngine.Object.DestroyImmediate(mesh);EditorUtility.SetDirty(saved);}
+                if(saved==null){AssetDatabase.CreateAsset(mesh,path);saved=mesh;}
+                else
+                {
+                    // Rebuild native mesh buffers as well as serialized data when an FBX changes.
+                    // CopySerialized alone can leave the old GPU geometry visible until an Editor reload.
+                    saved.Clear();saved.indexFormat=IndexFormat.UInt32;
+                    saved.CombineMeshes(combine.ToArray(),true,true,false);saved.RecalculateBounds();
+                    UnityEngine.Object.DestroyImmediate(mesh);EditorUtility.SetDirty(saved);
+                }
                 parts.Add(new Part{mesh=saved,material=group.Key.material,shadow=group.Key.shadowCastingMode,receive=group.Key.receiveShadows});
             }
         }
@@ -62,7 +82,8 @@ public static class ThemedShelfBatcher
             var original=art.GetComponentsInChildren<MeshRenderer>(false);
             Bounds before=GeometryBounds(original);
             var batch=shelf.transform.Find("Batched Shelf Art");if(batch==null){batch=new GameObject("Batched Shelf Art").transform;batch.SetParent(shelf.transform,false);}
-            var sectionPaint=batch.GetComponentsInChildren<MeshRenderer>().Select(r=>r.sharedMaterial).FirstOrDefault(m=>m!=null&&m.name.StartsWith("Section Paint"));
+            var sectionPaint=themed?null:batch.GetComponentsInChildren<MeshRenderer>().Select(r=>r.sharedMaterial).FirstOrDefault(m=>m!=null&&m.name.StartsWith("Section Paint"));
+            foreach(Transform child in batch.Cast<Transform>().ToArray())UnityEngine.Object.DestroyImmediate(child.gameObject);
             batch.localPosition=art.localPosition;batch.localRotation=art.localRotation;batch.localScale=art.localScale;
             int i=0;foreach(var part in parts)
             {
@@ -74,6 +95,8 @@ public static class ThemedShelfBatcher
             foreach(var r in original){r.enabled=false;PrefabUtility.RecordPrefabInstancePropertyModifications(r);}
         }
         AssetDatabase.SaveAssets();
-        File.WriteAllText("IntegrationEvidence/shelf_batching.json",new JObject{["sourceRenderersPerShelf"]=originalRenderers,["batchedRenderersPerShelf"]=parts.Count,["trianglesBefore"]=trianglesBefore,["trianglesAfter"]=trianglesAfter,["shelfInstances"]=shelves.Length,["boundsMatched"]=true,["sourcePrefabModified"]=false,["sourceMaterialsReplaced"]=false}.ToString());
+        string reportPath=themed?ThemedShelfArtBuilder.Evidence+"/Batching/"+Path.GetFileNameWithoutExtension(sourcePath)+".json":"IntegrationEvidence/shelf_batching.json";
+        Directory.CreateDirectory(Path.GetDirectoryName(reportPath));
+        File.WriteAllText(reportPath,new JObject{["sourceRenderersPerShelf"]=originalRenderers,["batchedRenderersPerShelf"]=parts.Count,["trianglesBefore"]=trianglesBefore,["trianglesAfter"]=trianglesAfter,["shelfInstances"]=shelves.Length,["boundsMatched"]=true,["sourcePrefabModified"]=false,["sourceMaterialsReplaced"]=false}.ToString());
     }
 }

@@ -27,6 +27,10 @@ public class CompactCollectionTests
         // Scene callbacks run after Awake, so also load the isolated wallet balance.
         if (coins != null) typeof(CoinsManager).GetProperty(nameof(CoinsManager.Coins))
             .SetValue(coins, Mathf.Max(0, PlayerPrefs.GetInt(Key + ".coins", 0)));
+        // Automated bulk placement is not a representative performance sample.
+        // Keep the optional metrics writer from contending with external report readers on Windows.
+        foreach (var probe in UnityEngine.Object.FindObjectsByType<ThemedPerformanceProbe>(FindObjectsSortMode.None))
+            probe.enabled = false;
     }
     static IEnumerator Tick(float seconds)
     { float until = Time.realtimeSinceStartup + seconds; while (Time.realtimeSinceStartup < until) yield return null; }
@@ -227,6 +231,7 @@ public class CompactCollectionTests
         Assert.AreEqual(1200, occupants.Select(ThemedWorldInstance.Read).Distinct().Count());
         Assert.True(occupants.All(o => o != null && !o.IsWrong));
         ExactShelfCapacityTests.CaptureShelves("filled", Shelf(egypt[0].themeId));
+        ThemedShelfArtTests.CaptureCheckpoints("filled");
         Session.suspendPersistenceForTests = false;
         var save = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); save.Save();
         Assert.True(save.StoreCompleted);
@@ -237,6 +242,14 @@ public class CompactCollectionTests
         Assert.True(UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None).All(s=>s.IsCompleted&&!s.HasFreeSpot));
         Note("All 1200 cars physically placed into 1200 slots, all 80 shelves full, 40 themes complete; completion UI/save and fully occupied reload verified");
 
+        // A heavy scene can consume the real-time settle interval in one frame.
+        // Replay is available to players only after the completion UI initializes its save reference.
+        var replayUI = UnityEngine.Object.FindFirstObjectByType<CarStoreUI>();
+        var completionReady = typeof(CarStoreUI).GetField("shownComplete", BindingFlags.Instance | BindingFlags.NonPublic);
+        float uiDeadline = Time.realtimeSinceStartup + 15f;
+        while (!(bool)completionReady.GetValue(replayUI) && Time.realtimeSinceStartup < uiDeadline) yield return null;
+        Assert.True((bool)completionReady.GetValue(replayUI), "Completion UI must be ready before replay.");
+
         // Replay resets upgrades by design; preserve the user's real upgrade preferences around that test.
         var upgrades = UpgradeManager.Instance.Upgrades;
         foreach (var upgrade in upgrades)
@@ -245,7 +258,7 @@ public class CompactCollectionTests
             SessionState.SetInt("CompactQA.backup." + key, PlayerPrefs.HasKey(key) ? PlayerPrefs.GetInt(key) : -1);
         }
         SessionState.SetBool("CompactQA.restoreUpgrades", true);
-        UnityEngine.Object.FindFirstObjectByType<CarStoreUI>().Replay();
+        replayUI.Replay();
         while(Session==null||Session.Sorted!=0||Session.LivePileCount!=1200) yield return null;
         yield return Tick(.3f);
         Assert.AreEqual(0, Session.Sorted); Assert.AreEqual(1200, Session.Total); Assert.AreEqual(1200, Session.LivePileCount);

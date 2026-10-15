@@ -66,7 +66,7 @@ public static class CollectorRoomBuilder
                 label.color = Ink; label.fontSize = 1.05f; label.enableAutoSizing = true;
                 label.fontSizeMin = .65f; label.fontSizeMax = 1.05f;
                 label.transform.localPosition = new Vector3(0, 1.59f, .145f);
-                label.rectTransform.sizeDelta = new Vector2(1.08f, .17f);
+                label.rectTransform.sizeDelta = new Vector2(ThemedShelfArtBuilder.HasThemedArt(shelf) ? .88f : 1.08f, .17f);
             }
             var blocker = shelf.transform.Find("Player Collision");
             if (blocker == null) { blocker = new GameObject("Player Collision").transform; blocker.SetParent(shelf.transform,false); }
@@ -75,7 +75,7 @@ public static class CollectorRoomBuilder
             if (solid == null) solid = blocker.gameObject.AddComponent<BoxCollider>();
             solid.center = new Vector3(0,.8f,0); solid.size = new Vector3(1.704f,1.6f,.38f);
             var batch = shelf.transform.Find("Batched Shelf Art");
-            if (batch != null)
+            if (batch != null && !ThemedShelfArtBuilder.HasThemedArt(shelf))
                 foreach (var renderer in batch.GetComponentsInChildren<MeshRenderer>())
                     if (renderer.sharedMaterial != null && (renderer.sharedMaterial.name.Contains("SidePanels") || renderer.sharedMaterial.name.StartsWith("Section Paint")))
                     {
@@ -102,6 +102,7 @@ public static class CollectorRoomBuilder
         }
         EditorUtility.SetDirty(layout); AssetDatabase.SaveAssets();
         ExactThemeShelfBuilder.ValidateScene();
+        ThemedShelfSignClearance.Apply();
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
         Audit();
         Debug.Log("COLLECTOR_ROOM_READY: 36x44 / 8 sections / 80 shelves / 1200 mixed cars. " + backup);

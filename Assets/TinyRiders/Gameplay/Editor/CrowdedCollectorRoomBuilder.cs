@@ -59,7 +59,7 @@ public static class CrowdedCollectorRoomBuilder
             {
                 header.text=session.ThemeName(shelf.GetComponent<ThemeShelfBinding>().themeId);
                 header.color=Ink;header.fontSize=1.05f;header.enableAutoSizing=true;header.fontSizeMin=.65f;header.fontSizeMax=1.05f;
-                header.transform.localPosition=new Vector3(0,1.59f,.145f);header.rectTransform.sizeDelta=new Vector2(1.08f,.17f);
+                header.transform.localPosition=new Vector3(0,1.59f,.145f);header.rectTransform.sizeDelta=new Vector2(ThemedShelfArtBuilder.HasThemedArt(shelf) ? .88f : 1.08f,.17f);
             }
             var blocker=shelf.transform.Find("Player Collision");
             if(blocker==null){blocker=new GameObject("Player Collision").transform;blocker.SetParent(shelf.transform,false);}
@@ -67,7 +67,7 @@ public static class CrowdedCollectorRoomBuilder
             var solid=blocker.GetComponent<BoxCollider>()??blocker.gameObject.AddComponent<BoxCollider>();
             solid.center=new Vector3(0,.8f,0);solid.size=new Vector3(1.704f,1.6f,.38f);
             var batch=shelf.transform.Find("Batched Shelf Art");
-            if(batch!=null)foreach(var r in batch.GetComponentsInChildren<MeshRenderer>())
+            if(batch!=null&&!ThemedShelfArtBuilder.HasThemedArt(shelf))foreach(var r in batch.GetComponentsInChildren<MeshRenderer>())
                 if(r.sharedMaterial!=null&&(r.sharedMaterial.name.Contains("SidePanels")||r.sharedMaterial.name.StartsWith("Section Paint")))
                 {var paint=Mat("Section Paint "+pose.section,section.color);r.sharedMaterial=paint;}
             EditorUtility.SetDirty(shelf);
@@ -81,6 +81,7 @@ public static class CrowdedCollectorRoomBuilder
         PrefabUtility.RecordPrefabInstancePropertyModifications(upgrade);
         EditorUtility.SetDirty(session);EditorUtility.SetDirty(layout);AssetDatabase.SaveAssets();
         ExactThemeShelfBuilder.ValidateScene();
+        ThemedShelfSignClearance.Apply();
         EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);Audit();
     }
 

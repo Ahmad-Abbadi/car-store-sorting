@@ -155,7 +155,6 @@ public static class CompactCollectionBuilder
         session.seed = 73481; session.worldScale = 1; session.boundedPile = true; session.pileAreaSize = new Vector2(31.5f,27);
         session.pileCellSpacing = .75f; session.pileSpacing = new Vector3(.75f,.3f,.75f); session.completeStoreWhenSorted = true;
         var pile = new GameObject("Mixed 600 Design Pile").transform; pile.SetParent(collection.transform, false); pile.position = new Vector3(500,0,0); session.pileOrigin = pile;
-        var shelfArt = ExactThemeShelfBuilder.EnsurePrefab();
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/00_Project/04_ِArt/UI/Fonts/Fredoka-SemiBold SDF.asset");
         int index = 0;
         foreach (var theme in catalog.themes.Where(t => t.enabled).OrderBy(t => t.id, StringComparer.Ordinal))
@@ -165,7 +164,7 @@ public static class CompactCollectionBuilder
             ShelfPose(index, out position, out yaw);
             var shelfObject = new GameObject(theme.displayName + " - " + unit); shelfObject.layer = 8; shelfObject.transform.SetParent(collection.transform, false);
             shelfObject.transform.SetPositionAndRotation(position, Quaternion.Euler(0,yaw,0));
-            var art = (GameObject)PrefabUtility.InstantiatePrefab(shelfArt, scene); art.name = "TR_Shelf_Base_01"; art.transform.SetParent(shelfObject.transform, false); art.transform.localScale = Vector3.one * ShelfScale;
+            var art = (GameObject)PrefabUtility.InstantiatePrefab(ThemedShelfArtBuilder.ArtForTheme(theme.id), scene); art.name = "TR_Shelf_Base_01"; art.transform.SetParent(shelfObject.transform, false); art.transform.localScale = Vector3.one * ShelfScale;
             foreach (var t in art.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = 2;
             foreach (var collider in art.GetComponentsInChildren<Collider>(true)) UnityEngine.Object.DestroyImmediate(collider);
             var markers = ExactThemeShelfBuilder.Markers(art);
@@ -184,7 +183,13 @@ public static class CompactCollectionBuilder
             var header = new GameObject("Theme Header"); header.transform.SetParent(shelfObject.transform, false);
             header.transform.localPosition = new Vector3(0,1.8f,.29f); header.transform.localRotation = Quaternion.Euler(0,180,0);
             var label = header.AddComponent<TextMeshPro>(); label.font = font; label.text = theme.displayName; label.fontSize = 1.5f;
-            label.color = new Color(.04f,.08f,.12f); label.alignment = TextAlignmentOptions.Center; label.rectTransform.sizeDelta = new Vector2(1.65f,.3f);
+            label.color = new Color(.04f,.08f,.12f); label.alignment = TextAlignmentOptions.Center; label.rectTransform.sizeDelta = new Vector2(ThemedShelfArtBuilder.Catalog != null ? .88f : 1.65f,.3f);
+            if (ThemedShelfArtBuilder.Catalog != null)
+            {
+                header.transform.localPosition = new Vector3(0,1.59f,.145f);
+                label.rectTransform.sizeDelta = new Vector2(.88f,.17f);
+                label.fontSize = 1.05f; label.enableAutoSizing = true; label.fontSizeMin = .58f; label.fontSizeMax = 1.05f;
+            }
         }
         var save = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); Set(save,"database",database); Set(save,"worldItemsContainer",pile); Text(save,"saveKey",SaveKey);
         var saveSo = new SerializedObject(save); saveSo.FindProperty("autosaveInterval").floatValue = 8; saveSo.ApplyModifiedPropertiesWithoutUndo();
@@ -218,7 +223,12 @@ public static class CompactCollectionBuilder
     public static void ArrangeShelves()
     {
         if (SceneManager.GetActiveScene().path == ScenePath && AssetDatabase.LoadAssetAtPath<CollectorRoomLayout>(CollectorRoomBuilder.LayoutPath) != null)
-        { CollectorRoomBuilder.Build(); return; }
+        {
+            CollectorRoomBuilder.Build();
+            ThemedShelfBatcher.Apply(UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None), ExactThemeShelfBuilder.PrefabPath);
+            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+            return;
+        }
         var shelves=UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None)
             .Where(s=>s.GetComponent<ThemeShelfBinding>()!=null).OrderBy(s=>s.SaveId,StringComparer.Ordinal).ToArray();
         if(SceneManager.GetActiveScene().path!=ScenePath||shelves.Length!=80)throw new InvalidOperationException("Open the compact room first.");
