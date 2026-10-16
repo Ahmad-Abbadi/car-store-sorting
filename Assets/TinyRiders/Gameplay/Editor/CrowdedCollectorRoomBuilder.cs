@@ -82,6 +82,7 @@ public static class CrowdedCollectorRoomBuilder
         EditorUtility.SetDirty(session);EditorUtility.SetDirty(layout);AssetDatabase.SaveAssets();
         ExactThemeShelfBuilder.ValidateScene();
         ThemedShelfSignClearance.Apply();
+        ShopInteriorPolishBuilder.Apply(interior,layout);
         EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);Audit();
     }
 
@@ -259,6 +260,7 @@ public static class CrowdedCollectorRoomBuilder
         float w=l.roomSize.x,d=l.roomSize.y,h=l.ceilingHeight;
         var floor=Mat("Warm Gray",new Color(.57f,.59f,.57f));var cream=Mat("Ivory",new Color(.91f,.88f,.79f));var wood=Mat("Pale Oak",new Color(.69f,.51f,.32f));var teal=Mat("Teal",new Color(.08f,.34f,.36f));var white=Mat("Soft White",new Color(.97f,.96f,.91f));
         Box(root,"Store Floor",new Vector3(0,-.2f,0),new Vector3(w+.6f,.4f,d+.6f),floor,true);
+        RacingFloorBuilder.Apply(root, l);
         foreach(float side in new[]{-1f,1f})
         {
             Box(root,"Side Wall",new Vector3(side*(w*.5f+.15f),h*.5f,0),new Vector3(.3f,h,d+.6f),cream,true);

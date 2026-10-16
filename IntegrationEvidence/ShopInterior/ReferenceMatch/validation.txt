@@ -1,0 +1,18 @@
+Reference racing-shop interior validation — 2026-10-16
+
+Unity 6000.3.22f1; active build target remains WebGL.
+Compilation completed without errors. Final Editor console ground truth: 0 errors.
+Existing CompactCollectionTests.CompactRoom_CollectionSortingSaveCompletionAndReplay: Passed (95.624 seconds).
+The detailed collection assertions and filled-shelf captures are preserved in GameplayRegression/.
+
+Applied the targeted builder twice, saved, reopened Level, and ran the structural audit again: PASS.
+Original collider data, 80 shelves, category signs and directory, six shop lights, floor material data, and pile configuration match the before snapshot.
+Eight added renderer/material slots; two unique decoration roots; zero decoration colliders; Ignore Raycast; no shadow casting.
+All new ceiling decoration remains above 3.12 meters. Existing room height remains 3.2 meters.
+No new lights, post-processing, runtime API, or save-format changes.
+
+Saved eighteen empty and eighteen full-pile viewpoints. Full capture confirms 1,200 live cars.
+Reviewed player-height views, all eight themed wall views, directory, overhead, and ceiling badge.
+The artwork follows the reference's visual vocabulary within the existing room proportions and lighting budget.
+The distant thin edges retain the current project's antialiasing characteristics; no rendering-quality or post-processing settings were changed.
+Editable SVG artwork, 8K source and 4K runtime mural atlas, separate ceiling graphic, and retained 2K surface maps are documented in ArtSource/ShopInterior/README.md.
