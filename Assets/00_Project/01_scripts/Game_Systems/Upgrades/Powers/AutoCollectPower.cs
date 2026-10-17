@@ -26,7 +26,10 @@ public class AutoCollectPower : ItemPowerBase
         ItemDataSO held = HeldItem;
         if (held == null || Player.ItemCollector == null) return false;
 
-        int count = upgrade.CurrentValues.maxItemsPerUse ;
+        InventoryHandler inventory = Player.StashHandler != null ? Player.StashHandler.Inventory : null;
+        if (inventory == null) return false;
+        int count = upgrade.CurrentValues.maxItemsPerUse;
+        if (inventory.Capacity > 0) count = Mathf.Min(count, inventory.Capacity - inventory.Count);
         if (count <= 0) return false; // hand is full
 
         // Highlighted items count too; this power takes them over.
@@ -49,9 +52,6 @@ public class AutoCollectPower : ItemPowerBase
         _timeout = DOVirtual.DelayedCall(upgrade.maxDuration, DropRemaining).SetLink(gameObject);
         return true;
     }
-
-    /// <summary> Free inventory slots; unlimited capacity counts as no limit. </summary>
-    
 
     /// <summary> Moves a random pick of count items to the front of the list. </summary>
     private static void PickRandom(List<WorldItemBase> list, int count)
@@ -124,5 +124,12 @@ public class AutoCollectPower : ItemPowerBase
         _timeout?.Kill();
         _timeout = null;
         FinishEffect();
+    }
+
+    private void OnDisable()
+    {
+        _timeout?.Kill();
+        _timeout = null;
+        DropRemaining();
     }
 }

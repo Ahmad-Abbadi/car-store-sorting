@@ -27,6 +27,7 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] private InteractionHandler interaction;
 
     private readonly List<UpgradeSO> _upgrades = new List<UpgradeSO>();
+    private bool _started;
 
     /// <summary> Every assigned upgrade, in inspector order. </summary>
     public IReadOnlyList<UpgradeSO> Upgrades => _upgrades;
@@ -53,6 +54,8 @@ public class UpgradeManager : MonoBehaviour
     private void OnEnable()
     {
         foreach (UpgradeSO upgrade in _upgrades) upgrade.OnLevelChanged += Apply;
+        if (_started)
+            foreach (UpgradeSO upgrade in _upgrades) Apply(upgrade);
     }
 
     private void OnDisable()
@@ -68,13 +71,14 @@ public class UpgradeManager : MonoBehaviour
     // Start, so every target system has finished its own Awake.
     private void Start()
     {
+        _started = true;
         foreach (UpgradeSO upgrade in _upgrades) Apply(upgrade);
     }
 
     /// <summary> True when the upgrade has a next level the balance covers. </summary>
     public bool CanPurchase(UpgradeSO upgrade)
     {
-        return upgrade != null && !upgrade.IsMaxed
+        return isActiveAndEnabled && upgrade != null && _upgrades.Contains(upgrade) && !upgrade.IsMaxed
             && CoinsManager.Instance != null && CoinsManager.Instance.CanAfford(upgrade.NextCost);
     }
 
