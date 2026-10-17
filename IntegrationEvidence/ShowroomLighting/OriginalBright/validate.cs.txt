@@ -1,0 +1,66 @@
+var original = UnityEngine.SceneManagement.SceneManager.GetActiveScene().path;
+int quality = UnityEngine.QualitySettings.GetQualityLevel();
+var report = new System.Text.StringBuilder();
+System.Action<bool,string> check = (ok,message) => { if(!ok) throw new System.Exception(message); report.AppendLine("PASS "+message); };
+try
+{
+    foreach(var path in new[]{ShowroomLightingBuilder.LevelPath,CinematicMenuBuilder.MenuPath})
+    {
+        var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(path);
+        ShowroomLightingBuilder.Apply(scene);
+        ShowroomLightingBuilder.Apply(scene);
+        var controllers = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.SelectMany(scene.GetRootGameObjects(),g=>g.GetComponentsInChildren<ShowroomLightingController>(true)));
+        check(controllers.Length==1,scene.name+" one controller after repeated builder application");
+        var c=controllers[0];
+        var bright=c.brightPreset;
+        check(bright.ambientSky==new UnityEngine.Color(.85f,.88f,.9f) && bright.ambientEquator==new UnityEngine.Color(.65f,.68f,.66f) && bright.ambientGround==new UnityEngine.Color(.4f,.39f,.35f),scene.name+" original ambient colors");
+        check(bright.reflectionIntensity==.6f,scene.name+" original environment reflection intensity");
+        foreach(var theme in new[]{LightingTheme.Bright,LightingTheme.Dark,LightingTheme.Bright,LightingTheme.Dark,LightingTheme.Bright})
+        {
+            c.ApplyTheme(theme);
+            var p=theme==LightingTheme.Bright?c.brightPreset:c.darkPreset;
+            check(UnityEngine.Quaternion.Angle(c.keyLight.transform.rotation,p.keyRotation)<.001f && c.keyLight.intensity==p.keyIntensity && c.keyLight.color==p.keyColor && c.keyLight.shadowStrength==p.shadowStrength && c.keyLight.colorTemperature==p.keyColorTemperature && c.keyLight.useColorTemperature==p.keyUseColorTemperature && c.keyLight.shadowBias==p.shadowBias && c.keyLight.shadowNormalBias==p.shadowNormalBias,scene.name+" "+theme+" complete key-light restoration");
+            check(c.ceilingLights.Length==6 && System.Linq.Enumerable.All(c.ceilingLights,l=>l.intensity==p.ceilingLightIntensity && l.range==p.ceilingLightRange && l.color==p.ceilingLightColor && l.shadows==UnityEngine.LightShadows.None),scene.name+" "+theme+" six ceiling lights");
+            check(System.Linq.Enumerable.All(c.surfaces,s=>s.renderer.sharedMaterial==(theme==LightingTheme.Bright?s.bright:s.dark)),scene.name+" "+theme+" correct ceiling materials");
+            check(c.volume.sharedProfile==p.volumeProfile && c.reflectionProbe.customBakedTexture==(theme==LightingTheme.Bright?c.brightReflection:c.darkReflection) && c.reflectionProbe.customBakedTexture!=null,scene.name+" "+theme+" profile and reflection");
+            check(UnityEngine.QualitySettings.GetQualityLevel()==quality,scene.name+" theme leaves quality unchanged");
+        }
+        check(bright.keyIntensity==.72f && bright.keyColor==new UnityEngine.Color(1,.96f,.89f) && bright.shadowStrength==.68f && bright.keyColorTemperature==3900 && bright.keyUseColorTemperature,scene.name+" original sun values");
+        check(UnityEngine.Quaternion.Angle(bright.keyRotation,new UnityEngine.Quaternion(.40821794f,-.23456973f,.10938166f,.8754261f))<.001f,scene.name+" original sun direction");
+        check(System.Linq.Enumerable.All(c.surfaces,s=>UnityEditor.AssetDatabase.GetAssetPath(s.bright).StartsWith(ShopInteriorPolishBuilder.ArtRoot+"/Materials/")),scene.name+" original ceiling material assets");
+        bright.volumeProfile.TryGet<UnityEngine.Rendering.Universal.Tonemapping>(out var tone);
+        bright.volumeProfile.TryGet<UnityEngine.Rendering.Universal.ColorAdjustments>(out var color);
+        bright.volumeProfile.TryGet<UnityEngine.Rendering.Universal.Bloom>(out var bloom);
+        check(tone.mode.value==UnityEngine.Rendering.Universal.TonemappingMode.None && color.postExposure.value==0 && color.contrast.value==0 && color.saturation.value==0 && bloom.intensity.value==0,scene.name+" Bright has no added grading or bloom");
+        c.darkPreset.volumeProfile.TryGet<UnityEngine.Rendering.Universal.Tonemapping>(out var darkTone);
+        check(darkTone.mode.value==UnityEngine.Rendering.Universal.TonemappingMode.ACES && c.darkPreset.keyIntensity==1.15f && c.darkPreset.shadowStrength==.7f && c.darkPreset.ceilingLightIntensity==5 && c.darkPreset.ceilingLightRange==8,scene.name+" Dark unchanged");
+        if(path==CinematicMenuBuilder.MenuPath)
+        {
+            var buttons=System.Linq.Enumerable.SelectMany(scene.GetRootGameObjects(),g=>g.GetComponentsInChildren<UnityEngine.UI.Button>(true));
+            check(System.Linq.Enumerable.Count(buttons,b=>b.name=="Button_LightingTheme")==1,"Menu one theme button after rebuild");
+        }
+        try
+        {
+            foreach(var name in new[]{"Low","Medium","High"})
+            {
+                UnityEngine.QualitySettings.SetQualityLevel(System.Array.IndexOf(UnityEngine.QualitySettings.names,name),true);
+                foreach(var theme in new[]{LightingTheme.Bright,LightingTheme.Dark})
+                {
+                    c.ApplyTheme(theme);
+                    if(path==CinematicMenuBuilder.MenuPath) ShowroomLightingBuilder.CaptureMenuViews("OriginalBright/"+theme+"/Menu-"+name);
+                    else ShowroomLightingBuilder.Capture(UnityEngine.Camera.main,"OriginalBright/"+theme+"/Gameplay-"+name+".png");
+                }
+            }
+        }
+        finally { UnityEngine.QualitySettings.SetQualityLevel(quality,true); c.ApplyTheme(LightingTheme.Bright); }
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
+        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+    }
+}
+finally
+{
+    UnityEngine.QualitySettings.SetQualityLevel(quality,true);
+    UnityEditor.SceneManagement.EditorSceneManager.OpenScene(original);
+}
+System.IO.File.WriteAllText(ShowroomLightingBuilder.Evidence+"/OriginalBright/validation.txt",report.ToString());
+return report.ToString();

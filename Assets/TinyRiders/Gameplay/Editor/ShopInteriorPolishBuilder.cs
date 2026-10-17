@@ -26,6 +26,8 @@ public static class ShopInteriorPolishBuilder
         var interior=scene.GetRootGameObjects().Single(g=>g.name=="Car Store Generated").transform.Find("Crowded Shop Interior");
         if(session==null||interior==null)throw new InvalidOperationException("The crowded collector room is required.");
         Apply(interior,session.roomLayout);
+        ShowroomLightingBuilder.Apply(scene);
+        ShowroomLightingBuilder.BakeReflection(scene);
         EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
     }
 

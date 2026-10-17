@@ -83,6 +83,8 @@ public static class CrowdedCollectorRoomBuilder
         ExactThemeShelfBuilder.ValidateScene();
         ThemedShelfSignClearance.Apply();
         ShopInteriorPolishBuilder.Apply(interior,layout);
+        ShowroomLightingBuilder.Apply(scene);
+        ShowroomLightingBuilder.BakeReflection(scene);
         EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);Audit();
     }
 

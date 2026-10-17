@@ -11,6 +11,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button itemDetailButton;
     [SerializeField] private TMP_Text ItemDetails;
+    [SerializeField] private UnityEngine.UI.Button themeButton;
+    [SerializeField] private TMP_Text themeLabel;
     [Tooltip("Hidden on WebGL, where quitting does nothing.")]
     [SerializeField] private Button quitButton;
     [SerializeField] private MenuCinematicTour cinematicTour;
@@ -21,6 +23,7 @@ public class MainMenu : MonoBehaviour
     {
         if (playButton) playButton.onClick.AddListener(Play);
         if (itemDetailButton) itemDetailButton.onClick.AddListener(CycleItemDetail);
+        if (themeButton) themeButton.onClick.AddListener(ToggleTheme);
         if (quitButton) quitButton.onClick.AddListener(Quit);
 #if UNITY_WEBGL && !UNITY_EDITOR
         if (quitButton) quitButton.gameObject.SetActive(false);
@@ -30,12 +33,14 @@ public class MainMenu : MonoBehaviour
     private void OnEnable()
     {
         Localizer.LanguageChanged += RefreshLabel;
+        LightingThemeSettings.Changed += HandleThemeChanged;
         SceneManager.sceneLoaded += HandleSceneLoaded;
     }
 
     private void OnDisable()
     {
         Localizer.LanguageChanged -= RefreshLabel;
+        LightingThemeSettings.Changed -= HandleThemeChanged;
         SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
@@ -58,6 +63,7 @@ public class MainMenu : MonoBehaviour
     {
         if (playButton) playButton.onClick.RemoveListener(Play);
         if (itemDetailButton) itemDetailButton.onClick.RemoveListener(CycleItemDetail);
+        if (themeButton) themeButton.onClick.RemoveListener(ToggleTheme);
         if (quitButton) quitButton.onClick.RemoveListener(Quit);
     }
 
@@ -78,6 +84,11 @@ public class MainMenu : MonoBehaviour
         RefreshLabel();
     }
 
+    public void ToggleTheme() => LightingThemeSettings.Set(LightingThemeSettings.Current == LightingTheme.Bright
+        ? LightingTheme.Dark : LightingTheme.Bright);
+
+    private void HandleThemeChanged(LightingTheme theme) => RefreshLabel();
+
     /// <summary> Quits the app; stops Play mode in the Editor. </summary>
     public void Quit()
     {
@@ -92,5 +103,6 @@ public class MainMenu : MonoBehaviour
     private void RefreshLabel()
     {
         if (ItemDetails) ItemDetails.SetLocalized(Localizer.Format("menu.details", Localizer.Get("menu.detail." + ItemDetail.Current.ToString().ToLowerInvariant())));
+        if (themeLabel) themeLabel.SetLocalized(Localizer.Format("menu.theme", Localizer.Get("menu.theme." + LightingThemeSettings.Current.ToString().ToLowerInvariant())));
     }
 }

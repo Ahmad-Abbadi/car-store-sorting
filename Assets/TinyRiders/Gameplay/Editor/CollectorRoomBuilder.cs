@@ -103,6 +103,8 @@ public static class CollectorRoomBuilder
         EditorUtility.SetDirty(layout); AssetDatabase.SaveAssets();
         ExactThemeShelfBuilder.ValidateScene();
         ThemedShelfSignClearance.Apply();
+        ShowroomLightingBuilder.Apply(scene);
+        ShowroomLightingBuilder.BakeReflection(scene);
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
         Audit();
         Debug.Log("COLLECTOR_ROOM_READY: 36x44 / 8 sections / 80 shelves / 1200 mixed cars. " + backup);

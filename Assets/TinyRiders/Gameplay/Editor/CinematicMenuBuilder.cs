@@ -80,9 +80,11 @@ public static class CinematicMenuBuilder
         stage.SetActive(true);
         BuildCameras(menu);
         PolishMenu(menu);
+        if (openedLevel) EditorSceneManager.CloseScene(level, true);
+        ShowroomLightingBuilder.Apply(menu);
+        ShowroomLightingBuilder.BakeReflection(menu);
         EditorSceneManager.MarkSceneDirty(menu);
         EditorSceneManager.SaveScene(menu);
-        if (openedLevel) EditorSceneManager.CloseScene(level, true);
         Debug.Log("CINEMATIC_MENU_BUILT: visual-only store, six shots, 48 second loop.");
     }
 
