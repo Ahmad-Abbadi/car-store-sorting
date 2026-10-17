@@ -162,6 +162,21 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     // placement, previews, and restored saves instead of turning cars back inward.
     private Quaternion PlacementRotation => Quaternion.identity;
 
+    private void ResolvePlacementPose(Transform display, out Vector3 position, out Vector3 scale)
+    {
+        position = Vector3.zero;
+        scale = display.localScale;
+        if (TryGetComponent<TinyRiders.ThemeShelfBinding>(out var theme))
+            theme.TryFitDisplay(display, out position, out scale);
+    }
+
+    private void SnapPlacementPose(Transform display)
+    {
+        ResolvePlacementPose(display, out var position, out var scale);
+        display.SetLocalPositionAndRotation(position, PlacementRotation);
+        display.localScale = scale;
+    }
+
     private void Awake()
     {
         _occupants = new PlacedOnShelfItemBase[placingSpots.Count];
@@ -225,8 +240,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
 
         Transform t = item.transform;
         t.SetParent(placingSpots[spot], true); // keep world scale, like AddItem
-        t.localPosition = Vector3.zero;
-        t.localRotation = PlacementRotation;
+        SnapPlacementPose(t);
 
         _occupants[spot] = item;
         _placeOrder.Add(item);
@@ -332,8 +346,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         if (_hologram != null)
         {
             _hologram.transform.SetParent(placingSpots[spot], true);
-            _hologram.transform.localPosition = Vector3.zero;
-            _hologram.transform.localRotation = PlacementRotation;
+            SnapPlacementPose(_hologram.transform);
             _hologramSpot = spot;
             return;
         }
@@ -345,8 +358,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         // Keep world scale, like AddItem, then snap to the spot.
         Transform t = _hologram.transform;
         t.SetParent(placingSpots[spot], true);
-        t.localPosition = Vector3.zero;
-        t.localRotation = PlacementRotation;
+        SnapPlacementPose(t);
         _hologramSpot = spot;
     }
 
@@ -494,12 +506,14 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         LevelSaveManager.MarkDirty();
         Transform t = item.transform;
         t.SetParent(placingSpots[spot], true);
+        ResolvePlacementPose(t, out var destination, out var displayScale);
         if (themed) TinyRiders.ThemedCollectionSession.Instance?.Placed(item, this, spot);
         if (correct) PlayPlacementSFX(placingSpots[spot].position);
 
         DOTween.Sequence()
-            .Join(t.DOLocalJump(Vector3.zero, jumpPower, 1, jumpDuration).SetEase(jumpEase))
+            .Join(t.DOLocalJump(destination, jumpPower, 1, jumpDuration).SetEase(jumpEase))
             .Join(t.DOLocalRotateQuaternion(PlacementRotation, jumpDuration).SetEase(jumpEase))
+            .Join(t.DOScale(displayScale, jumpDuration).SetEase(jumpEase))
             .SetLink(item.gameObject)
             .OnComplete(() =>
             {
@@ -691,8 +705,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
 
             Transform t = item.transform;
             t.SetParent(placingSpots[i], true); // keep world scale, like AddItem
-            t.localPosition = Vector3.zero;
-            t.localRotation = PlacementRotation;
+            SnapPlacementPose(t);
 
             _occupants[i] = item;
             _placeOrder.Add(item);

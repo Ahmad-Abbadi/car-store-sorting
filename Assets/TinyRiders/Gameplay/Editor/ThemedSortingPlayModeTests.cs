@@ -149,7 +149,9 @@ public class ThemedSortingPlayModeTests
   Assert.NotNull(wrong);Assert.True(wrong.IsSettled);Assert.True(wrong.IsWrong);Assert.AreEqual(held,ThemedWorldInstance.Read(wrong));
   Assert.AreEqual(1,Session.Sorted);Assert.AreEqual(1,Session.UniqueDiscovered);Assert.AreEqual(coinsBeforeWrong,CoinsManager.Instance.Coins);
   Assert.False(WorldItemBase.All.Any(w=>ThemedWorldInstance.Read(w)==held));
-  Assert.Less(Vector3.Distance(wrong.transform.position,wrongShelf.GetSpot(0).position),.01f);
+  Assert.True(wrongShelf.GetComponent<ThemeShelfBinding>().TryFitDisplay(wrong.transform,out var wrongPosition,out var wrongScale));
+  Assert.Less(Vector3.Distance(wrong.transform.localPosition,wrongPosition),.0001f);
+  Assert.Less(Vector3.Distance(wrong.transform.localScale,wrongScale),.0001f);
   Assert.True(wrongShelf.TryTakeBack(wrong));Assert.True(wrongShelf.IsSpotFree(0));
   Assert.AreEqual(held,ThemedWorldInstance.Read(Player.Instance.ItemHandler.CurrentEquipped));
   Assert.AreEqual("held",Session.State.instances.Single(r=>r.id==held).state);Assert.True(Session.CanPlace(held));
@@ -189,7 +191,11 @@ public class ThemedSortingPlayModeTests
   SceneManager.sceneLoaded+=Isolate;yield return SceneManager.LoadSceneAsync("ThemedSorting");UnityEngine.Application.runInBackground=true;yield return new WaitUntil(()=>Player.Instance!=null && Session!=null);yield return null;yield return null;SceneManager.sceneLoaded-=Isolate;
   Assert.AreEqual(4,Session.Sorted);Assert.AreEqual(3,Session.UniqueDiscovered);pirateShelf=Shelf("TH_PIRATE");Assert.AreEqual(id,ThemedWorldInstance.Read(pirateShelf.GetOccupant(0)));
   Assert.False(WorldItemBase.All.Any(w=>ThemedWorldInstance.Read(w)==id));
-  Assert.False(WorldItemBase.All.Any(w=>Session.State.instances.Any(r=>r.state=="sorted"&&r.id==ThemedWorldInstance.Read(w))));Assert.Less(Vector3.Distance(pirateShelf.GetSpot(0).position,pirateShelf.GetOccupant(0).transform.position),.01f);
+  Assert.False(WorldItemBase.All.Any(w=>Session.State.instances.Any(r=>r.state=="sorted"&&r.id==ThemedWorldInstance.Read(w))));
+  var restoredCar=pirateShelf.GetOccupant(0);
+  Assert.True(pirateShelf.GetComponent<ThemeShelfBinding>().TryFitDisplay(restoredCar.transform,out var restoredPosition,out var restoredScale));
+  Assert.Less(Vector3.Distance(restoredCar.transform.localPosition,restoredPosition),.0001f);
+  Assert.Less(Vector3.Distance(restoredCar.transform.localScale,restoredScale),.0001f);
   Assert.Less(Vector3.Distance(movedPose,WorldItemBase.All.First(w=>ThemedWorldInstance.Read(w)==movedId).transform.position),.1f);
   Pass("H: real scene reload restores stable shelf markers, identities and interrupted placement without pile duplicates");
   var expansion=Session.ActiveDefinitions.Where(e=>e.releaseId=="themes_expansion_01").GroupBy(e=>e.themeId).First(g=>g.Count()>=13).ToArray();
