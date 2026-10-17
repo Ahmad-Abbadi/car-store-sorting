@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 /// <summary> Player-selectable item detail; each level maps to one mesh LOD. </summary>
 public enum ItemDetailLevel { High = 0, Medium = 1, Low = 2 }
 
-/// <summary> Saved item detail setting; swaps item renderers to LOD-capable meshes. </summary>
+/// <summary> Saved graphics and item detail setting; swaps item renderers to LOD-capable meshes. </summary>
 public static class ItemDetail
 {
     private const string PrefKey = "Item_Detail";
@@ -58,11 +58,29 @@ public static class ItemDetail
         }
     }
 
-    /// <summary> Saves the level and applies it to every item in the loaded scenes. </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void ApplySavedQuality() => ApplyQuality(Current);
+
+    private static void ApplyQuality(ItemDetailLevel level)
+    {
+        int index = Array.IndexOf(QualitySettings.names, level.ToString());
+        if (index < 0)
+        {
+            Debug.LogWarning($"Graphics quality preset '{level}' is missing.");
+            return;
+        }
+
+        QualitySettings.SetQualityLevel(index, true);
+    }
+
+    /// <summary> Saves the level and applies graphics quality and item detail immediately. </summary>
     public static void Set(ItemDetailLevel level)
     {
+        if (!Enum.IsDefined(typeof(ItemDetailLevel), level)) level = DefaultLevel;
         PlayerPrefs.SetInt(PrefKey, (int)level);
         PlayerPrefs.Save();
+
+        ApplyQuality(level);
 
         short lod = (short)Lod;
         foreach (WorldItemBase item in WorldItemBase.All) item.RefreshDetail(lod);

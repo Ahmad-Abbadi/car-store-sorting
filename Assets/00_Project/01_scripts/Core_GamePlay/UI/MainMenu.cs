@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary> Main menu: Play, item detail cycle and Quit buttons. </summary>
 public class MainMenu : MonoBehaviour
@@ -12,6 +13,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TMP_Text ItemDetails;
     [Tooltip("Hidden on WebGL, where quitting does nothing.")]
     [SerializeField] private Button quitButton;
+    [SerializeField] private MenuCinematicTour cinematicTour;
+    [SerializeField] private Camera menuCamera;
+    private bool startingGame;
 
     private void Awake()
     {
@@ -23,9 +27,24 @@ public class MainMenu : MonoBehaviour
 #endif
     }
 
-    private void OnEnable() => Localizer.LanguageChanged += RefreshLabel;
+    private void OnEnable()
+    {
+        Localizer.LanguageChanged += RefreshLabel;
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
 
-    private void OnDisable() => Localizer.LanguageChanged -= RefreshLabel;
+    private void OnDisable()
+    {
+        Localizer.LanguageChanged -= RefreshLabel;
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // The additive loading scene supplies its own camera and listener.
+        if (startingGame && scene.name == SceneLoader.LoadingSceneName && menuCamera)
+            menuCamera.gameObject.SetActive(false);
+    }
 
     private void Start()
     {
@@ -43,7 +62,14 @@ public class MainMenu : MonoBehaviour
     }
 
     /// <summary> Loads the gameplay level through the loading screen. </summary>
-    public void Play() => SceneLoader.LoadWithLoadingScreen(levelScene);
+    public void Play()
+    {
+        if (startingGame || SceneLoader.IsLoading) return;
+        startingGame = true;
+        if (playButton) playButton.interactable = false;
+        if (cinematicTour) cinematicTour.StopTour();
+        SceneLoader.LoadWithLoadingScreen(levelScene);
+    }
 
     /// <summary> Cycles item detail High, Medium, Low; saved for every scene. </summary>
     public void CycleItemDetail()
