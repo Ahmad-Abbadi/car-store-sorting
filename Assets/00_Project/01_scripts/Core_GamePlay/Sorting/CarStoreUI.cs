@@ -55,10 +55,10 @@ public sealed class CarStoreUI : MonoBehaviour
         if (themed)
         {
             Refresh();
-            if (TinyRiders.ThemedCollectionSession.Instance.completeStoreWhenSorted && save != null && save.StoreCompleted) ShowCompletion();
+            if (TinyRiders.ThemedCollectionSession.Instance.completeStoreWhenSorted && save != null && save.StoreCompleted) ShowCompletion(false);
             yield break;
         }
-        if (save != null && save.StoreCompleted) ShowCompletion();
+        if (save != null && save.StoreCompleted) ShowCompletion(false);
         else if (SortingProgressTracker.Instance != null && SortingProgressTracker.Instance.Collected == 0)
         {
             tutorial.SetActive(true);
@@ -119,10 +119,19 @@ public sealed class CarStoreUI : MonoBehaviour
         ShowCompletion();
     }
 
-    private void ShowCompletion()
+    private void ShowCompletion(bool animate = true)
     {
         shownComplete = true;
         tutorial.SetActive(false);
+        var reward = FindFirstObjectByType<TinyRiders.GoldenCarReveal>();
+        if (reward != null)
+        {
+            finish.SetActive(false);
+            if (themeDirectory != null) themeDirectory.SetActive(false);
+            reward.Complete(animate);
+            Refresh();
+            return;
+        }
         finish.SetActive(true);
         GameFlowManager.Instance?.SetState(GameFlowManager.GameState.LevelFinished);
         Cursor.visible = true;
@@ -140,6 +149,7 @@ public sealed class CarStoreUI : MonoBehaviour
 
     public void Replay()
     {
+        FindFirstObjectByType<TinyRiders.GoldenCarReveal>()?.ResetDisplay();
         save?.Clear();
         FindFirstObjectByType<PlayerSavePosition>()?.Clear();
         CoinsManager.Instance?.ResetForReplay();
@@ -148,6 +158,24 @@ public sealed class CarStoreUI : MonoBehaviour
         if (GameFlowManager.Instance != null) GameFlowManager.Instance.LoadScene(SceneManager.GetActiveScene().name);
         else SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary> Dismisses completion after F9 without resetting upgrades or reloading the scene. </summary>
+    internal void DebugResumeCollection()
+    {
+        StopAllCoroutines();
+        FindFirstObjectByType<TinyRiders.GoldenCarReveal>()?.ResetDisplay();
+        shownComplete = false;
+        if (finish != null) finish.SetActive(false);
+        if (tutorial != null) tutorial.SetActive(false);
+        if (themeDirectory != null) themeDirectory.SetActive(false);
+        Time.timeScale = 1f;
+        GameFlowManager.Instance?.SetState(GameFlowManager.GameState.Playing);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Refresh();
+    }
+#endif
 
     private void Refresh()
     {

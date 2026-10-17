@@ -4,8 +4,17 @@ using UnityEditor;
 /// <summary>Fixed authoring calibration: the camera can see over the top tray lip.</summary>
 public static class ThemedPlayerCalibration
 {
+    public static void EnableCarryFraming(Player player)
+    {
+        if (player == null || player.ItemHandler == null) return;
+        player.ItemHandler.FrameCameraFixedCars = true;
+        EditorUtility.SetDirty(player.ItemHandler);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(player.ItemHandler);
+    }
+
     public static void Apply(Player player, float worldScale)
     {
+        EnableCarryFraming(player);
         if(player==null||player.Look==null||player.LookTransform==null)throw new System.InvalidOperationException("Player viewing references missing");
         var settings=new SerializedObject(player.Look);
         var pivot=settings.FindProperty("pitchPivot").objectReferenceValue as Transform;

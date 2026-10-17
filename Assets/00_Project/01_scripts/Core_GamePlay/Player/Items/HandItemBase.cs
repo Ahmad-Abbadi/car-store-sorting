@@ -13,6 +13,9 @@ public class HandItemBase : MonoBehaviour
     // True while this item is the equipped one.
     public bool IsEquipped { get; internal set; }
 
+    internal HeldItemFraming Framing;
+    internal bool IsFlyingToHand;
+
     // Lets the handler stamp the source data when equipped from an ItemDataSO.
     internal void SetData(ItemDataSO value) => data = value;
 

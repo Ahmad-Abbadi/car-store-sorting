@@ -120,13 +120,24 @@ public class ItemCollectingBehaviour : MonoBehaviour
         Transform t = hand.transform;
         t.SetPositionAndRotation(fromPosition, fromRotation);
 
-        Tween move = t.DOLocalMove(data.HeldPosition, flightDuration).SetEase(flightEase);
-        Tween turn = t.DOLocalRotateQuaternion(Quaternion.Euler(data.HeldRotation), flightDuration)
-                      .SetEase(flightEase);
+        Vector3 startPosition = t.localPosition;
+        Quaternion startRotation = t.localRotation;
+        hand.IsFlyingToHand = true;
+        Tween motion = DOTween.To(() => 0f, progress =>
+        {
+            var pose = player.ItemHandler.GetHeldPose(hand);
+            t.localPosition = Vector3.LerpUnclamped(startPosition, pose.Position, progress);
+            t.localRotation = Quaternion.SlerpUnclamped(startRotation, pose.Rotation, progress);
+            t.localScale = pose.Scale;
+        }, 1f, flightDuration).SetEase(flightEase);
 
-        Sequence flight = DOTween.Sequence().Join(move).Join(turn).SetLink(hand.gameObject);
+        Sequence flight = DOTween.Sequence().Join(motion).SetLink(hand.gameObject);
         flight.OnUpdate(() => { if (!hand.IsEquipped) ClearFlying(false); }) // unequipped mid-air: sink takes over
-              .OnKill(() => { if (_flight == flight) _flight = null; });
+              .OnKill(() =>
+              {
+                  if (hand != null) hand.IsFlyingToHand = false;
+                  if (_flight == flight) _flight = null;
+              });
         _flight = flight;
     }
 
@@ -137,6 +148,11 @@ public class ItemCollectingBehaviour : MonoBehaviour
         _flight = null;
         flight?.Kill(snapToHand);
     }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary> Stops an in-flight pickup before the debug sorter removes its held representation. </summary>
+    internal void DebugCancelPickupFlight() => ClearFlying(false);
+#endif
 
     private void OnDisable() => ClearFlying(true);
 }

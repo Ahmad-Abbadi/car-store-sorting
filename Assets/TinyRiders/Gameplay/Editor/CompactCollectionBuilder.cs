@@ -201,6 +201,7 @@ public static class CompactCollectionBuilder
         foreach(var interaction in UnityEngine.Object.FindObjectsByType<InteractionHandler>(FindObjectsSortMode.None))
         { var so=new SerializedObject(interaction); so.FindProperty("triggerInteraction").enumValueIndex=(int)QueryTriggerInteraction.Collide; so.ApplyModifiedPropertiesWithoutUndo(); }
         ExactThemeShelfBuilder.ValidateScene();
+        ThemedPlayerCalibration.EnableCarryFraming(UnityEngine.Object.FindFirstObjectByType<Player>());
         EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
         var menu=EditorSceneManager.OpenScene("Assets/00_Project/00_Scenes/MainMenu Scene.unity",OpenSceneMode.Additive);
         foreach(var m in menu.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<MainMenu>(true))) Text(m,"levelScene","Level");

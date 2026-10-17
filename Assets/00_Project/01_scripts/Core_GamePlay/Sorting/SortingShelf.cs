@@ -234,6 +234,34 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         RefreshStatus();
         return true;
     }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary> Preflight for an instant correct placement; an occupied spot must be freed first. </summary>
+    internal bool DebugCanPlaceInstant(SortableItem_SO data, int spot)
+    {
+        return data != null && data.PlacedOnShelfPrefab != null && GetSpot(spot) != null &&
+            IsCorrectItem(data) && (!TryGetComponent<TinyRiders.ThemeShelfBinding>(out var theme) || theme.Accepts(data, out _));
+    }
+
+    /// <summary> Removes a debug-cheat source without collecting it into the player's hand. </summary>
+    internal void DebugRemoveForSort(int spot, bool notify = true)
+    {
+        var item = GetOccupant(spot);
+        if (item == null) return;
+        item.transform.DOKill();
+        RemoveItem(spot, notify);
+        item.gameObject.SetActive(false);
+        Destroy(item.gameObject);
+    }
+
+    /// <summary> Places a real instance instantly, without animations, sounds or coin events. </summary>
+    internal bool DebugPlaceInstant(SortableItem_SO data, int spot, string instanceId)
+    {
+        if (!DebugCanPlaceInstant(data, spot) || !RestoreItem(spot, data)) return false;
+        TinyRiders.ThemedWorldInstance.Stamp(GetOccupant(spot), instanceId);
+        return true;
+    }
+#endif
+
     /// <summary> Overrides the accepted category at runtime. </summary>
     public void SetCatagory(Catagory_SO catagory)
     {
@@ -482,12 +510,12 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     }
 
     /// <summary> Frees a spot and refreshes the representative item from remaining occupants. </summary>
-    private void RemoveItem(int spot)
+    private void RemoveItem(int spot, bool notify = true)
     {
         PlacedOnShelfItemBase removed = _occupants[spot];
         _placeOrder.Remove(removed);
         _occupants[spot] = null;
-        if (removed != null) NotifyRightItemRemoved(removed.Data);
+        if (notify && removed != null) NotifyRightItemRemoved(removed.Data);
         _fullSequence?.Kill(); // no longer full; stop pending punches
         _cachedItem = null;
         foreach (PlacedOnShelfItemBase occupant in _placeOrder)

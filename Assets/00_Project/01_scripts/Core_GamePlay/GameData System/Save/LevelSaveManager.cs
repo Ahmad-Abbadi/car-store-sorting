@@ -40,6 +40,17 @@ public class LevelSaveManager : MonoBehaviour
     public bool StoreCompleted => _storeCompleted;
     public float ElapsedSeconds => _elapsedSeconds;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    /// <summary> Clears completion for a new debug collection run; the caller saves after rebuilding the pile. </summary>
+    internal void DebugResetCollectionProgress()
+    {
+        _storeCompleted = false;
+        _elapsedSeconds = 0f;
+        _levelFinished = false;
+        MarkDirty();
+    }
+#endif
+
     /// <summary>Persists completion without clearing the finished store.</summary>
     public static void MarkStoreCompleted()
     {

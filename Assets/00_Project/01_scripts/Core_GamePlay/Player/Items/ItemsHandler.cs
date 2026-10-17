@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 /// Equips items into the hand, routes the two item buttons, and owns throwing.
 /// Equipping a world item destroys it and spawns its hand form.
 /// </summary>
+[DefaultExecutionOrder(10000)]
 public class ItemsHandler : MonoBehaviour
 {
     public Player player;
@@ -17,6 +18,11 @@ public class ItemsHandler : MonoBehaviour
 
     [Tooltip("Transform items flagged CameraFixed are parented to.")]
     [SerializeField] private Transform cameraFixedSocket;
+
+    [Tooltip("Show camera-fixed cars large and close in the lower-right foreground, facing left.")]
+    public bool FrameCameraFixedCars;
+
+    private Camera _presentationCamera;
 
     [Tooltip("Layer applied to the spawned held item and all its children.")]
     [SerializeField] private LayerMask heldItemLayer;
@@ -121,7 +127,37 @@ public class ItemsHandler : MonoBehaviour
         => data != null && data.CameraFixed && cameraFixedSocket != null ? cameraFixedSocket : holdSocket;
 
     /// <summary> Socket-local position the equip rise starts from. </summary>
-    public Vector3 GetEquipStartPosition(ItemDataSO data) => data.HeldPosition + equipOffset;
+    public Vector3 GetEquipStartPosition(ItemDataSO data)
+        => CurrentEquipped != null && CurrentEquipped.Data == data
+            ? GetEquipStartPosition(CurrentEquipped) : data.HeldPosition + equipOffset;
+
+    /// <summary>Shared destination for equip, pickup flight, and the settled held model.</summary>
+    public HeldItemPose GetHeldPose(HandItemBase hand)
+    {
+        if (hand.Framing == null) hand.Framing = new HeldItemFraming(hand.transform);
+        if (_presentationCamera == null) _presentationCamera = Camera.main;
+        if (FrameCameraFixedCars && hand.Data.CameraFixed &&
+            hand.Framing.IsThemedCar &&
+            hand.Framing.TryResolve(_presentationCamera, hand.transform.parent, hand.Data.HeldRotation, out var fitted))
+            return fitted;
+        return new HeldItemPose(hand.Data.HeldPosition, Quaternion.Euler(hand.Data.HeldRotation), hand.Framing.OriginalScale);
+    }
+
+    private void ApplyHeldPose(HandItemBase hand)
+    {
+        var pose = GetHeldPose(hand);
+        hand.transform.SetLocalPositionAndRotation(pose.Position, pose.Rotation);
+        hand.transform.localScale = pose.Scale;
+    }
+
+    private void LateUpdate()
+    {
+        var hand = CurrentEquipped;
+        if (hand != null && FrameCameraFixedCars && hand.Data.CameraFixed && hand.Framing.IsThemedCar && !hand.IsFlyingToHand &&
+            (_equipSequence == null || !_equipSequence.IsActive())) ApplyHeldPose(hand);
+    }
+
+    private Vector3 GetEquipStartPosition(HandItemBase hand) => GetHeldPose(hand).Position + equipOffset;
 
     private EquippedItem _equipped = EquippedItem.None;
 
@@ -247,8 +283,7 @@ public class ItemsHandler : MonoBehaviour
             TinyRiders.ThemedWorldInstance.Stamp(hand,
                 player.StashHandler.Inventory?.InstanceIdAt(player.StashHandler.SelectedIndex));
         Transform t = hand.transform;
-        t.localPosition = hand.Data.HeldPosition;
-        t.localEulerAngles = hand.Data.HeldRotation;
+        ApplyHeldPose(hand);
 
         ApplyLayerRecursive(t, LayerFromMask(heldItemLayer)); // put held item on chosen layer
 
@@ -265,7 +300,7 @@ public class ItemsHandler : MonoBehaviour
     private void PlayEquipSequence(HandItemBase hand)
     {
         Transform t = hand.transform;
-        t.localPosition = GetEquipStartPosition(hand.Data);
+        t.localPosition = GetEquipStartPosition(hand);
 
         float wait = SinkTimeLeft();
         if (wait > 0f) _hiddenRenderers = HideRenderers(hand); // unseen until the old item is gone
@@ -273,7 +308,13 @@ public class ItemsHandler : MonoBehaviour
         _equipSequence = DOTween.Sequence()
             .AppendInterval(wait)
             .AppendCallback(ShowHiddenRenderers)
-            .Append(t.DOLocalMove(hand.Data.HeldPosition, equipDuration).SetEase(equipEase))
+            .Append(DOTween.To(() => 0f, progress =>
+            {
+                var pose = GetHeldPose(hand);
+                t.localPosition = pose.Position + equipOffset * (1f - progress);
+                t.localRotation = pose.Rotation;
+                t.localScale = pose.Scale;
+            }, 1f, equipDuration).SetEase(equipEase))
             .SetLink(hand.gameObject)
             .OnComplete(() => _equipSequence = null);
     }
@@ -285,7 +326,7 @@ public class ItemsHandler : MonoBehaviour
 
         Transform t = item.transform;
         Vector3 target = item.Data != null
-            ? GetEquipStartPosition(item.Data)
+            ? GetEquipStartPosition(item)
             : t.localPosition + equipOffset;
 
         _sinking = item.gameObject;
@@ -472,6 +513,7 @@ public class ItemsHandler : MonoBehaviour
         if (data == null || data.WorldItem == null) return;
 
         Transform hand = _equipped.Item.transform;
+        Vector3 pullTarget = GetEquipStartPosition(_equipped.Item);
         WorldItemBase thrown = Instantiate(data.WorldItem, hand.position, hand.rotation);
         string instanceId = player.StashHandler?.Inventory?.InstanceIdAt(player.StashHandler.SelectedIndex);
         TinyRiders.ThemedWorldInstance.Stamp(thrown, instanceId);
@@ -481,11 +523,11 @@ public class ItemsHandler : MonoBehaviour
 
         Unequip(); // thrown copy replaces it, so no sink
         if (themedCopy) player.StashHandler.TryRemove(data);
-        PlayThrowPull(thrown.gameObject, data, force);
+        PlayThrowPull(thrown.gameObject, data, force, pullTarget);
     }
 
     /// <summary> Tweens the item toward the equip start point, following the socket, then releases. </summary>
-    private void PlayThrowPull(GameObject thrown, ItemDataSO data, float force)
+    private void PlayThrowPull(GameObject thrown, ItemDataSO data, float force, Vector3 pullTarget)
     {
         Rigidbody body = GetThrowBody(thrown);
         body.isKinematic = true; // hold still while the pull drives it
@@ -502,7 +544,7 @@ public class ItemsHandler : MonoBehaviour
         Transform socket = GetSocketFor(data);
         Vector3 startLocal = socket.InverseTransformPoint(t.position);
         Quaternion localRot = Quaternion.Inverse(socket.rotation) * t.rotation;
-        Vector3 endLocal = Vector3.Lerp(startLocal, GetEquipStartPosition(data), throwPullAmount);
+        Vector3 endLocal = Vector3.Lerp(startLocal, pullTarget, throwPullAmount);
 
         DOTween.To(() => 0f, p =>
             {

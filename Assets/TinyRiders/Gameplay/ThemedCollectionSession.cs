@@ -21,7 +21,7 @@ namespace TinyRiders
     }
     /// <summary>Finite visible pile over an extensible, deterministic physical collection. Uses the template's inventory, shelves and save coordinator.</summary>
     [DefaultExecutionOrder(-150)]
-    public sealed class ThemedCollectionSession : MonoBehaviour
+    public sealed partial class ThemedCollectionSession : MonoBehaviour
     {
         public static ThemedCollectionSession Instance { get; private set; }
         public ThemedCarCatalog catalog;
@@ -137,7 +137,7 @@ namespace TinyRiders
             r.state = "held"; r.shelfId = null; r.slotId = null; live.Remove(id);
             LevelSaveManager.MarkDirty(); Publish();
         }
-        public void Dropped(WorldItemBase item, string id)
+        public void Dropped(WorldItemBase item, string id, bool publish = true)
         {
             if (item == null || string.IsNullOrEmpty(id) || !records.TryGetValue(id, out var r)) return;
             ThemedWorldInstance.Stamp(item, id); r.state = "world"; live[id] = item;
@@ -147,7 +147,8 @@ namespace TinyRiders
                 Player.Instance.gameObject.scene == gameObject.scene && Player.Instance.Motor != null)
                 foreach (var collider in item.GetComponentsInChildren<Collider>())
                     Physics.IgnoreCollision(Player.Instance.Motor.Capsule, collider, roomLayout.walkThroughLooseCars);
-            r.shelfId = null; r.slotId = null; LevelSaveManager.MarkDirty(); Publish();
+            r.shelfId = null; r.slotId = null; LevelSaveManager.MarkDirty();
+            if (publish) Publish();
         }
         public bool CanPlace(string id) => !string.IsNullOrEmpty(id) && records.TryGetValue(id, out var r) &&
             r.state != "sorted" && r.state != "misplaced";
@@ -190,6 +191,14 @@ namespace TinyRiders
         }
         private void Update()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (ready && !debugSorting)
+            {
+                var keyboard = UnityEngine.InputSystem.Keyboard.current;
+                if (keyboard?.f9Key.wasPressedThisFrame == true) DebugResetCollection();
+                else if (keyboard?.f8Key.wasPressedThisFrame == true) DebugSortAll();
+            }
+#endif
             if (!ready || Time.unscaledTime < nextMaintenance) return;
             nextMaintenance = Time.unscaledTime + .4f;
             foreach (var pair in live.ToArray())
@@ -229,7 +238,7 @@ namespace TinyRiders
             float radius = 25f + cell / 24 * 5.5f;
             return pileOrigin.position + new Vector3(Mathf.Cos(angle) * radius, .05f, Mathf.Sin(angle) * radius);
         }
-        private void Refill()
+        private void Refill(bool publish = true)
         {
             int target = spawnEntireCollectionAtStart ? Total : visiblePileLimit;
             if (pileOrigin == null || live.Count >= target) return;
@@ -295,7 +304,7 @@ namespace TinyRiders
                     item.gameObject.SetActive(true);
                 }
                 else item = Instantiate(source, p, q);
-                Dropped(item, r.id);
+                Dropped(item, r.id, publish);
             }
         }
         public ThemedSessionSave Capture()

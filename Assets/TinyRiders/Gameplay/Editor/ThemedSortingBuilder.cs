@@ -116,6 +116,7 @@ public static class ThemedSortingBuilder
    }
   }
   var player=UnityEngine.Object.FindFirstObjectByType<Player>();
+  ThemedPlayerCalibration.EnableCarryFraming(player);
   foreach(var t in player.GetComponentsInChildren<Transform>(true)) if(t!=player.transform)t.localPosition*=Scale;
   player.transform.position=new Vector3(500,.05f,-125);
   if(player.Motor!=null)player.Motor.SetCapsuleDimensions(.35f*Scale,1.8f*Scale,.9f*Scale);

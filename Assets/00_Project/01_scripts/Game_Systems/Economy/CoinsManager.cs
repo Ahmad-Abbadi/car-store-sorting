@@ -42,6 +42,20 @@ public class CoinsManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void Update()
+    {
+        if (UnityEngine.InputSystem.Keyboard.current?.f10Key.wasPressedThisFrame == true)
+            DebugAddCoins();
+    }
+
+    /// <summary> F10 test cheat: grants 10,000 coins through the normal saved wallet and UI events. </summary>
+    public void DebugAddCoins()
+    {
+        SetCoins(Coins + Mathf.Min(10000, int.MaxValue - Coins));
+    }
+#endif
+
     /// <summary> True when the balance covers the amount. </summary>
     public bool CanAfford(int amount) => amount >= 0 && Coins >= amount;
 
