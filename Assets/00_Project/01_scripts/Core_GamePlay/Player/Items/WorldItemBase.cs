@@ -241,6 +241,8 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
     /// <summary> Shows or hides the power outline, separate from the hover one. </summary>
     internal void SetPowerOutline(bool visible, Color color, float width = SharedOutline.Width)
     {
+        // Keep highlight feedback white while preserving the power's opacity.
+        color = new Color(1f, 1f, 1f, color.a);
         if (_visualGroup != null)
         {
             if (visible) _visualGroup.ShowSecondary(color, width);

@@ -297,6 +297,10 @@ public sealed class CarStoreUI : MonoBehaviour
         nearbyRect.anchorMin = nearbyRect.anchorMax = new Vector2(0.5f, 1f);
         nearbyRect.pivot = new Vector2(0.5f, 1f);
         nearbyRect.anchoredPosition = new Vector2(0, -70);
+        // Keep status data available for the collection UI without the top-center overlay.
+        progressBackground.SetActive(false);
+        overall.gameObject.SetActive(false);
+        nearby.gameObject.SetActive(false);
         GameObject directoryPanel = new GameObject("Model Directory Background", typeof(RectTransform), typeof(Image));
         directoryPanel.transform.SetParent(root.transform, false);
         RectTransform directoryRect = (RectTransform)directoryPanel.transform;
@@ -309,16 +313,6 @@ public sealed class CarStoreUI : MonoBehaviour
         {
             themeDirectory = directoryPanel;
             themeDirectory.SetActive(false);
-            var toggle = Button(root.transform, "Collection Toggle", Vector2.zero,
-                () => themeDirectory.SetActive(!themeDirectory.activeSelf));
-            toggle.text = "Collection [C]"; toggle.fontSize = 21;
-            var toggleRect = (RectTransform)toggle.transform.parent;
-            toggleRect.anchorMin = toggleRect.anchorMax = new Vector2(0, 0);
-            toggleRect.pivot = new Vector2(0, 0);
-            toggleRect.anchoredPosition = new Vector2(16, 16);
-            toggleRect.sizeDelta = new Vector2(240, 50);
-            ((RectTransform)toggle.transform).sizeDelta = new Vector2(235, 45);
-            directoryRect.anchoredPosition = new Vector2(12, 75);
         }
         directoryTitle = Text(directoryPanel.transform, "Directory Title", new Vector2(18, -9),
             new Vector2(660, 33), 23, TextAlignmentOptions.TopLeft);

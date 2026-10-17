@@ -7,14 +7,16 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 public class HeldCarFramingTests
 {
     const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
-    static readonly Rect SafeArea = Rect.MinMaxRect(.64f, .08f, .98f, .43f);
+    static readonly Rect SafeArea = Rect.MinMaxRect(.58f, .16f, .98f, .60f);
     static ThemedCollectionSession Session => ThemedCollectionSession.Instance;
 
-    public static void AssertVisible(HandItemBase hand, Camera camera)
+    public static void AssertVisible(HandItemBase hand, Camera camera, bool checkDefaultFacing = true)
     {
         Vector2 minimum = Vector2.one, maximum = Vector2.zero;
         foreach (var renderer in hand.GetComponentsInChildren<Renderer>(true))
@@ -32,10 +34,12 @@ public class HeldCarFramingTests
                 Assert.Greater(point.z, camera.nearClipPlane + .02f, hand.Data.name + " near clip");
             }
         }
-        Assert.True(maximum.x - minimum.x > .24f || maximum.y - minimum.y > .25f, "Held car should fill the foreground");
+        Assert.True(maximum.x - minimum.x > .27f || maximum.y - minimum.y > .29f,
+            $"{hand.Data.name}: held car should fill the larger foreground area; size={maximum - minimum}, aspect={camera.aspect}, fov={camera.fieldOfView}");
+        if (!checkDefaultFacing) return;
         Vector3 facing = camera.transform.InverseTransformDirection(hand.transform.forward);
-        Assert.Less(facing.x, -.4f, "Car nose should face left");
-        Assert.Less(facing.z, -.4f, "Car nose should face toward the player");
+        Vector3 expected = Quaternion.Euler(hand.Data.HeldRotation + new Vector3(-3.659882f, 88.439224f, 5.780028f)) * Vector3.forward;
+        Assert.Less(Vector3.Distance(expected, facing), .001f, "Default pose should match the chosen front/side reference angle");
     }
 
     [Test, Timeout(240000)]
@@ -76,6 +80,16 @@ public class HeldCarFramingTests
                     // Resolving repeatedly must not shrink the already fitted model again.
                     Assert.Less(Vector3.Distance(pose.Scale, handler.GetHeldPose(hand).Scale), .00001f);
                 }
+                // Include underside, rear, and rolled views for every design and its accessories.
+                foreach (var angles in new[] { new Vector3(0, 90, 0), new Vector3(180, 0, 0), new Vector3(60, 180, 45) })
+                {
+                    typeof(ItemsHandler).GetField("_inspectionRotation", Private).SetValue(handler, Quaternion.Euler(angles));
+                    var pose = handler.GetHeldPose(hand);
+                    hand.transform.SetLocalPositionAndRotation(pose.Position, pose.Rotation);
+                    hand.transform.localScale = pose.Scale;
+                    AssertVisible(hand, camera, false);
+                }
+                typeof(ItemsHandler).GetField("_inspectionRotation", Private).SetValue(handler, Quaternion.identity);
                 Assert.AreEqual(authoredPosition, item.HeldPosition); Assert.AreEqual(authoredRotation, item.HeldRotation);
                 Assert.AreEqual(prefabScale, item.HandItem.transform.localScale); Assert.AreEqual(worldScale, item.WorldItem.transform.localScale);
                 Object.DestroyImmediate(hand.gameObject);
@@ -148,6 +162,76 @@ public class HeldCarFramingTests
             until = Time.realtimeSinceStartup + .2f;
             while (Time.realtimeSinceStartup < until) yield return null;
             AssertVisible(player.ItemHandler.CurrentEquipped, Camera.main);
+        }
+        yield return ExerciseInspection(player);
+    }
+
+    static IEnumerator ExerciseInspection(Player player)
+    {
+        var settings = InputSystem.settings;
+        var previousBehavior = settings.editorInputBehaviorInPlayMode;
+        var previousBackground = settings.backgroundBehavior;
+        settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+        settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+        var mouse = InputSystem.AddDevice<Mouse>();
+        var input = player.Input;
+        var handler = player.ItemHandler;
+        void Send(bool down, Vector2 delta)
+        {
+            InputSystem.QueueStateEvent(mouse, new MouseState { delta = delta }.WithButton(MouseButton.Middle, down));
+            InputSystem.Update();
+            // Exercise reads in camera-before-handler order without waiting for another input update.
+            typeof(PlayerInput).GetField("_inspectionFrame", Private).SetValue(input, -1);
+        }
+        try
+        {
+            input.Enable();
+            input.SendMessage("OnApplicationFocus", true);
+            Send(false, Vector2.zero);
+            Assert.False(input.IsInspectingCar);
+            var initial = handler.GetHeldPose(handler.CurrentEquipped);
+            Send(true, new Vector2(80, 40));
+            Assert.True(input.IsInspectingCar);
+            Assert.AreEqual(Vector2.zero, input.LookDelta, "Inspection must consume camera look in the same frame");
+            float yaw = player.Look.Yaw, pitch = player.Look.Pitch;
+            player.Look.SendMessage("Update");
+            Assert.AreEqual(yaw, player.Look.Yaw); Assert.AreEqual(pitch, player.Look.Pitch);
+            handler.SendMessage("Update");
+            var rotated = handler.GetHeldPose(handler.CurrentEquipped);
+            Assert.Greater(Quaternion.Angle(initial.Rotation, rotated.Rotation), 10f);
+            Send(false, Vector2.zero);
+            Assert.False(input.IsInspectingCar);
+            Assert.Less(Quaternion.Angle(rotated.Rotation, handler.GetHeldPose(handler.CurrentEquipped).Rotation), .001f);
+
+            // Disabling input and focus loss both require release and a new press.
+            foreach (bool focusLoss in new[] { false, true })
+            {
+                Send(true, Vector2.one); Assert.True(input.IsInspectingCar);
+                if (focusLoss) input.SendMessage("OnApplicationFocus", false); else input.Disable();
+                Assert.False(input.IsInspectingCar);
+                if (focusLoss) input.SendMessage("OnApplicationFocus", true); else input.Enable();
+                Send(true, Vector2.one); Assert.False(input.IsInspectingCar);
+                Send(false, Vector2.zero); Assert.False(input.IsInspectingCar);
+            }
+            Send(true, Vector2.one); Assert.True(input.IsInspectingCar);
+            player.StashHandler.SelectIndex(1);
+            Assert.False(input.IsInspectingCar);
+            float until = Time.realtimeSinceStartup + .7f;
+            while (Time.realtimeSinceStartup < until) yield return null;
+            Send(true, Vector2.one); Assert.False(input.IsInspectingCar, "Switching while held must require a fresh press");
+            AssertVisible(handler.CurrentEquipped, Camera.main);
+            Send(false, Vector2.zero); Assert.False(input.IsInspectingCar);
+            Send(true, Vector2.one); Assert.True(input.IsInspectingCar);
+            handler.Unequip();
+            Assert.False(input.IsInspectingCar);
+            Send(true, Vector2.one); Assert.False(input.IsInspectingCar, "An empty hand must not capture camera look");
+        }
+        finally
+        {
+            InputSystem.RemoveDevice(mouse);
+            settings.editorInputBehaviorInPlayMode = previousBehavior;
+            settings.backgroundBehavior = previousBackground;
+            input.CancelCarInspection();
         }
     }
 

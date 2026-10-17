@@ -31,6 +31,56 @@ public class PlayerInput : MonoBehaviour
     public bool IsEnabled { get; private set; }
 
     private GameControls _controls;
+    private Player _player;
+    private bool _inspectionActive;
+    private bool _inspectionMustRelease;
+    private bool _hasFocus = true;
+    private int _inspectionFrame = -1;
+
+    /// <summary>Middle-button inspection owns mouse look only while a settled car is held.</summary>
+    public bool IsInspectingCar
+    {
+        get
+        {
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            if (!IsEnabled || !isActiveAndEnabled || !_hasFocus || Time.timeScale <= 0f || mouse == null ||
+                _player == null || _player.ItemHandler == null || !_player.ItemHandler.CanInspectHeldCar)
+            {
+                CancelCarInspection();
+                return false;
+            }
+            if (_inspectionFrame == Time.frameCount) return _inspectionActive;
+            _inspectionFrame = Time.frameCount;
+            if (!mouse.middleButton.isPressed)
+            {
+                _inspectionMustRelease = false;
+                _inspectionActive = false;
+            }
+            else if (!_inspectionMustRelease && mouse.middleButton.wasPressedThisFrame)
+                _inspectionActive = true;
+            return _inspectionActive;
+        }
+    }
+
+    /// <summary>Raw pixels, independent of camera sensitivity and frame duration.</summary>
+    public Vector2 CarInspectionDelta => IsInspectingCar
+        ? UnityEngine.InputSystem.Mouse.current.delta.ReadValue() : Vector2.zero;
+
+    public void CancelCarInspection()
+    {
+        _inspectionActive = false;
+        _inspectionMustRelease = UnityEngine.InputSystem.Mouse.current != null &&
+            UnityEngine.InputSystem.Mouse.current.middleButton.isPressed;
+        _inspectionFrame = Time.frameCount;
+    }
+
+    private void Update() { _ = IsInspectingCar; }
+
+    private void OnApplicationFocus(bool focused)
+    {
+        _hasFocus = focused;
+        CancelCarInspection();
+    }
     public bool CollectionPressed => IsEnabled && UnityEngine.InputSystem.Keyboard.current != null &&
         UnityEngine.InputSystem.Keyboard.current.cKey.wasPressedThisFrame;
 
@@ -51,6 +101,7 @@ public class PlayerInput : MonoBehaviour
     // Gates the map only; the look component keeps whatever state it was authored with.
     private void Awake()
     {
+        _player = GetComponentInParent<Player>();
         IsEnabled = startEnabled;
         ApplyGate();
     }
@@ -59,6 +110,7 @@ public class PlayerInput : MonoBehaviour
 
     private void OnDisable()
     {
+        CancelCarInspection();
         if (_controls == null) return;
         _controls.Player.Disable();
     }
@@ -115,7 +167,7 @@ public class PlayerInput : MonoBehaviour
     {
         get
         {
-            if (!IsEnabled) return Vector2.zero;
+            if (!IsEnabled || IsInspectingCar) return Vector2.zero;
             Vector2 look = Controls.Player.Look.ReadValue<Vector2>() * lookScale;
             return Touch != null ? look + Touch.LookDelta : look;
         }
@@ -181,6 +233,7 @@ public class PlayerInput : MonoBehaviour
     /// <summary>Enable or disable all player input, toggling the look system with it.</summary>
     public void SetEnabled(bool enabled)
     {
+        if (!enabled) CancelCarInspection();
         IsEnabled = enabled;
         ApplyGate();
         if (look != null) look.SetLook(enabled);

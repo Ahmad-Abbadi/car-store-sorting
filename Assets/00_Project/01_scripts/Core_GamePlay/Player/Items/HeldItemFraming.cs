@@ -14,8 +14,10 @@ public readonly struct HeldItemPose
 /// <summary>Caches model bounds once, then fits their corners into a camera viewport rectangle.</summary>
 internal sealed class HeldItemFraming
 {
-    // Large foreground hold, like the original duck: the HUD sits in front of its lower edge.
-    internal static readonly Rect Viewport = Rect.MinMaxRect(.64f, .08f, .98f, .43f);
+    // Leave the name and inventory count unobstructed below the model.
+    internal static readonly Rect Viewport = Rect.MinMaxRect(.58f, .16f, .98f, .60f);
+    // Camera-relative angle chosen in Play mode: front/side view with a slight tilt.
+    internal static readonly Vector3 DefaultRotationOffset = new Vector3(-3.659882f, 88.439224f, 5.780028f);
     internal readonly Vector3 OriginalScale;
     internal readonly bool IsThemedCar;
     readonly Vector3[] corners;
@@ -40,10 +42,13 @@ internal sealed class HeldItemFraming
     }
 
     internal bool TryResolve(Camera camera, Transform socket, Vector3 authoredRotation, out HeldItemPose pose)
+        => TryResolve(camera, socket, authoredRotation, Quaternion.identity, out pose);
+
+    internal bool TryResolve(Camera camera, Transform socket, Vector3 authoredRotation, Quaternion inspectionRotation, out HeldItemPose pose)
     {
         pose = default;
         if (camera == null || camera.orthographic || socket == null || corners.Length == 0) return false;
-        var rotation = Quaternion.Euler(authoredRotation + new Vector3(8f, 70f, 0f));
+        var rotation = inspectionRotation * Quaternion.Euler(authoredRotation + DefaultRotationOffset);
         var scale = Vector3.Scale(OriginalScale, socket.lossyScale);
         var bounds = new Bounds(rotation * Vector3.Scale(corners[0], scale), Vector3.zero);
         foreach (var point in corners) bounds.Encapsulate(rotation * Vector3.Scale(point, scale));

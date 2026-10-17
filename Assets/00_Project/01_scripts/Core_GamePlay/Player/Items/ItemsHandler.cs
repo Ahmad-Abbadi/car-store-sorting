@@ -19,8 +19,20 @@ public class ItemsHandler : MonoBehaviour
     [Tooltip("Transform items flagged CameraFixed are parented to.")]
     [SerializeField] private Transform cameraFixedSocket;
 
-    [Tooltip("Show camera-fixed cars large and close in the lower-right foreground, facing left.")]
+    [Tooltip("Show camera-fixed cars large in the lower-right foreground, above the item name.")]
     public bool FrameCameraFixedCars;
+
+    [Header("Car Inspection")]
+    [Tooltip("Degrees of car rotation per mouse pixel while holding the middle mouse button.")]
+    [SerializeField, Min(0f)] private float inspectionSensitivity = .25f;
+    private Quaternion _inspectionRotation = Quaternion.identity;
+
+    /// <summary>Only settled, visible camera-fixed themed cars accept inspection input.</summary>
+    public bool CanInspectHeldCar => isActiveAndEnabled && FrameCameraFixedCars &&
+        CurrentEquipped != null && CurrentEquipped.Data != null && CurrentEquipped.Data.CameraFixed &&
+        CurrentEquipped.Framing != null && CurrentEquipped.Framing.IsThemedCar &&
+        !CurrentEquipped.IsFlyingToHand && _hiddenRenderers == null &&
+        (_equipSequence == null || !_equipSequence.IsActive());
 
     private Camera _presentationCamera;
 
@@ -138,7 +150,8 @@ public class ItemsHandler : MonoBehaviour
         if (_presentationCamera == null) _presentationCamera = Camera.main;
         if (FrameCameraFixedCars && hand.Data.CameraFixed &&
             hand.Framing.IsThemedCar &&
-            hand.Framing.TryResolve(_presentationCamera, hand.transform.parent, hand.Data.HeldRotation, out var fitted))
+            hand.Framing.TryResolve(_presentationCamera, hand.transform.parent, hand.Data.HeldRotation,
+                hand == CurrentEquipped ? _inspectionRotation : Quaternion.identity, out var fitted))
             return fitted;
         return new HeldItemPose(hand.Data.HeldPosition, Quaternion.Euler(hand.Data.HeldRotation), hand.Framing.OriginalScale);
     }
@@ -153,6 +166,7 @@ public class ItemsHandler : MonoBehaviour
     private void LateUpdate()
     {
         var hand = CurrentEquipped;
+        if (hand != null) hand.SetHeldCarOutline(_hiddenRenderers == null && hand.IsEquipped);
         if (hand != null && FrameCameraFixedCars && hand.Data.CameraFixed && hand.Framing.IsThemedCar && !hand.IsFlyingToHand &&
             (_equipSequence == null || !_equipSequence.IsActive())) ApplyHeldPose(hand);
     }
@@ -179,6 +193,11 @@ public class ItemsHandler : MonoBehaviour
     private void Update()
     {
         if (player == null || player.Input == null) return;
+
+        Vector2 drag = player.Input.CarInspectionDelta;
+        if (drag.sqrMagnitude > 0f)
+            _inspectionRotation = (Quaternion.AngleAxis(drag.x * inspectionSensitivity, Vector3.up) *
+                Quaternion.AngleAxis(-drag.y * inspectionSensitivity, Vector3.right) * _inspectionRotation).normalized;
 
         if (UpdateThrowInput()) return;
 
@@ -255,11 +274,14 @@ public class ItemsHandler : MonoBehaviour
     /// <summary> Ends any hold, clears the equipped slot and returns the old item, or null. </summary>
     private HandItemBase Detach()
     {
+        player?.Input?.CancelCarInspection();
+        _inspectionRotation = Quaternion.identity;
         if (!_equipped.IsValid) return null;
 
         if (_holding) EndHold(_holdCompleted); // tear down while still cached
 
         HandItemBase item = _equipped.Item;
+        item.SetHeldCarOutline(false);
         _equipped = EquippedItem.None;
 
         item.IsEquipped = false;
@@ -290,6 +312,7 @@ public class ItemsHandler : MonoBehaviour
         _equipped = new EquippedItem(hand);
         hand.IsEquipped = true;
         hand.OnEquipped(this);
+        hand.SetHeldCarOutline(true);
 
         return hand;
     }
@@ -627,6 +650,7 @@ public class ItemsHandler : MonoBehaviour
     /// <summary> Safety net: tear down a hold if disabled mid-press. </summary>
     private void OnDisable()
     {
+        player?.Input?.CancelCarInspection();
         if (_holding) EndHold(_holdCompleted);
     }
 

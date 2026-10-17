@@ -95,7 +95,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     private SortableItem_SO _cachedItem; // representative occupant for the name display
     private PlacedOnShelfItemBase[] _occupants;
     private readonly List<PlacedOnShelfItemBase> _placeOrder = new List<PlacedOnShelfItemBase>(); // oldest to newest
-    private PlacedOnShelfItemBase _hoveredItem; // latest item outlined while the shelf is hovered
+    private PlacedOnShelfItemBase _hoveredItem; // aimed item outlined while the shelf is hovered
     private bool _isHovered;
     private GameObject _hologram; // preview of the held item on the aimed free spot
     private int _hologramSpot = -1;
@@ -277,13 +277,14 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         if (_occupants != null) RefreshStatus();
     }
 
-    /// <summary> Gives the most recently placed item back to the player. </summary>
+    /// <summary> Gives the item in the aimed slot back to the player. </summary>
     public void OnInteract(InteractionHandler handler)
     {
-        if (_placeOrder.Count > 0) TryTakeBack(_placeOrder[_placeOrder.Count - 1]);
+        PlacedOnShelfItemBase target = GetAimedItem(handler);
+        if (target != null) TryTakeBack(target);
     }
 
-    /// <summary> Starts outlining the latest settled item and shows the held item's hologram. </summary>
+    /// <summary> Starts outlining the aimed settled item and shows the held item's hologram. </summary>
     public void OnHoverEnter()
     {
         _isHovered = true;
@@ -291,7 +292,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         RefreshPlacementPreview();
     }
 
-    /// <summary> Keeps the outline on the latest item; shows a hologram if none exists. </summary>
+    /// <summary> Keeps the outline on the aimed item and updates the hologram. </summary>
     public void OnHoverStay()
     {
         RefreshHoverOutline();
@@ -386,11 +387,30 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         return nearest;
     }
 
-    /// <summary> Moves the hover outline to the latest settled item, or clears it. </summary>
+    /// <summary> Resolves the aimed slot, including empty slots so another item is never substituted. </summary>
+    private PlacedOnShelfItemBase GetAimedItem(InteractionHandler handler)
+    {
+        if (handler == null || !handler.HasCurrentHit || _occupants == null) return null;
+
+        int nearest = -1;
+        float nearestDistance = float.PositiveInfinity;
+        for (int i = 0; i < _occupants.Length; i++)
+        {
+            if (placingSpots[i] == null) continue;
+            float distance = (placingSpots[i].position - handler.CurrentHitPoint).sqrMagnitude;
+            if (distance >= nearestDistance) continue;
+            nearest = i;
+            nearestDistance = distance;
+        }
+
+        PlacedOnShelfItemBase item = nearest >= 0 ? _occupants[nearest] : null;
+        return item != null && item.IsSettled ? item : null;
+    }
+
+    /// <summary> Moves the hover outline to the aimed settled item, or clears it. </summary>
     private void RefreshHoverOutline()
     {
-        PlacedOnShelfItemBase latest = _placeOrder.Count > 0 ? _placeOrder[_placeOrder.Count - 1] : null;
-        PlacedOnShelfItemBase target = _isHovered && latest != null && latest.IsSettled ? latest : null;
+        PlacedOnShelfItemBase target = _isHovered ? GetAimedItem(GetInteraction()) : null;
         if (target == _hoveredItem) return;
 
         if (_hoveredItem != null) _hoveredItem.OnHoverExit();
@@ -497,6 +517,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     /// <summary> Returns the item to the player's hand and frees its spot. </summary>
     public bool TryTakeBack(PlacedOnShelfItemBase item)
     {
+        if (item == null || !item.IsSettled || _occupants == null) return false;
         int spot = System.Array.IndexOf(_occupants, item);
         if (spot < 0) return false;
 
