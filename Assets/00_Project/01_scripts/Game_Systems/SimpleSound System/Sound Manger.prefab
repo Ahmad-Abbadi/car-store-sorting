@@ -46,12 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd9933e90b0e8504a9e7847fad2e6794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleAudioManager
+  _menuMusic: {fileID: 8300000, guid: 9415dd3d3ea8d384ca36bf701c8b9e49, type: 3}
+  _gameplayMusic: {fileID: 8300000, guid: 2a1462f479e47354b85412b968edbf67, type: 3}
   _poolSize: 15
   _audioSourcePrefab: {fileID: 4409058234743211879}
   _MusicSource: {fileID: 1516361557008149576}
   _gameplaySounds: {fileID: 11400000, guid: 0ef4591c902a5bf41bc6a6fdcb7a1598, type: 2}
   _musicFadeDuration: 1
-  musicFadeDuration: 0.35
+  musicFadeDuration: 1
 --- !u!1 &4409058234743211879
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +97,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 0b02cc8489b785d4b9b3ae824d7e302b, type: 3}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -224,10 +226,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 529af80373748294c833a1af8c447ca5, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.1
-  m_Pitch: 1.35
+  m_Resource: {fileID: 8300000, guid: 2a1462f479e47354b85412b968edbf67, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.18
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0

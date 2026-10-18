@@ -20,6 +20,7 @@ public class LevelSaveManager : MonoBehaviour
 
     [Tooltip("PlayerPrefs key the level save is stored under.")]
     [SerializeField] private string saveKey = "LevelSave";
+    public string StorageKey => saveKey;
 
     [Tooltip("Min seconds between autosaves while there are unsaved changes. 0 disables autosave.")]
     [SerializeField, Min(0)] private float autosaveInterval = 60f;

@@ -1,0 +1,33 @@
+Imported package audio integration — 2026-10-17
+
+Prepared 23 working clips from the user's Mobile Games Bundle and 2000 Game Sound FX:
+2 stereo music themes and 21 mono effect assets, including 17 assigned gameplay variants/cues.
+Menu: Life Is Simple, C major, 120 BPM, 120 seconds.
+Gameplay: Life Is Simple, C major, 123 BPM, 124.878 seconds.
+All working clips preserve the original 44.1 kHz / 16-bit PCM source format.
+Original package files remain unchanged. Previous audio remains available but is not assigned.
+
+Source analysis and individual processing records: source-analysis.json / package-selection.json.
+Package licensing/provenance: Assets/00_Project/Audio/PackageSelection/Sources.txt and Sources.json.
+Selected package assets are not CC0; they retain the original imported-package licenses.
+All 23 prepared waveforms have zero endpoint samples and no clipped samples.
+
+Assignment succeeded through Unity Editor APIs. Saved the shared sound library, audio manager
+prefab, menu, gameplay Level and ThemedSorting audio overrides. Cleared an accidental music
+assignment from the effects-source template. Preserved existing music fades, mutes and pooling.
+
+3 existing focused NUnit assertion checks passed when invoked directly in the Editor:
+- Library variants, pitch, volume and complete playback tails.
+- All enabled playable scene audio dependencies use the selected package working copies.
+- All 23 imports preserve sample rate, stereo music / mono effects, preload and expected load types.
+See asset-checks.txt. Unity Test Runner was not launched for this pass.
+
+33 runtime checks passed: every assigned gameplay cue/variation played; independent and temporary
+mutes and lock behavior; fades while paused; no restart on selecting the current track; correct
+music through menu/loading/Level/menu; one persistent manager; exactly one active listener on
+every sampled frame of both loading transitions. Preferences/background settings restored.
+See runtime-checks.txt. Reported Editor AudioClip memory: 9,241,099 bytes.
+
+No build was requested or started. No device/browser playback or CPU/memory result is claimed.
+Listening quality is subjective; waveform measurements and actual Editor playback are verified.
+Unrelated camera, loading-screen and UI work was preserved.

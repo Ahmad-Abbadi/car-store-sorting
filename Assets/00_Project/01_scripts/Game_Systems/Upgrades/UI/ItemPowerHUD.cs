@@ -41,6 +41,7 @@ public class ItemPowerHUD : MonoBehaviour
         button.transition = Selectable.Transition.None;
         button.navigation = new Navigation { mode = Navigation.Mode.None };
         button.onClick.AddListener(power.RequestUse);
+        UIButtonAudioFeedback.Ensure(button);
     }
 
     private void Update()

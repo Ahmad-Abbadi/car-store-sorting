@@ -89,6 +89,9 @@ GameObject:
   - component: {fileID: 7288741539121995327}
   - component: {fileID: 2141017335461605483}
   - component: {fileID: 1850863273933902523}
+  - component: {fileID: 974375560069698057}
+  - component: {fileID: 1969205592578561436}
+  - component: {fileID: 4798893859000567990}
   m_Layer: 0
   m_Name: Language Button
   m_TagString: Untagged
@@ -137,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.25, b: 0.3, a: 1}
+  m_Color: {r: 0.8627451, g: 0.8901961, b: 0.92156863, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -176,10 +179,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 0.93, g: 0.96, b: 1, a: 1}
+    m_PressedColor: {r: 0.78, g: 0.84, b: 0.94, a: 1}
+    m_SelectedColor: {r: 0.88, g: 0.94, b: 1, a: 1}
+    m_DisabledColor: {r: 0.65, g: 0.68, b: 0.72, a: 0.7}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -231,3 +234,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LanguageButton
   flag: {fileID: 8472846832888409504}
+--- !u!114 &974375560069698057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6468223910277337090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0.13333334, g: 0.19607843, b: 0.2901961, a: 0.16}
+  m_EffectDistance: {x: 0, y: -4}
+  m_UseGraphicAlpha: 1
+--- !u!114 &1969205592578561436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6468223910277337090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10e07121eaadcef469046a4cc7e47261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToyShop.UI.ToyShopButtonFeedback
+--- !u!114 &4798893859000567990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6468223910277337090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80c987532ef3aa5438ee98977df491ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonAudioFeedback

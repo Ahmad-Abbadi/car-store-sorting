@@ -1,0 +1,24 @@
+PASS menu button coverage including inactive panels: 10
+PASS pointer click: exactly one cue and original callback
+PASS keyboard/controller Submit: exactly one cue and original callback
+PASS disabled pointer and Submit stay silent
+PASS hover and cancelled press stay silent
+PASS 20 panel reopen/rebind cycles do not accumulate listeners
+PASS panel-closing callback still produces one click
+PASS rapid clicks retain one callback and cue per activation
+PASS UI plays in 2D during pause, listener pause and temporary gameplay mute
+PASS temporary gameplay mute still suppresses world effects
+PASS saved SFX mute stops and suppresses UI
+PASS pooled UI voice resets to positioned world playback
+PASS pooled world voice resets to 2D UI playback
+PASS successful real world pickup: one plastic cue after collection (picked=True, count=1, voices=1)
+PASS full inventory: one distinct soft refusal (accepted=False, voices=1)
+PASS throw pull animation starts silently
+PASS actual throw: one whoosh at release
+PASS blocked real throw input: one refusal, no release whoosh
+PASS placement flights are silent before shelf contact
+PASS two landing clacks and exactly one completion chime
+PASS completion does not replay after feedback finishes
+PASS wrong placement: one warning with red feedback
+PASS wrong placement lands without success or completion sound
+PASS saved shelf restoration remains silent

@@ -68,6 +68,7 @@ public class EquipmentItemNameUI : MonoBehaviour
         button.navigation = new Navigation { mode = Navigation.Mode.None };
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => onTap?.Invoke());
+        UIButtonAudioFeedback.Ensure(button);
     }
 
     /// <summary> Tints the name with the warning color, keeping the highlight's fade. </summary>

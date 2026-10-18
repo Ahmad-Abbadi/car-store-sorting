@@ -85,7 +85,7 @@ public static class CinematicMenuBuilder
         ShowroomLightingBuilder.BakeReflection(menu);
         EditorSceneManager.MarkSceneDirty(menu);
         EditorSceneManager.SaveScene(menu);
-        Debug.Log("CINEMATIC_MENU_BUILT: visual-only store, six shots, 48 second loop.");
+        Debug.Log("CINEMATIC_MENU_BUILT: visual-only store, six shuffled views.");
     }
 
     private static void StripGameplay(GameObject root)
@@ -126,6 +126,7 @@ public static class CinematicMenuBuilder
                 StripGameplay(car);
             }
         }
+        cars.gameObject.AddComponent<ItemDetailDisplay>();
         if (session.pileLayout == null) return;
         var pile = JsonUtility.FromJson<Pile>(session.pileLayout.text);
         var lookup = definitions.ToDictionary(e => e.collectibleId);

@@ -58,6 +58,8 @@ public class UpgradeCardUI : MonoBehaviour
 
     private void OnDisable()
     {
+        _punch?.Complete();
+        _punch?.Kill();
         CoinsManager.OnCoinsChanged -= HandleCoinsChanged;
         Localizer.LanguageChanged -= Relocalize;
     }
@@ -100,11 +102,13 @@ public class UpgradeCardUI : MonoBehaviour
         bool canBuy = UpgradeManager.Instance != null && UpgradeManager.Instance.CanPurchase(_upgrade);
 
         if (buyLabel != null) buyLabel.SetLocalized(maxed ? Localizer.FromEnglish("upgrade", maxLabel) : string.Format(priceFormat, _upgrade.NextCost));
-        if (buyButtonImage != null) buyButtonImage.color = maxed ? maxedColor : canBuy ? affordableColor : unaffordableColor;
+        var theme = ToyShop.UI.ToyShopTheme.Current;
+        if (buyButtonImage != null) buyButtonImage.color = maxed ? theme.gold : canBuy ? theme.blue : theme.muted;
+        if (buyLabel != null) buyLabel.color = canBuy ? Color.white : theme.navy;
         if (buyButton != null) buyButton.interactable = canBuy;
 
         int owned = _upgrade.Level;
-        for (int i = 0; i < _pips.Count; i++) _pips[i].color = i < owned ? pipOwnedColor : pipEmptyColor;
+        for (int i = 0; i < _pips.Count; i++) _pips[i].color = i < owned ? theme.mint : theme.muted;
     }
 
     /// <summary> Buys the next level through the manager; punches on success. </summary>
@@ -112,11 +116,11 @@ public class UpgradeCardUI : MonoBehaviour
     {
         if (UpgradeManager.Instance == null || !UpgradeManager.Instance.TryPurchase(_upgrade)) return;
 
-        if (buyButton == null) return;
+        // Reward motion belongs to the card; the button has its own press feedback.
         _punch?.Complete();
-        _punch = buyButton.transform.DOPunchScale(buyPunchScale, buyPunchDuration, 6, 0.5f)
+        _punch = transform.DOPunchScale(new Vector3(.025f, .025f, 0), .2f, 2, 0.2f)
             .SetUpdate(true) // the panel pauses time
-            .SetLink(gameObject);
+            .SetLink(gameObject, LinkBehaviour.KillOnDisable);
     }
 
     /// <summary> One pip per level; hidden for single-level upgrades. </summary>

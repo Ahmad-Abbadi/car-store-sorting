@@ -1,0 +1,42 @@
+{
+  "entries": [
+    {
+      "seq": 350,
+      "timestampUtc": "2026-10-18T09:16:13.2050272Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "Failed to handle /api/exec request: Main thread operation timed out after 5000ms",
+      "stackTrace": "UnityEngine.Debug:LogError (object)\nUnity.Pipeline.BasePipelineServer/<HandleExecRequest>d__119:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Common/BasePipelineServer.cs:2257)\nSystem.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)\nUnity.Pipeline.BasePipelineServer/<ExecuteGated>d__109:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Common/BasePipelineServer.cs:1590)\nSystem.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetException (System.Exception)\nUnity.Pipeline.BasePipelineServer/<>c__DisplayClass119_1/<<HandleExecRequest>b__0>d:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Common/BasePipelineServer.cs:2219)\nSystem.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)\nUnity.Pipeline.BasePipelineServer/<ExecuteCommandByName>d__137:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Common/BasePipelineServer.cs:2664)\nSystem.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<object>:SetException (System.Exception)\nUnity.Pipeline.BasePipelineServer/<ExecuteCommand>d__138:MoveNext () (at ./Library/PackageCache/com.unity.pipeline@62c08c808737/Runtime/Common/BasePipelineServer.cs:2703)\nSystem.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()\n",
+      "seeded": false
+    },
+    {
+      "seq": 353,
+      "timestampUtc": "2026-10-18T09:17:42.1960949Z",
+      "level": "error",
+      "logType": "Error",
+      "message": "Assets\\TinyRiders\\Gameplay\\Editor\\UpgradeFactoryTests.cs(65,41): error CS0103: The name 'meshes' does not exist in the current context",
+      "stackTrace": "",
+      "seeded": false
+    }
+  ],
+  "cursor": 362,
+  "session": "38dc8ebfa2424dbd9bcd6aeec447300d",
+  "returned": 2,
+  "dropped": false,
+  "reset": false,
+  "counts": {
+    "error": 43,
+    "warn": 166,
+    "log": 153
+  },
+  "groundTruth": {
+    "sampledUtc": "2026-10-18T09:18:46.1396338Z",
+    "ageMs": 72,
+    "compilationFailed": false,
+    "compiling": false,
+    "consoleErrors": 1,
+    "consoleWarnings": 3,
+    "consoleLogs": 5,
+    "seeded": true
+  }
+}

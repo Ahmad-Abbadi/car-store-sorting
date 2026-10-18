@@ -1,0 +1,13 @@
+Same-camera structural comparison (includes inactive scanner/particles):
+Before: 36 renderers, 33732 mesh triangles.
+After: 22 renderers, 31426 mesh triangles.
+Renderer reduction 38.9%; triangle reduction 6.8%.
+No additional realtime lights or full-screen effects.
+These are structural rendering costs; GPU frame times were not measured.
+_BaseMap: 2048x2048 DXT1 runtimeBytes=5615160
+_BumpMap: 2048x2048 DXT5 runtimeBytes=11229424
+_MetallicGlossMap: 2048x2048 DXT5 runtimeBytes=11229424
+_OcclusionMap: 2048x2048 DXT1 runtimeBytes=5615160
+Prefab footprint ~0.79 x 0.75m; original scene scale 1.34 preserved.
+Nearest shelf bounds leave approximately 0.39m on one side and 0.61m on the other.
+Texture runtimeBytes are Editor Profiler residency estimates, not standalone player GPU memory.

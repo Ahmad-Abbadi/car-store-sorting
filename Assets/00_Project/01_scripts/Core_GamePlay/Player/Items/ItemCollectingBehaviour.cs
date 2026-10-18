@@ -28,7 +28,7 @@ public class ItemCollectingBehaviour : MonoBehaviour
         if (item == null || player == null) return false;
         if (player.StashHandler == null || player.ItemHandler == null) return false;
 
-        if (!player.StashHandler.TryAddItem(item)) return false;
+        if (!player.StashHandler.TryAddItem(item)) { PlayRefusalSFX(); return false; }
 
         player.ItemHandler.Equip_ItemData(item);
         PlayCollectSFX();
@@ -69,7 +69,7 @@ public class ItemCollectingBehaviour : MonoBehaviour
         if (data == null || player == null) return false;
         if (player.StashHandler == null || player.ItemHandler == null) return false;
 
-        if (!player.StashHandler.TryAddItem(data)) return false; // full stash refuses
+        if (!player.StashHandler.TryAddItem(data)) { PlayRefusalSFX(); return false; } // full stash refuses
 
         player.ItemHandler.UnEquip_Juicy(); // old item sinks out, the new item is on its way
         FlyIntoHand(data, fromPosition, fromRotation);
@@ -96,14 +96,20 @@ public class ItemCollectingBehaviour : MonoBehaviour
         SimpleAudioManager audio = SimpleAudioManager.instance;
         if (audio == null || audio.GameplaySounds == null) return;
 
-        audio.PlayJuicyGlobalClip(audio.GameplaySounds.GetRandomCollectSFX());
+        audio.PlayGlobal(audio.GameplaySounds.GetRandomCollectSFX());
+    }
+
+    private void PlayRefusalSFX()
+    {
+        var audio = SimpleAudioManager.instance;
+        if (audio && audio.GameplaySounds) audio.PlayGlobal(audio.GameplaySounds.WrongSFX);
     }
 
     /// <summary> Shakes and flashes the refused item and capacity counter. </summary>
     private void PlayCantCollect(GameObject item)
     {
-        if (cantCollectFeedback != null) cantCollectFeedback.Play(item);
-        FloatingTextEffect.Show(Localizer.FromEnglish("feedback", "Inventory Full"), item.transform.position + Vector3.up * 0.5f, new Color(1f, 0.3f, 0.3f));
+        if (cantCollectFeedback != null) cantCollectFeedback.Play(item, false);
+        FloatingTextEffect.ShowKey("feedback.inventory_full", item.transform.position + Vector3.up * 0.5f, new Color(1f, 0.3f, 0.3f));
     }
 
     /// <summary> Equips the item at once, then tweens it from the world pose into the hand. </summary>

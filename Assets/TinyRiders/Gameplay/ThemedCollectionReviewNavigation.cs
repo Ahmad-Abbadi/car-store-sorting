@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -37,11 +38,14 @@ namespace TinyRiders
             root.Q<Button>("frameTheme").clicked += () => Move(() => navigation.ShowTheme(navigation.CurrentTheme));
             root.Q<Button>("overview").clicked += () => Move(navigation.ShowOverview);
             navigation.NavigationChanged += Refresh;
+            Localizer.LanguageChanged += Refresh;
             Refresh();
         }
         void Move(Action move) { move(); afterMove?.Invoke(); }
         string ThemeName(int i)
         {
+            var identity = navigation.themeCenters[i].parent.GetComponentInChildren<ThemedCarIdentity>(true);
+            if (identity != null) return Localizer.Get("theme." + identity.themeId + ".name");
             string name = navigation.themeCenters[i].parent.name;
             int start = name.IndexOf(" - ", StringComparison.Ordinal);
             int end = name.IndexOf(" [", StringComparison.Ordinal);
@@ -54,14 +58,28 @@ namespace TinyRiders
             {
                 int index = i; string name = ThemeName(i);
                 if (name.IndexOf(search.value ?? "", StringComparison.OrdinalIgnoreCase) < 0) continue;
-                var button = new Button(() => Move(() => navigation.ShowTheme(index))) { text = name };
+                var button = new Button(() => Move(() => navigation.ShowTheme(index))) { text = Display(name) };
                 button.EnableInClassList("selected", i == navigation.CurrentTheme); list.Add(button);
             }
-            if (list.childCount == 0) list.Add(new Label("No matching themes"));
+            if (list.childCount == 0) list.Add(new Label(Display(Localizer.Get("review.empty"))));
         }
         void Refresh()
         {
-            root.Q<Label>("currentTheme").text = ThemeName(navigation.CurrentTheme);
+            var data = Localizer.Data;
+            root.style.unityFont = Localizer.IsRtl ? data.arabicSource : data.latinSource;
+            root.style.unityFontDefinition = new StyleFontDefinition(StyleKeyword.Null);
+            root.style.unityTextAlign = Localizer.IsRtl ? TextAnchor.MiddleRight : TextAnchor.MiddleLeft;
+            int total = Enumerable.Range(0, navigation.themeCenters.Length).Sum(i => navigation.Cars(i).Length);
+            root.Q<Label>("reviewTitle").text = Display(Localizer.Get("review.title"));
+            root.Q<Label>("reviewCaption").text = Display(Localizer.Format("review.caption", navigation.themeCenters.Length, total));
+            root.Q<Label>("reviewControls").text = Display(Localizer.Get("review.controls"));
+            search.label = Display(Localizer.Get("review.search"));
+            root.Q<Button>("previous").text = Display(Localizer.Get("review.previous"));
+            root.Q<Button>("next").text = Display(Localizer.Get("review.next"));
+            root.Q<Button>("frameTheme").text = Display(Localizer.Get("review.frame"));
+            root.Q<Button>("overview").text = Display(Localizer.Format("review.overview", total));
+            if (navigation.themeCenters.Length == 0) return;
+            root.Q<Label>("currentTheme").text = Display(ThemeName(navigation.CurrentTheme));
             RefreshThemes();
             var grid = root.Q("cars"); grid.Clear();
             var cars = navigation.Cars(navigation.CurrentTheme);
@@ -70,13 +88,16 @@ namespace TinyRiders
                 int index = i;
                 var identity = cars[i].GetComponent<ThemedCarIdentity>();
                 grid.Add(new Button(() => Move(() => navigation.ShowCar(index)))
-                { text = "C" + (i + 1).ToString("D3"), tooltip = identity.collectibleId });
+                { text = identity.baseCarId, tooltip = Display(Localizer.Get("item." + identity.collectibleId + ".name")) });
             }
         }
         public void Dispose()
         {
             navigation.NavigationChanged -= Refresh;
+            Localizer.LanguageChanged -= Refresh;
             navigation.PointerOverNavigation = false; navigation.EditingSearch = false;
         }
+        static string Display(string text) => Localizer.IsRtl && ArabicText.NeedsShaping(text)
+            ? string.Join("\n", text.Split('\n').Select(ArabicText.ToVisual)) : text;
     }
 }

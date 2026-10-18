@@ -19,6 +19,12 @@ public class HandItemBase : MonoBehaviour
     private ItemVisualGroup _heldOutline;
     private bool _heldOutlineVisible;
 
+    private void Awake()
+    {
+        if (GetComponent<ItemVisualGroup>() == null && GetComponentInChildren<TinyRiders.ThemedCarIdentity>(true) != null)
+            gameObject.AddComponent<ItemVisualGroup>();
+    }
+
     /// <summary>Black silhouette on the carried car, including its themed accessories.</summary>
     internal void SetHeldCarOutline(bool visible)
     {

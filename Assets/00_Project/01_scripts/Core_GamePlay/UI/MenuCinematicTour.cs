@@ -23,7 +23,10 @@ public sealed class MenuCinematicTour : MonoBehaviour
     private float elapsed;
     private bool running;
     private bool firstFrame;
+    private int[] order = Array.Empty<int>();
+    private int orderIndex;
     public int CurrentShot => current;
+    public int ShotCount => shots.Length;
     public int CompletedLoops { get; private set; }
 
     private void OnEnable()
@@ -33,6 +36,8 @@ public sealed class MenuCinematicTour : MonoBehaviour
         CompletedLoops = 0;
         running = shots.Length > 0;
         firstFrame = true;
+        orderIndex = 0;
+        order = new int[shots.Length];
         for (int i = 0; i < shots.Length; i++)
         {
             if (shots[i].camera == null || shots[i].start == null || shots[i].end == null)
@@ -42,8 +47,12 @@ public sealed class MenuCinematicTour : MonoBehaviour
                 return;
             }
             SetPose(shots[i], 0);
-            shots[i].camera.Priority = i == 0 ? 20 : 0;
+            shots[i].camera.Priority = 0;
         }
+        if (!running) return;
+        ShuffleRound(-1);
+        current = order[0];
+        shots[current].camera.Priority = 20;
         if (brain != null)
         {
             brain.IgnoreTimeScale = true;
@@ -61,17 +70,43 @@ public sealed class MenuCinematicTour : MonoBehaviour
         while (elapsed >= Mathf.Max(.1f, shots[current].duration))
         {
             elapsed -= Mathf.Max(.1f, shots[current].duration);
-            SetPose(shots[current], 1);
-            shots[current].camera.Priority = 0;
-            current = (current + 1) % shots.Length;
-            if (current == 0) CompletedLoops++;
-            SetPose(shots[current], 0);
-            shots[current].camera.Priority = 20;
-            if (brain != null)
-                brain.DefaultBlend = new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.EaseInOut,
-                    Mathf.Min(blendTime, Mathf.Max(.1f, shots[current].duration)));
+            AdvanceShot();
         }
         SetPose(shots[current], elapsed / Mathf.Max(.1f, shots[current].duration));
+    }
+
+    private void AdvanceShot()
+    {
+        SetPose(shots[current], 1);
+        shots[current].camera.Priority = 0;
+        if (++orderIndex == order.Length)
+        {
+            CompletedLoops++;
+            orderIndex = 0;
+            ShuffleRound(current);
+        }
+        current = order[orderIndex];
+        SetPose(shots[current], 0);
+        shots[current].camera.Priority = 20;
+        if (brain != null)
+            brain.DefaultBlend = new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.EaseInOut,
+                Mathf.Min(blendTime, Mathf.Max(.1f, shots[current].duration)));
+    }
+
+    private void ShuffleRound(int previous)
+    {
+        for (int i = 0; i < order.Length; i++) order[i] = i;
+        for (int i = order.Length - 1; i > 0; i--)
+        {
+            int other = UnityEngine.Random.Range(0, i + 1);
+            (order[i], order[other]) = (order[other], order[i]);
+        }
+        // Keep all views in the bag, while avoiding a repeat across round boundaries.
+        if (order.Length > 1 && order[0] == previous)
+        {
+            int other = UnityEngine.Random.Range(1, order.Length);
+            (order[0], order[other]) = (order[other], order[0]);
+        }
     }
 
     private static void SetPose(Shot shot, float t)

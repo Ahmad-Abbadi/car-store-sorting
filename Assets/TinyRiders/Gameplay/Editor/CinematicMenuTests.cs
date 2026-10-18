@@ -21,6 +21,32 @@ public class CinematicMenuTests
         .GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b => b.name == name);
     static IEnumerator Frames(int count = 5) { for (int i = 0; i < count; i++) yield return null; }
 
+    static void OpenMenu()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (scene.path == CinematicMenuBuilder.MenuPath) return;
+        Assert.IsFalse(scene.isDirty, "Save the current scene before running menu tests.");
+        EditorSceneManager.OpenScene(CinematicMenuBuilder.MenuPath);
+    }
+
+    static void AssertFreshTour()
+    {
+        var tour = Object.FindFirstObjectByType<MenuCinematicTour>();
+        Assert.That(tour.CurrentShot, Is.InRange(0,tour.ShotCount-1));
+        Assert.AreEqual(0,tour.CompletedLoops);
+        var shots = (MenuCinematicTour.Shot[])typeof(MenuCinematicTour).GetField("shots",Private).GetValue(tour);
+        Assert.AreEqual(20,shots[tour.CurrentShot].camera.Priority.Value);
+        Assert.AreEqual(1,shots.Count(s => s.camera.Priority.Value == 20));
+    }
+
+    static void IsolateNavigationPhysics()
+    {
+        // This fixture checks UI and scene ownership, not the initial pile's collision solver.
+        SessionState.SetInt("CinematicMenu.PreviousPhysics",(int)Physics.simulationMode);
+        SessionState.SetBool("CinematicMenu.PhysicsOverride",true);
+        Physics.simulationMode = SimulationMode.Script;
+    }
+
     [UnityTest, Timeout(120000)]
     public IEnumerator LoadingHandoff_UsesOneCameraAndListener()
     {
@@ -29,11 +55,13 @@ public class CinematicMenuTests
         SessionState.SetBool("CinematicMenu.Background",Application.runInBackground);
         SessionState.SetBool("TinyRiders.Compact.QA.Active",true);
         PlayerPrefs.SetString("Language","en");
-        EditorSceneManager.OpenScene(CinematicMenuBuilder.MenuPath);
+        OpenMenu();
+        SetGameSize(1280,720);
         yield return new EnterPlayMode();
         Application.runInBackground = true;
         yield return Frames(5);
         var menu = Object.FindFirstObjectByType<MainMenu>();
+        IsolateNavigationPhysics();
         menu.Play(); menu.Play();
         float deadline = Time.realtimeSinceStartup + 65;
         bool sawLoading = false;
@@ -52,7 +80,7 @@ public class CinematicMenuTests
         yield return Frames(5);
         Assert.AreEqual(1,Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Count(c => c.isActiveAndEnabled));
         Assert.AreEqual(1,Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Count(c => c.isActiveAndEnabled));
-        Assert.AreEqual(0,Object.FindFirstObjectByType<MenuCinematicTour>().CurrentShot);
+        AssertFreshTour();
         yield return new ExitPlayMode();
         File.WriteAllText(Evidence + "/handoff-verification.txt","PASS: guarded Play; one active camera and listener during loading; cinematic cleanup; menu camera restored on return.\n");
     }
@@ -66,7 +94,8 @@ public class CinematicMenuTests
         SessionState.SetBool("CinematicMenu.Background", Application.runInBackground);
         SessionState.SetBool("TinyRiders.Compact.QA.Active", true);
         PlayerPrefs.DeleteKey("Language");
-        EditorSceneManager.OpenScene(CinematicMenuBuilder.MenuPath);
+        OpenMenu();
+        SetGameSize(1280,720);
         yield return new EnterPlayMode();
         Application.runInBackground = true;
         yield return Frames(10);
@@ -81,31 +110,52 @@ public class CinematicMenuTests
         var stage = GameObject.Find("Cinematic Store");
         Assert.AreEqual(1, Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Length);
         Assert.AreEqual(1, Object.FindObjectsByType<AudioListener>(FindObjectsSortMode.None).Length);
-        Assert.AreEqual(6, Object.FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None).Length);
+        Assert.AreEqual(6, tour.GetComponentsInChildren<CinemachineCamera>(true).Length);
         Assert.IsNull(Object.FindFirstObjectByType<ThemedCollectionSession>());
         Assert.IsNull(Object.FindFirstObjectByType<Player>());
         Assert.IsEmpty(stage.GetComponentsInChildren<Collider>(true));
         Assert.IsTrue(stage.GetComponentsInChildren<MonoBehaviour>(true).All(b => b is TMPro.TMP_Text ||
-            b is UnityEngine.Rendering.Volume || b is UnityEngine.Rendering.Universal.UniversalAdditionalLightData));
-        var firstPositions = new Vector3[6]; var sampled = new bool[6]; var moved = new bool[6];
+            b is UnityEngine.Rendering.Volume || b is UnityEngine.Rendering.Universal.UniversalAdditionalLightData ||
+            b is ItemDetailDisplay),"The backdrop may contain visual components, but no gameplay session or player logic.");
+        // Language selection may take part of the first round; observe two fresh, full rounds.
+        var authored=(MenuCinematicTour.Shot[])typeof(MenuCinematicTour).GetField("shots",Private).GetValue(tour);
+        Assert.AreEqual(6,authored.Length);
+        Assert.IsTrue(authored.All(s=>Mathf.Approximately(s.duration,8)),"Saved shot durations must remain eight seconds.");
+        tour.enabled = false;
+        tour.enabled = true;
+        var firstPositions = new Vector3[tour.ShotCount]; var sampled = new bool[tour.ShotCount]; var moved = new bool[tour.ShotCount];
         var elapsedField = typeof(MenuCinematicTour).GetField("elapsed", Private);
         int initialFrame = Time.frameCount;
         float deadline = Time.realtimeSinceStartup + 125;
         int initialLoops = tour.CompletedLoops;
+        int observedRound = initialLoops, previousShot = -1;
+        var roundViews = new System.Collections.Generic.HashSet<int>();
         while (tour.CompletedLoops < initialLoops + 2 && Time.realtimeSinceStartup < deadline)
         {
             int shot = tour.CurrentShot;
+            if (tour.CompletedLoops != observedRound)
+            {
+                Assert.AreEqual(tour.ShotCount,roundViews.Count,"A round must show every view.");
+                roundViews.Clear(); observedRound = tour.CompletedLoops;
+            }
+            if (shot != previousShot)
+            {
+                Assert.IsTrue(roundViews.Add(shot),"A view must not repeat within its round.");
+                previousShot = shot;
+            }
             float elapsed = (float)elapsedField.GetValue(tour);
-            if (elapsed > 3 && elapsed < 5 && !sampled[shot])
+            float progress=elapsed/authored[shot].duration;
+            if (progress > .35f && progress < .55f && !sampled[shot])
             {
                 sampled[shot] = true; firstPositions[shot] = Camera.main.transform.position;
-                ScreenCapture.CaptureScreenshot(Path.GetFullPath(Evidence + "/shot-" + (shot + 1).ToString("D2") + ".png"));
+                if(shot<6) ScreenCapture.CaptureScreenshot(Path.GetFullPath(Evidence + "/shot-" + (shot + 1).ToString("D2") + ".png"));
             }
-            if (elapsed > 6 && sampled[shot] && Vector3.Distance(firstPositions[shot], Camera.main.transform.position) > .015f)
+            if (progress > .75f && sampled[shot] && Vector3.Distance(firstPositions[shot], Camera.main.transform.position) > .015f)
                 moved[shot] = true;
             yield return null;
         }
         Assert.Greater(Time.frameCount, initialFrame + 100, "The player loop must advance.");
+        Assert.AreEqual(tour.ShotCount,roundViews.Count,"The final observed round must be complete.");
         Assert.GreaterOrEqual(tour.CompletedLoops, initialLoops + 2, "Two complete real-time loops must finish.");
         Assert.IsTrue(sampled.All(v => v), "All six shots must appear.");
         Assert.IsTrue(moved.All(v => v), "Every shot must move the rendered camera after its blend.");
@@ -138,6 +188,7 @@ public class CinematicMenuTests
             yield return Frames();
         }
         var menu = Object.FindFirstObjectByType<MainMenu>();
+        IsolateNavigationPhysics();
         menu.Play(); menu.Play();
         Assert.IsFalse(Button("Button_Play").interactable);
         Assert.AreEqual("Level", SceneLoader.TargetScene);
@@ -151,9 +202,9 @@ public class CinematicMenuTests
         Assert.IsNotNull(Player.Instance);
         yield return SceneManager.LoadSceneAsync("MainMenu Scene");
         yield return Frames(5);
-        Assert.AreEqual(0, Object.FindFirstObjectByType<MenuCinematicTour>().CurrentShot);
+        AssertFreshTour();
         Assert.IsTrue(Button("Button_Play").interactable);
-        File.WriteAllText(Evidence + "/verification.txt", "PASS: two complete camera loops; six moving shots; first-run language selection; detail cycle; both mute controls; reset cancellation; language reopening; 16:9, 16:10 and ultrawide controls; guarded Play through Loading Scene into Level; cinematic cleanup; return to overview.\n");
+        File.WriteAllText(Evidence + "/verification.txt", "PASS: two complete shuffled rounds of six moving views; first-run language selection; detail cycle; both mute controls; reset cancellation; language reopening; 16:9, 16:10 and ultrawide controls; guarded Play through Loading Scene into Level with physics isolated; cinematic cleanup; fresh tour on return.\n");
         yield return new ExitPlayMode();
     }
 
@@ -189,6 +240,11 @@ public class CinematicMenuTests
     public IEnumerator Restore()
     {
         if (EditorApplication.isPlaying) yield return new ExitPlayMode();
+        if (SessionState.GetBool("CinematicMenu.PhysicsOverride",false))
+        {
+            Physics.simulationMode=(SimulationMode)SessionState.GetInt("CinematicMenu.PreviousPhysics",0);
+            SessionState.SetBool("CinematicMenu.PhysicsOverride",false);
+        }
         if (SessionState.GetBool("CinematicMenu.HadLanguage",false)) PlayerPrefs.SetString("Language",SessionState.GetString("CinematicMenu.Language","en"));
         else PlayerPrefs.DeleteKey("Language");
         Application.runInBackground = SessionState.GetBool("CinematicMenu.Background",false);
@@ -206,6 +262,6 @@ public class CinematicMenuTests
                 group.GetType().GetMethod("RemoveCustomSize").Invoke(group,new object[] { i });
             SessionState.SetBool("CinematicMenu.SizeSaved",false);
         }
-        EditorSceneManager.OpenScene(CinematicMenuBuilder.MenuPath);
+        OpenMenu();
     }
 }

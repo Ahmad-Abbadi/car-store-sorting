@@ -6,6 +6,12 @@ public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance { get; private set; }
 
+    /// <summary> Raised once after a paid upgrade succeeds; never on save restoration. </summary>
+    public static event System.Action<UpgradeSO> OnPurchased;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetPresentationEvents() => OnPurchased = null;
+
     [Header("Upgrades")]
     [SerializeField] private InventoryUpgradeSO inventoryUpgrade;
     [SerializeField] private ThrowUpgradeSO throwUpgrade;
@@ -88,6 +94,7 @@ public class UpgradeManager : MonoBehaviour
         if (!CanPurchase(upgrade) || !CoinsManager.Instance.TrySpend(upgrade.NextCost)) return false;
 
         upgrade.SetLevel(upgrade.Level + 1); // OnLevelChanged applies it
+        OnPurchased?.Invoke(upgrade);
         return true;
     }
 

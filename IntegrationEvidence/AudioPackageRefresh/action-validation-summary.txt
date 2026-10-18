@@ -1,0 +1,44 @@
+Action-matched SFX and button audio — validated 2026-10-17
+
+Implemented:
+- Short plastic pickup variations; three related throw whooshes; plastic/clack placements.
+- Separate wrong-section warning and quieter refusal for full inventory, blocked throws,
+  full shelves and themed placement rejection. Short completion reward, indoor steps,
+  subtle jump and quiet shared UI click. Existing music preserved byte-for-byte.
+- Collector owns pickup/refusal audio; world-item duplicate paths removed. Visual refusal
+  feedback skips its optional sound modules when the collector supplies the cue.
+- Correct placement clack moved to the actual landing callback; throw remains at release.
+- Random repeated-action selection excludes the previous variation.
+- UIButtonAudioFeedback attaches through authoring and runtime UI factories, subscribes
+  once through Button.onClick, and rebinds after dynamic callbacks are replaced.
+- PlayUI(GameSound) is 2D, ignores gameplay/listener pause and temporary gameplay mute,
+  respects saved SFX mute, and resets spatial/pause properties on pooled source reuse.
+- Repeatable Unity Editor entry: PlayfulAudioBuilder.ApplyActionSounds(). This leaves
+  music assignments/imports intact. Audio processing: prepare_audio.py --prepare --effects-only.
+- Package originals and previous assets retained. Sources.json/Sources.txt updated.
+
+Validation results:
+- Compilation passed. Focused git diff --check passed.
+- Four asset assertion groups passed: assignments/cutoffs, playable dependencies,
+  all 23 imports, distinct refusal and non-repeating frequent variations.
+- All 38 authored scene button instances covered, including inactive panels.
+- 24/24 action/UI runtime checks passed using a configured toy-car asset and isolated
+  gameplay fixtures: real collection, full inventory, throw pull/release, blocked input,
+  concurrent shelf landings, one completion, wrong placement, silent restore, pointer
+  and Submit activation, disabled/cancelled presses, 20 reopens, rapid clicks, pause,
+  saved SFX mute and UI/world pool reuse. Wallet/progress observers paused for fixtures;
+  saved inventory untouched. Fixture controls explicitly disposed on cleanup.
+- 35/35 playback/transition checks passed, including actual replacement-clip playback,
+  independent mute preferences, locked temporary mute, paused music fade, one listener
+  throughout loading, one persistent manager, gameplay dynamic button coverage (16),
+  menu reload coverage, and no restart of an already-playing music theme.
+- 21 mono PCM effects, 44.1 kHz, preloaded/decompressed; two stereo music files retained.
+  Offline measured working-copy clipping: zero samples. All asset checksums match manifest.
+  Editor AudioClip memory observed by playback probe: 8,844,511 bytes (not whole-project
+  audio memory or a target-platform performance measurement).
+- Final Editor state: MainMenu Scene, Edit mode, not compiling, scene clean;
+  original Cinemachine SaveDuringPlay preference restored.
+
+Scope of evidence: automated Unity playback/state checks plus offline sample measurements.
+Subjective listening/tonal approval has not been performed by an audio reviewer. No build
+was created or tested, as requested. Runtime and asset results are in the adjacent check files.

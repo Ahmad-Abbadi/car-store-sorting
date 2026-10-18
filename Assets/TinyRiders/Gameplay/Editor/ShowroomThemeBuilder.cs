@@ -112,6 +112,7 @@ public static class ShowroomThemeBuilder
 
     public static void ConfigureMenu(Scene scene)
     {
+        ItemDetailBuilder.ConfigureMenu(scene);
         EnsureTranslations();
         var menu = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<MainMenu>(true)).Single();
         var data = new SerializedObject(menu);

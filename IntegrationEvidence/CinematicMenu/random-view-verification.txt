@@ -1,0 +1,19 @@
+Random cinematic views
+
+Passed: CinematicShuffleTests.Rounds_VisitEveryView_WithoutAdjacentRepeats
+for 0, 1, 2 and 6 views. Each nonempty configuration exercised 100 rounds;
+multi-view configurations also checked varied starts across 50 fresh activations.
+
+Passed after the user-approved Editor restart:
+- RandomViews_AllCameraPairs: all 30 directed camera pairs, with real Cinemachine
+  blend samples at 0.5, 1.0 and 1.5 seconds; contact sheets visually reviewed.
+- LoadingHandoff_UsesOneCameraAndListener: guarded Play, loading route, cinematic
+  cleanup and a fresh random tour on return.
+- Tour_MenuControls_LoadingAndReturn: two complete shuffled real-time rounds,
+  each containing all six moving views; menu controls and three aspect ratios;
+  Play through the loading screen into Level and return to a fresh tour.
+
+Navigation tests temporarily use scripted physics and isolated QA save keys.
+They do not verify the pile's collision solver, which stalled the original run.
+The previous physics mode and preferences are restored by test teardown.
+Total passing test cases: 7.

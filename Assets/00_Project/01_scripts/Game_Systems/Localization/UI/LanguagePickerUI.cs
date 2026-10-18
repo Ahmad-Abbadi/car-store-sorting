@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +17,6 @@ public class LanguagePickerUI : MonoBehaviour
     [Header("Layout")]
     [Tooltip("Window height above and below the button grid.")]
     [SerializeField] private float chromeHeight = 200f;
-    [SerializeField] private float popDuration = 0.25f;
 
     private readonly List<LanguageButtonUI> _buttons = new List<LanguageButtonUI>();
     private bool _canClose;
@@ -53,11 +51,7 @@ public class LanguagePickerUI : MonoBehaviour
 
         Build();
 
-        if (window != null)
-        {
-            window.localScale = Vector3.one * 0.8f;
-            window.DOScale(1f, popDuration).SetEase(Ease.OutBack).SetUpdate(true).SetLink(gameObject);
-        }
+        // The shared entrance component owns the window motion.
     }
 
     private void OnEnable()

@@ -42,7 +42,7 @@ public static class ItemDetail
     }
 
     /// <summary> Mesh LOD index for the current level; 0 without baked LODs. </summary>
-    public static int Lod => LodSet != null ? (int)Current : 0;
+    public static int Lod => LodSet != null && LodSet.Count > 0 ? (int)Current : 0;
 
     /// <summary> Baked item LODs from Resources, or null if not baked. </summary>
     public static ItemLodSet LodSet
@@ -83,9 +83,11 @@ public static class ItemDetail
         ApplyQuality(level);
 
         short lod = (short)Lod;
-        foreach (WorldItemBase item in WorldItemBase.All) item.RefreshDetail(lod);
+        foreach (ItemVisualGroup group in ItemVisualGroup.All) group.RefreshDetail(lod);
+        foreach (WorldItemBase item in WorldItemBase.All)
+            if (item.GetComponent<ItemVisualGroup>() == null) item.RefreshDetail(lod);
         foreach (PlacedOnShelfItemBase item in UnityEngine.Object.FindObjectsByType<PlacedOnShelfItemBase>(FindObjectsSortMode.None))
-            item.RefreshDetail(lod);
+            if (item.GetComponent<ItemVisualGroup>() == null) item.RefreshDetail(lod);
 
         OnChanged?.Invoke();
     }
@@ -93,28 +95,37 @@ public static class ItemDetail
     /// <summary> Swaps the renderer to its LOD-capable mesh and forces the current level. </summary>
     public static void ApplyTo(MeshRenderer renderer)
     {
-        if (renderer == null || LodSet == null) return;
+        if (renderer == null) return;
 
         MeshFilter filter = renderer.GetComponent<MeshFilter>();
         if (filter == null || filter.sharedMesh == null) return;
 
-        Mesh lodMesh = GetLodMesh(filter.sharedMesh);
-        if (lodMesh == null) return;
-
-        filter.sharedMesh = lodMesh;
-        renderer.forceMeshLod = (short)Lod;
+        Mesh lodMesh = LodSet != null ? GetLodMesh(filter.sharedMesh) : null;
+        if (lodMesh != null) filter.sharedMesh = lodMesh;
+        renderer.forceMeshLod = (short)Mathf.Clamp(Lod, 0, filter.sharedMesh.lodCount - 1);
     }
 
     /// <summary> Source mesh behind a LOD copy; the mesh itself otherwise. </summary>
-    public static Mesh Original(Mesh mesh) =>
-        mesh != null && Originals.TryGetValue(mesh, out Mesh original) ? original : mesh;
+    public static Mesh Original(Mesh mesh)
+    {
+        if (mesh == null) return null;
+        if (Originals.TryGetValue(mesh, out Mesh original)) return original;
+        return LodSet != null && LodSet.TryGet(mesh, out var entry) ? entry.mesh : mesh;
+    }
 
     /// <summary> Copy of the source mesh carrying LOD0-2 as Mesh LOD ranges; cached. </summary>
     private static Mesh GetLodMesh(Mesh mesh)
     {
         if (Originals.ContainsKey(mesh)) return mesh; // already a LOD copy
         if (LodMeshes.TryGetValue(mesh, out Mesh cached)) return cached;
-        if (!mesh.isReadable || mesh.subMeshCount != 1 || !LodSet.TryGet(mesh, out ItemLodSet.Entry entry)) return null;
+        if (!LodSet.TryGet(mesh, out ItemLodSet.Entry entry)) return null;
+        if (entry.bakedMesh != null)
+        {
+            LodMeshes[entry.mesh] = entry.bakedMesh;
+            Originals[entry.bakedMesh] = entry.mesh;
+            return entry.bakedMesh;
+        }
+        if (!mesh.isReadable || mesh.subMeshCount != 1) return null;
 
         int[] lod0 = mesh.GetIndices(0);
         int[] lod1 = entry.lod1 != null && entry.lod1.Length > 0 ? entry.lod1 : lod0;

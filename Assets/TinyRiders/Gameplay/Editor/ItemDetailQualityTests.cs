@@ -28,8 +28,8 @@ public class ItemDetailQualityTests
         QualitySettings.SetQualityLevel(savedQuality, true);
     }
 
-    [TestCase(ItemDetailLevel.Low, 0.8f, 1, false, false, 256, 10f)]
-    [TestCase(ItemDetailLevel.Medium, 0.9f, 2, true, false, 1024, 20f)]
+    [TestCase(ItemDetailLevel.Low, 0.8f, 1, true, true, 2048, 40f)]
+    [TestCase(ItemDetailLevel.Medium, 0.9f, 2, true, true, 2048, 40f)]
     [TestCase(ItemDetailLevel.High, 1f, 4, true, true, 2048, 40f)]
     public void SelectionAppliesQualityBeforeNotification(ItemDetailLevel level, float scale,
         int samples, bool shadows, bool softShadows, int shadowResolution, float shadowDistance)
@@ -55,6 +55,10 @@ public class ItemDetailQualityTests
         Assert.AreEqual(softShadows, asset.supportsSoftShadows);
         Assert.AreEqual(shadowResolution, asset.mainLightShadowmapResolution);
         Assert.AreEqual(shadowDistance, asset.shadowDistance);
+        Assert.AreEqual(UnityEngine.Rendering.Universal.LightRenderingMode.PerPixel, asset.additionalLightsRenderingMode);
+        Assert.AreEqual(4, asset.maxAdditionalLightsCount);
+        Assert.AreEqual(0, QualitySettings.globalTextureMipmapLimit);
+        Assert.AreEqual((int)level, QualitySettings.GetTextureMipmapLimitSettings(ItemDetailBuilder.TextureGroup).limitBias);
     }
 
     [TestCase(-1)]

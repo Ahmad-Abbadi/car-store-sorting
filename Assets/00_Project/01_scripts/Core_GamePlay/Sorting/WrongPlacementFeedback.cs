@@ -68,7 +68,7 @@ public class WrongPlacementFeedback : MonoBehaviour
         SimpleAudioManager audio = SimpleAudioManager.instance;
         if (audio == null || audio.GameplaySounds == null) return;
 
-        audio.PlayJuicyClip(audio.GameplaySounds.WrongSectionSFX, transform.position);
+        audio.PlayClipAt(audio.GameplaySounds.WrongSectionSFX, transform.position);
     }
 
     /// <summary>Shows floating text above the car and in front of its shelf.</summary>
@@ -79,7 +79,7 @@ public class WrongPlacementFeedback : MonoBehaviour
         PlacedOnShelfItemBase placed = GetComponent<PlacedOnShelfItemBase>();
         Transform shelf = placed != null && placed.Shelf != null ? placed.Shelf.transform : transform;
         Vector3 start = transform.position + Vector3.up * textHeightOffset - shelf.forward * textAisleOffset;
-        FloatingTextEffect.Show(Localizer.FromEnglish("feedback", message), start, textColor, textSize, textRise, textDuration);
+        FloatingTextEffect.ShowKey(Localizer.KeyFromEnglish("feedback", message), start, textColor, textSize, textRise, textDuration);
     }
 
     /// <summary> Multiplies the renderer's base color via a property block. </summary>

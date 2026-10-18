@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-18",
+  "unity": "6000.3.22f1",
+  "automated_checks": {
+    "CollectorQuestTests": {"passed": 18, "failed": 0},
+    "UpgradeAssets_HaveUniqueSaveIdsAndValidPrices": "passed",
+    "Tables_CoverEveryLanguageAndStableCatalogId_WithMatchingPlaceholders": "passed",
+    "Fonts_ContainAllTranslatedGlyphs_IncludingShapedArabic": "passed",
+    "ShelfSurfaceAim_SelectsOlderItem_AndDoesNotSubstituteForEmptyOrFlyingSlots": "passed"
+  },
+  "live_editor_checks": {
+    "frames_advance": "passed",
+    "startup_after_save_restore": "ready; 8 journey quests plus 3 optional challenges",
+    "board_player_interaction_ray": "passed using actual player interaction mask, board on layer 8",
+    "board_clearance": "no overlapping colliders in occupied board volume at final placement",
+    "board_modal": "opens, timeScale 0, cursor visible",
+    "escape": "consumed by quest panel; closes, timeScale 1, cursor hidden",
+    "real_shelf_placements": "5 cars sorted; First Display complete; reward remains unclaimed",
+    "claim_via_card_button": "coins 5 -> 8; XP 0 -> 20; repeated claim rejected",
+    "scene_reload": "5 sorted cars, 8 coins, 20 XP, claimed First Display retained",
+    "upgrade_purchase": "Better Tools completed through existing UpgradeManager purchase event",
+    "automatic_sorting": "all 1200 cars sorted; every journey goal completed",
+    "golden_car_ceremony": "original 90 second ceremony completed; quest toast hidden during reveal",
+    "all_rewards": "465 XP; Collector rank; no further challenges offered for completed store",
+    "replay": "465 XP and 8 claimed journey rewards retained; 3 fresh challenges; store, upgrades and coins reset",
+    "full_reset": "isolated storage test passed; live wipe rejected by automatic approval review to protect actual player saves",
+    "original_player_saves": "restored after verification, including upgrades and language",
+    "aspect_ratios": ["1280x720", "1280x800", "1680x720"],
+    "languages_visually_checked": ["en", "ar"]
+  },
+  "limits": [
+    "Verified in Unity Editor; a standalone WebGL build was not produced.",
+    "A pre-existing ThemedPerformanceProbe file-lock exception occurred during early verification; no quest exceptions occurred."
+  ]
+}

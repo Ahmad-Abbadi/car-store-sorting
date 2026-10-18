@@ -88,6 +88,7 @@ public static class LocalizationCsvTool
         LocalizationDatabase_SO db = LoadOrCreateDatabase();
         db.SetTable(keys.ToArray(), columns);
         AssetDatabase.SaveAssets();
+        CompleteLocalizationBuilder.SynchronizeTables();
         Debug.Log($"Localization import: {keys.Count} keys, {columns.Count} languages.");
     }
 

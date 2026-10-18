@@ -1,0 +1,10 @@
+# Reference decisions
+
+## Features directly visible
+Both boards were opened from C:/Users/User/Downloads and copied into References. The car uses the large three-quarter image as primary authority: low wide coupe, broad arches, enclosed cabin, hood and roof scoops, supported rear wing, gold/charcoal materials, relief crowns, printed checks, four wheels and paired rear lamps/exhausts. The station uses a circular stepped plinth, two columns, ring canopy, clear cylindrical cover, crown shields and optional carpet/ropes.
+
+## Conflicts and unspecified details
+The display labels 120 cm width/height but 30 cm depth despite its circular depiction. Small car views differ in scoop/wing and bumper proportions. No exact hidden chassis, roof section, support fastening, UV layouts or reward state transition is specified. No supplier car closely matches the reference: the 15 actual ithappy core FBX files were imported and rendered for comparison (source_audit.json and Renders/supplier_audit.png). Car 14 is a conventional sedan; Cars 04/05 are open vehicles; none is a strong structural starting point.
+
+## Production adaptations
+Build one new local Blender coupe, no supplier mesh reuse. Use one consistent geometry across views. Keep a coherent circular footprint, ignoring the conflicting depth label. The existing compact Held_TR-C001-TH_FIRE-V01 prefab is 0.3500 units long, 0.1696 wide and 0.2001 high; base collection meshes are about 4.2 units long and do not represent in-game collectible size. Reward length targets 0.35 units with a deliberately wider, lower body. Station dimensions derive from full radial clearance. Printed checkers use a shared 512px seamless editable SVG/PNG motif instead of wasteful 2048px empty atlases; grille detail is a second 512px map. UVs on all real geometry are editable, with analytic repeat coordinates on printed bands. Crown relief uses one shared shallow profile. The complete column pair supports the canopy; no invented rear mechanism. Clear cover has a separate low-opacity Unity material. No gameplay or catalog integration.

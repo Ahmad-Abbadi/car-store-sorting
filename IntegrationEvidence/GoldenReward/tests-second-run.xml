@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-17 19:07:41Z" end-time="2026-10-17 19:07:48Z" duration="7.293008">
+  <test-suite type="TestSuite" id="1000" name="Car Store Sorting" fullname="Car Store Sorting" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-17 19:07:41Z" end-time="2026-10-17 19:07:48Z" duration="7.293008" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1088" name="Assembly-CSharp-Editor.dll" fullname="C:/Users/User/Documents/Games_Projects/My_Games_Projects/Car Store Sorting/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-17 19:07:41Z" end-time="2026-10-17 19:07:48Z" duration="7.161081" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="71272" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1019" name="DebugSortAllTests" fullname="DebugSortAllTests" classname="DebugSortAllTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-17 19:07:41Z" end-time="2026-10-17 19:07:48Z" duration="7.155439" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1020" name="FreshCollection_F8SortsCompletesSavesAndReloads" fullname="DebugSortAllTests.FreshCollection_F8SortsCompletesSavesAndReloads" methodname="FreshCollection_F8SortsCompletesSavesAndReloads" classname="DebugSortAllTests" runstate="Runnable" seed="414823577" result="Failed" start-time="2026-10-17 19:06:08Z" end-time="2026-10-17 19:06:23Z" duration="15.178298" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  0.000381680089f
+]]></message>
+            <stack-trace><![CDATA[at DebugSortAllTests.AssertSorted () [0x0021b] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:67
+at DebugSortAllTests+<ExerciseFresh>d__13.MoveNext () [0x00340] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:127
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[TINYRIDERS_METRICS {
+    "mode": "idle",
+    "platform": "WindowsEditor",
+    "unity": "6000.3.22f1",
+    "scene": "Level",
+    "samples": 1,
+    "maxWorldObjects": 0,
+    "maxDynamicBodies": 0,
+    "totalRecords": 1200,
+    "loadedRendererComponents": 21352,
+    "enabledRendererComponents": 15098,
+    "seconds": 10.324891090393067,
+    "fps": 0.09685329347848892,
+    "averageFrameMs": 32.098995208740237,
+    "p95FrameMs": 32.098995208740237,
+    "startupRealtime": 0.0,
+    "peakUnityAllocatedBytes": 2320914120,
+    "drawCalls": -1
+}
+]]></output>
+        </test-case>
+        <test-case id="1025" name="GoldenCar_IncompleteSaveAndEmptyVisiblePileDoNotReveal" fullname="DebugSortAllTests.GoldenCar_IncompleteSaveAndEmptyVisiblePileDoNotReveal" methodname="GoldenCar_IncompleteSaveAndEmptyVisiblePileDoNotReveal" classname="DebugSortAllTests" runstate="Runnable" seed="1176284090" result="Passed" start-time="2026-10-17 19:06:23Z" end-time="2026-10-17 19:06:33Z" duration="9.917289" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <output><![CDATA[<color=orange>Game State: Playing</color>
+]]></output>
+        </test-case>
+        <test-case id="1027" name="GoldenCar_LastNormalPlacementRevealsAndDisableRestoresControls" fullname="DebugSortAllTests.GoldenCar_LastNormalPlacementRevealsAndDisableRestoresControls" methodname="GoldenCar_LastNormalPlacementRevealsAndDisableRestoresControls" classname="DebugSortAllTests" runstate="Runnable" seed="1261641480" result="Passed" start-time="2026-10-17 19:06:33Z" end-time="2026-10-17 19:06:45Z" duration="11.937736" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <output><![CDATA[<color=orange>Game State: Freeze</color>
+<color=orange>Game State: Playing</color>
+]]></output>
+        </test-case>
+        <test-case id="1026" name="GoldenCar_PauseAndSceneChangeRestoreRevealState" fullname="DebugSortAllTests.GoldenCar_PauseAndSceneChangeRestoreRevealState" methodname="GoldenCar_PauseAndSceneChangeRestoreRevealState" classname="DebugSortAllTests" runstate="Runnable" seed="1830806584" result="Passed" start-time="2026-10-17 19:06:45Z" end-time="2026-10-17 19:06:56Z" duration="11.088526" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <output><![CDATA[<color=orange>Game State: Freeze</color>
+<color=orange>Game State: Paused</color>
+<color=orange>Game State: Playing</color>
+<color=orange>Game State: Freeze</color>
+<color=orange>Game State: Playing</color>
+<color=orange>Game State: Playing</color>
+]]></output>
+        </test-case>
+        <test-case id="1022" name="MissingCompatibleCapacity_DoesNotChangeCarsInventoryProgressOrSave" fullname="DebugSortAllTests.MissingCompatibleCapacity_DoesNotChangeCarsInventoryProgressOrSave" methodname="MissingCompatibleCapacity_DoesNotChangeCarsInventoryProgressOrSave" classname="DebugSortAllTests" runstate="Runnable" seed="81669649" result="Failed" start-time="2026-10-17 19:06:56Z" end-time="2026-10-17 19:07:06Z" duration="10.545705" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  0.000435840106f
+]]></message>
+            <stack-trace><![CDATA[at DebugSortAllTests.AssertSorted () [0x0021b] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:67
+at DebugSortAllTests+<ExerciseMissingCapacity>d__19.MoveNext () [0x00330] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:309
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1021" name="MixedCollection_PreservesSortedAndConsumesHeldDroppedMisplacedAndPending" fullname="DebugSortAllTests.MixedCollection_PreservesSortedAndConsumesHeldDroppedMisplacedAndPending" methodname="MixedCollection_PreservesSortedAndConsumesHeldDroppedMisplacedAndPending" classname="DebugSortAllTests" runstate="Runnable" seed="738982374" result="Failed" start-time="2026-10-17 19:07:06Z" end-time="2026-10-17 19:07:17Z" duration="10.453473" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  0.000435840106f
+]]></message>
+            <stack-trace><![CDATA[at DebugSortAllTests.AssertSorted () [0x0021b] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:67
+at DebugSortAllTests+<ExerciseMixed>d__17.MoveNext () [0x0037e] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:265
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1023" name="ResetCollection_F9ResumesCompletedCollectionAndPersistsPile" fullname="DebugSortAllTests.ResetCollection_F9ResumesCompletedCollectionAndPersistsPile" methodname="ResetCollection_F9ResumesCompletedCollectionAndPersistsPile" classname="DebugSortAllTests" runstate="Runnable" seed="1528900833" result="Passed" start-time="2026-10-17 19:07:17Z" end-time="2026-10-17 19:07:35Z" duration="18.655648" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+          </properties>
+          <output><![CDATA[<color=orange>Game State: Freeze</color>
+<color=orange>Game State: Playing</color>
+TINYRIDERS_METRICS {
+    "mode": "idle",
+    "platform": "WindowsEditor",
+    "unity": "6000.3.22f1",
+    "scene": "Level",
+    "samples": 1,
+    "maxWorldObjects": 1200,
+    "maxDynamicBodies": 0,
+    "totalRecords": 1200,
+    "loadedRendererComponents": 21352,
+    "enabledRendererComponents": 15098,
+    "seconds": 10.295971870422364,
+    "fps": 0.0971253365278244,
+    "averageFrameMs": 8.002799034118653,
+    "p95FrameMs": 8.002799034118653,
+    "startupRealtime": 0.0,
+    "peakUnityAllocatedBytes": 2164761999,
+    "drawCalls": -1
+}
+<color=orange>Game State: Playing</color>
+]]></output>
+        </test-case>
+        <test-case id="1024" name="ResetCollection_MixedStatesAndRepeatedResetHaveOnePileCopyPerCar" fullname="DebugSortAllTests.ResetCollection_MixedStatesAndRepeatedResetHaveOnePileCopyPerCar" methodname="ResetCollection_MixedStatesAndRepeatedResetHaveOnePileCopyPerCar" classname="DebugSortAllTests" runstate="Runnable" seed="1419772718" result="Failed" start-time="2026-10-17 19:07:35Z" end-time="2026-10-17 19:07:48Z" duration="12.944692" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="240000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  0.000435934664f
+]]></message>
+            <stack-trace><![CDATA[at DebugSortAllTests.AssertSorted () [0x0021b] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:67
+at DebugSortAllTests+<ExerciseResetMixed>d__24.MoveNext () [0x0030a] in C:\Users\User\Documents\Games_Projects\My_Games_Projects\Car Store Sorting\Assets\TinyRiders\Gameplay\Editor\DebugSortAllTests.cs:438
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[Saving results to: C:/Users/User/AppData/LocalLow/DefaultCompany/Car Store Sorting\TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

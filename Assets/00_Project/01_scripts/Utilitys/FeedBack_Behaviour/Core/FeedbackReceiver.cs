@@ -15,7 +15,10 @@ namespace GameFeedback
         public void Play() => Play(gameObject);
 
         /// <summary> Plays every enabled module against the given source object. </summary>
-        public void Play(GameObject source)
+        public void Play(GameObject source) => Play(source, true);
+
+        /// <summary> Allows an action owner to provide its own sound while retaining visual feedback. </summary>
+        public void Play(GameObject source, bool playSounds)
         {
             if (source == null) source = gameObject;
             var context = new FeedbackContext(source, this);
@@ -24,7 +27,7 @@ namespace GameFeedback
             for (int i = 0; i < modules.Count; i++)
             {
                 FeedbackModule module = modules[i];
-                if (module != null && module.Enabled) module.Play(context);
+                if (module != null && module.Enabled && (playSounds || !(module is PlaySoundModule))) module.Play(context);
             }
         }
 

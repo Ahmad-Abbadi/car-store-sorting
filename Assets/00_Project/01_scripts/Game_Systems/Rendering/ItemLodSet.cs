@@ -11,8 +11,17 @@ public class ItemLodSet : ScriptableObject
     public class Entry
     {
         public Mesh mesh;
+        public Mesh bakedMesh; // Native, multi-submesh LODs; the source asset stays untouched.
         public int[] lod1; // built-in simplifier; empty means reuse LOD0
         public int[] lod2; // big parts only; empty means reuse LOD1
+
+        public int[] GetIndices(int level, int submesh = 0)
+        {
+            if (bakedMesh == null)
+                return level >= 2 && lod2 != null && lod2.Length > 0 ? lod2
+                    : level >= 1 && lod1 != null && lod1.Length > 0 ? lod1 : mesh.GetIndices(submesh);
+            return bakedMesh.GetIndices(submesh, Mathf.Clamp(level, 0, bakedMesh.lodCount - 1), true);
+        }
     }
 
     [SerializeField] private List<Entry> entries = new List<Entry>();
@@ -36,7 +45,11 @@ public class ItemLodSet : ScriptableObject
         {
             _lookup = new Dictionary<Mesh, Entry>();
             foreach (Entry e in entries)
-                if (e != null && e.mesh != null) _lookup[e.mesh] = e;
+                if (e != null && e.mesh != null)
+                {
+                    _lookup[e.mesh] = e;
+                    if (e.bakedMesh != null) _lookup[e.bakedMesh] = e;
+                }
         }
         return _lookup.TryGetValue(mesh, out entry);
     }

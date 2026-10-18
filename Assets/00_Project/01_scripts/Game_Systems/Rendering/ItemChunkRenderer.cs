@@ -352,9 +352,12 @@ public class ItemChunkRenderer : MonoBehaviour
     {
         if (_sources.TryGetValue(mesh, out SourceMesh source)) return source;
 
-        Vector3[] positions = mesh.vertices;
-        Vector3[] normals = mesh.normals;
-        Vector2[] uvs = mesh.uv;
+        ItemLodSet.Entry entry = null;
+        if (ItemDetail.LodSet != null) ItemDetail.LodSet.TryGet(mesh, out entry);
+        Mesh geometry = entry != null && entry.bakedMesh != null ? entry.bakedMesh : mesh;
+        Vector3[] positions = geometry.vertices;
+        Vector3[] normals = geometry.normals;
+        Vector2[] uvs = geometry.uv;
         int count = positions.Length;
 
         source = new SourceMesh
@@ -367,11 +370,8 @@ public class ItemChunkRenderer : MonoBehaviour
         };
 
         // LOD0 is the mesh itself; empty baked levels reuse the level above.
-        source.Lods[0] = mesh.GetIndices(0);
-        ItemLodSet.Entry entry = null;
-        if (ItemDetail.LodSet != null) ItemDetail.LodSet.TryGet(mesh, out entry);
-        source.Lods[1] = entry != null && entry.lod1 != null && entry.lod1.Length > 0 ? entry.lod1 : source.Lods[0];
-        source.Lods[2] = entry != null && entry.lod2 != null && entry.lod2.Length > 0 ? entry.lod2 : source.Lods[1];
+        for (int level = 0; level < LodCount; level++)
+            source.Lods[level] = entry != null ? entry.GetIndices(level) : mesh.GetIndices(0);
 
         // Group identical normals so lighting is evaluated once per facet direction.
         var unique = new List<Vector3>();

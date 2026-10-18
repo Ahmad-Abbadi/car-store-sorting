@@ -18,6 +18,7 @@ public class LoadingScreen : MonoBehaviour
     [Header("UI")]
     [Tooltip("Slider showing progress. Fill maps to the slider's min..max range.")]
     [SerializeField] private Slider loadingSlider;
+    [SerializeField] private LoadingPresentation presentation;
 
     [Header("Loading")]
     [Tooltip("Scene to load when none was requested through SceneLoader.")]
@@ -55,12 +56,13 @@ public class LoadingScreen : MonoBehaviour
         AsyncOperation load = SceneManager.LoadSceneAsync(target);
         load.allowSceneActivation = false;
 
+        float duration = SceneLoader.MinimumDurationOverride >= 0f ? SceneLoader.MinimumDurationOverride : minimumDuration;
         float elapsed = 0f;
-        while (load.progress < AsyncReadyProgress || elapsed < minimumDuration)
+        while (load.progress < AsyncReadyProgress || elapsed < duration)
         {
             elapsed += Mathf.Min(Time.unscaledDeltaTime, MaxStepSeconds);
             float real = Mathf.Clamp01(load.progress / AsyncReadyProgress);
-            float time = minimumDuration > 0f ? Mathf.Clamp01(elapsed / minimumDuration) : 1f;
+            float time = duration > 0f ? Mathf.Clamp01(elapsed / duration) : 1f;
             SetFill(Mathf.Min(real, time));
             yield return null;
         }
@@ -74,9 +76,10 @@ public class LoadingScreen : MonoBehaviour
         load.allowSceneActivation = true;
         yield return load;
 
-        SceneLoader.MarkDone();
         yield return WaitForSettle();
         yield return FadeOut(root);
+        // The game becomes playable only once the covering loading UI has faded out.
+        SceneLoader.MarkDone();
         Destroy(root);
     }
 
@@ -100,7 +103,8 @@ public class LoadingScreen : MonoBehaviour
 
         for (float t = 0f; t < fadeOutDuration; t += Time.unscaledDeltaTime)
         {
-            group.alpha = 1f - t / fadeOutDuration;
+            if (presentation) presentation.SetOpacity(1f - t / fadeOutDuration);
+            else group.alpha = 1f - t / fadeOutDuration;
             yield return null;
         }
         group.alpha = 0f;
@@ -111,7 +115,7 @@ public class LoadingScreen : MonoBehaviour
     /// <summary> Keeps the loading UI above the old scene's canvases while both are loaded. </summary>
     private void BringCanvasToFront()
     {
-        Canvas canvas = loadingSlider != null ? loadingSlider.GetComponentInParent<Canvas>() : null;
+        Canvas canvas = presentation ? presentation.GetComponent<Canvas>() : loadingSlider != null ? loadingSlider.GetComponentInParent<Canvas>() : null;
         if (canvas != null) canvas.rootCanvas.sortingOrder = short.MaxValue;
     }
 
@@ -132,6 +136,7 @@ public class LoadingScreen : MonoBehaviour
     /// <summary> Sets the bar fill (0..1). </summary>
     private void SetFill(float value01)
     {
+        if (presentation) presentation.SetProgress(value01);
         if (loadingSlider != null) loadingSlider.SetValueWithoutNotify(Mathf.Lerp(loadingSlider.minValue, loadingSlider.maxValue, Mathf.Clamp01(value01)));
     }
 }

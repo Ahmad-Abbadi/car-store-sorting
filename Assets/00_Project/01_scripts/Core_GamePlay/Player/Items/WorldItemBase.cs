@@ -26,12 +26,6 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
     [Tooltip("Optional prompt shown while the reticle rests on the item.")]
     [SerializeField] private GameObject hoverHint;
 
-    [Tooltip("Played when the item is picked up.")]
-    [SerializeField] private GameSound pickupSound;
-
-    [Tooltip("Played when the pickup is refused, so the rule reads.")]
-    [SerializeField] private GameSound refuseSound;
-
     /// <summary> Data describing this item and its hand form. </summary>
     public ItemDataSO Data => data;
 
@@ -340,11 +334,9 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
 
         if (!player.ItemCollector.TryCollectItem(this))
         {
-            Play(refuseSound);
             return;
         }
 
-        Play(pickupSound);
         ItemPhysicsCulling.WakeAround(transform.position); // items resting on it fall
         // ItemCollector owns disposal or pooling after a successful pickup.
     }
@@ -365,9 +357,4 @@ public class WorldItemBase : MonoBehaviour, IInteractable, IHoverable
         else SharedOutline.Hide(this);
     }
 
-    private void Play(GameSound sound)
-    {
-        if (!sound.IsValid || SimpleAudioManager.instance == null) return;
-        SimpleAudioManager.instance.PlayClipAt(sound, transform.position);
-    }
 }

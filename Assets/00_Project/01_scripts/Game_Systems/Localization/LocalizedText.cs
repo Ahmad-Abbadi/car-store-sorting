@@ -42,6 +42,12 @@ public class LocalizedText : MonoBehaviour
     private void Refresh()
     {
         if (string.IsNullOrEmpty(key)) return;
+        if (!Label.enableAutoSizing)
+        {
+            Label.fontSizeMax = Label.fontSize;
+            Label.fontSizeMin = Mathf.Min(Label.fontSizeMin, Label.fontSize * .5f);
+            Label.enableAutoSizing = true;
+        }
         Label.SetLocalized(_args == null || _args.Length == 0 ? Localizer.Get(key) : Localizer.Format(key, _args));
     }
 }
@@ -53,6 +59,10 @@ public static class LocalizedTextExtensions
     public static void SetLocalized(this TMP_Text label, string text)
     {
         if (label == null) return;
+
+        var data = Localizer.Data;
+        var font = Localizer.IsRtl ? data.arabicFont : data.latinFont;
+        if (font != null && label.font != font) label.font = font;
 
         if (!Localizer.IsRtl || !ArabicText.NeedsShaping(text))
         {

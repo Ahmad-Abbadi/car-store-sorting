@@ -6,7 +6,9 @@ public enum GameplaySoundKey
     Throw,
     ShelfPlacement,
     CompleteShelf,
-    WrongSection
+    WrongSection,
+    QuestComplete,
+    QuestClaim
 }
 
 /// <summary> Keyed lookup: resolves a GameplaySoundKey to its sound. </summary>
@@ -23,6 +25,8 @@ public partial class GameplaySounds_SO
             case GameplaySoundKey.ShelfPlacement: return GetRandomShelfPlacementSFX();
             case GameplaySoundKey.CompleteShelf: return CompleteShelfSFX;
             case GameplaySoundKey.WrongSection: return WrongSectionSFX;
+            case GameplaySoundKey.QuestComplete: return QuestCompleteSFX;
+            case GameplaySoundKey.QuestClaim: return QuestClaimSFX;
             default: return default;
         }
     }

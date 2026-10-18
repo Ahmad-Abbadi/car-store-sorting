@@ -14,6 +14,19 @@ public class FloatingTextEffect : MonoBehaviour
 
     private TextMeshPro _text;
     private Sequence _seq;
+    private string _key;
+    private void OnEnable() => Localizer.LanguageChanged += Refresh;
+    private void OnDisable() => Localizer.LanguageChanged -= Refresh;
+    private void Refresh() { if (_text != null && _key != null) _text.SetLocalized(Localizer.Get(_key)); }
+
+    public static void ShowKey(string key, Vector3 worldPosition, Color? color = null,
+        float size = DefaultSize, float rise = DefaultRise, float duration = DefaultDuration)
+    {
+        FloatingTextEffect fx = Pool.Count > 0 ? Pool.Pop() : Create();
+        if (fx == null) fx = Create();
+        fx.Play(Localizer.Get(key), worldPosition, color ?? Color.white, size, rise, duration);
+        fx._key = key;
+    }
 
     /// <summary> Shows text at a world position, rising and fading out. </summary>
     public static void Show(string message, Vector3 worldPosition, Color? color = null,
@@ -43,6 +56,7 @@ public class FloatingTextEffect : MonoBehaviour
     private void Play(string message, Vector3 position, Color color, float size, float rise, float duration)
     {
         _seq?.Kill();
+        _key = null;
 
         _text.SetLocalized(message);
         _text.fontSize = size;

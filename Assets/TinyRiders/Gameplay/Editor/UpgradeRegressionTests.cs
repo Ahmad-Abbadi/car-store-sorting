@@ -65,89 +65,114 @@ public class UpgradeRegressionTests
 
     static IEnumerator Exercise()
     {
-        var session = ThemedCollectionSession.Instance;
-        Assert.NotNull(session);
-        session.suspendPersistenceForTests = true;
-        Time.timeScale = 1;
-        int frame = Time.frameCount;
-        yield return Tick(.1f);
-        Assert.Greater(Time.frameCount, frame, "The player loop must advance during verification.");
-        var manager = UpgradeManager.Instance;
-        var coins = CoinsManager.Instance;
-        var player = Player.Instance;
-        Assert.NotNull(manager); Assert.NotNull(coins); Assert.NotNull(player);
-        Assert.AreEqual(7, manager.Upgrades.Count);
-        var inventory = player.StashHandler.Inventory;
-        inventory.Clear();
-        foreach (var upgrade in manager.Upgrades) upgrade.SetLevel(0);
-        coins.Remove(coins.Coins);
-        Assert.False(manager.TryPurchase(null));
-
-        var panel = Object.FindFirstObjectByType<UpgradePanelUI>();
-        Assert.NotNull(panel);
-        panel.Open();
-        Assert.True(panel.IsOpen);
-        var cards = Object.FindObjectsByType<UpgradeCardUI>(FindObjectsSortMode.None)
-            .Where(c => c.Upgrade != null).ToArray();
-        Assert.AreEqual(7, cards.Length);
-        foreach (var upgrade in manager.Upgrades)
-        {
-            var card = cards.Single(c => c.Upgrade == upgrade);
-            while (!upgrade.IsMaxed)
-            {
-                int level = upgrade.Level, price = upgrade.NextCost;
-                coins.Remove(coins.Coins);
-                if (price > 0)
-                {
-                    coins.Add(price - 1);
-                    Assert.False(manager.TryPurchase(upgrade), upgrade.name + " must refuse insufficient funds");
-                    Assert.AreEqual(level, upgrade.Level);
-                    Assert.AreEqual(price - 1, coins.Coins);
-                    Assert.False(card.BuyButton.interactable);
-                    coins.Add(1);
-                }
-                Assert.True(card.BuyButton.interactable, upgrade.name);
-                card.BuyButton.onClick.Invoke();
-                Assert.AreEqual(level + 1, upgrade.Level, upgrade.name);
-                Assert.AreEqual(0, coins.Coins, upgrade.name + " must charge exactly once");
-                Assert.AreEqual(upgrade.Level, PlayerPrefs.GetInt("Upgrade_" + upgrade.SaveId));
-                upgrade.Reload();
-                Assert.AreEqual(level + 1, upgrade.Level, "Reload must retain purchases");
-                Assert.False(upgrade.GetDescription().Contains("{value}"));
-                CheckApplied(upgrade, player, session);
-            }
-            Assert.False(card.BuyButton.interactable);
-            coins.Add(100);
-            Assert.False(manager.TryPurchase(upgrade));
-            Assert.AreEqual(100, coins.Coins, "MAX must not spend coins");
-        }
-        panel.Close();
-        Assert.False(panel.IsOpen);
-        Time.timeScale = 1;
-        var foreign = Object.Instantiate(manager.Upgrades[0]);
+        int purchaseEvents = 0;
+        Action<UpgradeSO> countPurchase = _ => purchaseEvents++;
+        UpgradeManager.OnPurchased += countPurchase;
         try
         {
-            SetForeignId(foreign);
-            foreign.ResetLevel();
-            Assert.False(manager.TryPurchase(foreign), "Unregistered upgrades have no gameplay target");
-        }
-        finally { PlayerPrefs.DeleteKey("Upgrade_UpgradeRegression.foreign"); Object.Destroy(foreign); }
+            var session = ThemedCollectionSession.Instance;
+            Assert.NotNull(session);
+            session.suspendPersistenceForTests = true;
+            Time.timeScale = 1;
+            int frame = Time.frameCount;
+            yield return Tick(.1f);
+            Assert.Greater(Time.frameCount, frame, "The player loop must advance during verification.");
+            var manager = UpgradeManager.Instance;
+            var coins = CoinsManager.Instance;
+            var player = Player.Instance;
+            Assert.NotNull(manager); Assert.NotNull(coins); Assert.NotNull(player);
+            Assert.AreEqual(7, manager.Upgrades.Count);
+            var inventory = player.StashHandler.Inventory;
+            inventory.Clear();
+            foreach (var upgrade in manager.Upgrades) upgrade.SetLevel(0);
+            coins.Remove(coins.Coins);
+            Assert.False(manager.TryPurchase(null));
 
-        var reach = manager.Upgrades.OfType<ReachUpgradeSO>().Single();
-        manager.enabled = false;
-        Assert.False(manager.TryPurchase(reach));
-        reach.SetLevel(0);
-        manager.enabled = true;
-        CheckApplied(reach, player, session);
+            var panel = Object.FindFirstObjectByType<UpgradePanelUI>();
+            Assert.NotNull(panel);
+            var machine = Object.FindFirstObjectByType<UpgradeBox>();
+            Assert.NotNull(machine);
+            var presentation = machine.GetComponentInChildren<UpgradeFactoryPresentation>();
+            Assert.NotNull(presentation, "The scene must use the upgraded machine prefab");
+            machine.OnInteract(null);
+            Assert.True(panel.IsOpen);
+            Assert.AreEqual(0, purchaseEvents, "Opening and restoring levels must not announce purchases");
+            var cards = Object.FindObjectsByType<UpgradeCardUI>(FindObjectsSortMode.None)
+                .Where(c => c.Upgrade != null).ToArray();
+            Assert.AreEqual(7, cards.Length);
+            foreach (var upgrade in manager.Upgrades)
+            {
+                var card = cards.Single(c => c.Upgrade == upgrade);
+                while (!upgrade.IsMaxed)
+                {
+                    int level = upgrade.Level, price = upgrade.NextCost;
+                    int eventsBefore = purchaseEvents;
+                    coins.Remove(coins.Coins);
+                    if (price > 0)
+                    {
+                        coins.Add(price - 1);
+                        Assert.False(manager.TryPurchase(upgrade), upgrade.name + " must refuse insufficient funds");
+                        Assert.AreEqual(eventsBefore, purchaseEvents);
+                        Assert.AreEqual(level, upgrade.Level);
+                        Assert.AreEqual(price - 1, coins.Coins);
+                        Assert.False(card.BuyButton.interactable);
+                        coins.Add(1);
+                    }
+                    Assert.True(card.BuyButton.interactable, upgrade.name);
+                    card.BuyButton.onClick.Invoke();
+                    Assert.AreEqual(eventsBefore + 1, purchaseEvents, "Exactly one event for each successful purchase");
+                    Assert.AreEqual(purchaseEvents, presentation.PurchaseFeedbackCount);
+                    Assert.AreEqual(level + 1, upgrade.Level, upgrade.name);
+                    Assert.AreEqual(0, coins.Coins, upgrade.name + " must charge exactly once");
+                    Assert.AreEqual(upgrade.Level, PlayerPrefs.GetInt("Upgrade_" + upgrade.SaveId));
+                    upgrade.Reload();
+                    Assert.AreEqual(eventsBefore + 1, purchaseEvents, "Reload is not a purchase");
+                    Assert.AreEqual(level + 1, upgrade.Level, "Reload must retain purchases");
+                    Assert.False(upgrade.GetDescription().Contains("{value}"));
+                    CheckApplied(upgrade, player, session);
+                }
+                Assert.False(card.BuyButton.interactable);
+                coins.Add(100);
+                int beforeMax = purchaseEvents;
+                Assert.False(manager.TryPurchase(upgrade));
+                Assert.AreEqual(beforeMax, purchaseEvents);
+                Assert.AreEqual(100, coins.Coins, "MAX must not spend coins");
+            }
+            panel.Close();
+            Assert.False(panel.IsOpen);
+            yield return Tick(.1f);
+            Assert.True(presentation.IsCelebrating, "Reveal the machine feedback after the panel closes");
+            Assert.True(presentation.scanner.gameObject.activeSelf);
+            yield return Tick(2f);
+            Assert.False(presentation.IsCelebrating);
+            Assert.False(presentation.scanner.gameObject.activeSelf);
+            Time.timeScale = 1;
+            var foreign = Object.Instantiate(manager.Upgrades[0]);
+            try
+            {
+                SetForeignId(foreign);
+                foreign.ResetLevel();
+                Assert.False(manager.TryPurchase(foreign), "Unregistered upgrades have no gameplay target");
+            }
+            finally { PlayerPrefs.DeleteKey("Upgrade_UpgradeRegression.foreign"); Object.Destroy(foreign); }
 
-        yield return CheckPowers(player, manager);
-        manager.ResetForReplay();
-        foreach (var upgrade in manager.Upgrades)
-        {
-            Assert.AreEqual(0, upgrade.Level);
-            Assert.False(PlayerPrefs.HasKey("Upgrade_" + upgrade.SaveId));
-            CheckApplied(upgrade, player, session);
+            var reach = manager.Upgrades.OfType<ReachUpgradeSO>().Single();
+            manager.enabled = false;
+            Assert.False(manager.TryPurchase(reach));
+            reach.SetLevel(0);
+            manager.enabled = true;
+            CheckApplied(reach, player, session);
+
+            yield return CheckPowers(player, manager);
+            manager.ResetForReplay();
+            foreach (var upgrade in manager.Upgrades)
+            {
+                Assert.AreEqual(0, upgrade.Level);
+                Assert.False(PlayerPrefs.HasKey("Upgrade_" + upgrade.SaveId));
+                CheckApplied(upgrade, player, session);
+            }
         }
+        finally { UpgradeManager.OnPurchased -= countPurchase; }
     }
 
     static void SetForeignId(UpgradeSO upgrade) => typeof(UpgradeSO).GetField("saveId", Private)

@@ -8,8 +8,6 @@ public class TouchButton : MonoBehaviour
     [Tooltip("Circle behind the icon, tinted by state.")]
     [SerializeField] private Graphic background;
 
-    [SerializeField] private Color idleColor = new Color(0f, 0f, 0f, 0.45f);
-    [SerializeField] private Color pressedColor = new Color(1f, 1f, 1f, 0.55f);
     [SerializeField, Range(0.5f, 1f)] private float pressedScale = 0.9f;
 
     private RectTransform _rect;
@@ -51,7 +49,8 @@ public class TouchButton : MonoBehaviour
 
     private void ApplyVisual()
     {
-        if (background != null) background.color = Held ? pressedColor : idleColor;
+        var theme = ToyShop.UI.ToyShopTheme.Current;
+        if (background != null) background.color = Held ? theme.blue : theme.cream;
         Rect.localScale = Held ? Vector3.one * pressedScale : Vector3.one;
     }
 }

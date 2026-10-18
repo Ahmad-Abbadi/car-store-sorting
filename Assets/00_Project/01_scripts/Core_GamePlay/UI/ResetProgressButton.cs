@@ -9,7 +9,7 @@ public class ResetProgressButton : MonoBehaviour
     // Default PlayerPrefs keys of every progress save; settings and analytics are kept.
     private static readonly string[] ProgressKeys =
     {
-        "LevelSave", "Coins", "PlayerPositionSave"
+        "LevelSave", "Coins", "Coins_RewardWallet", "CollectorQuests", "PlayerPositionSave"
     };
 
     [SerializeField] private Button resetButton;
@@ -72,9 +72,15 @@ public class ResetProgressButton : MonoBehaviour
     }
 
     /// <summary> Deletes every progress save and resets in-memory progress. </summary>
+    internal static void DeleteProgressKeys(System.Action<string> deleteKey)
+    {
+        foreach (string key in ProgressKeys) deleteKey(key);
+    }
+
     private void WipeProgress()
     {
-        foreach (string key in ProgressKeys) PlayerPrefs.DeleteKey(key);
+        TinyRiders.Quests.CollectorQuestManager.Instance?.PrepareFullReset();
+        DeleteProgressKeys(PlayerPrefs.DeleteKey);
 
         HashSet<UpgradeSO> all = new HashSet<UpgradeSO>(upgrades);
         all.UnionWith(Resources.FindObjectsOfTypeAll<UpgradeSO>());

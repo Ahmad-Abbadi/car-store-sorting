@@ -149,6 +149,7 @@ public sealed class CarStoreUI : MonoBehaviour
 
     public void Replay()
     {
+        TinyRiders.Quests.CollectorQuestManager.Instance?.PrepareReplay();
         FindFirstObjectByType<TinyRiders.GoldenCarReveal>()?.ResetDisplay();
         save?.Clear();
         FindFirstObjectByType<PlayerSavePosition>()?.Clear();
@@ -183,24 +184,27 @@ public sealed class CarStoreUI : MonoBehaviour
         var session = TinyRiders.ThemedCollectionSession.Instance;
         if (session != null)
         {
-            overall.text = $"Sorted {session.Sorted} / {session.Total}  ·  Designs {session.UniqueDiscovered} / {System.Linq.Enumerable.Count(session.ActiveDefinitions)}";
-            if (finishText != null) finishText.text = $"COLLECTION COMPLETE\n{session.Sorted} cars sorted\n{session.UniqueDiscovered} unique designs · {session.catalog.themes.Length} themes";
-            if (replayLabel != null) replayLabel.text = "Play again";
+            overall.SetLocalized(Localizer.Format("collection.progress", session.Sorted, session.Total, session.UniqueDiscovered, System.Linq.Enumerable.Count(session.ActiveDefinitions)));
+            if (finishText != null) finishText.SetLocalized(Localizer.Format("collection.complete", session.Sorted, session.UniqueDiscovered, System.Linq.Enumerable.Count(session.catalog.themes, t => t.enabled)));
+            if (replayLabel != null) replayLabel.SetLocalized(Localizer.Get("collection.replay"));
             nearby.fontSize = 19;
-            directoryTitle.text = "THEME COLLECTIONS";
+            directoryTitle.SetLocalized(Localizer.Get("collection.title"));
             var held = Player.Instance?.ItemHandler?.CurrentEquipped;
             var entry = held != null ? session.Definition(held.Data) : null;
-            nearby.text = entry != null ? "Carrying: " + session.ThemeName(entry.themeId) + "\n" + session.Message : session.Message;
-            directoryLegend.text = entry != null ? "Carrying: " + session.ThemeName(entry.themeId) : "E / left click: pick up   ·   F / right click: place or drop";
+            nearby.SetLocalized(entry != null ? Localizer.Format("collection.carrying_message", session.ThemeName(entry.themeId), session.Message) : session.Message);
+            directoryLegend.SetLocalized(entry != null ? Localizer.Format("collection.carrying", session.ThemeName(entry.themeId)) : Localizer.Get(InputIcons.IsTouch ? "collection.touch_controls" : "collection.controls"));
+            directory.alignment = directoryRight.alignment = Localizer.IsRtl ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
+            if (tutorialText != null) tutorialText.SetLocalized(Localizer.Get("store.tutorial"));
+            if (startLabel != null) startLabel.SetLocalized(Localizer.Get("store.start"));
             if (themeDirectory != null && !themeDirectory.activeSelf) return;
             var left = new StringBuilder(); var right = new StringBuilder(); int index = 0;
             foreach (var theme in session.catalog.themes)
             {
                 if (!theme.enabled) continue;
                 var counts = session.ThemeCounts(theme.id);
-                (index++ < 20 ? left : right).Append(theme.displayName).Append("  ").Append(counts.sorted).Append('/').Append(counts.total).Append('\n');
+                (index++ < 20 ? left : right).Append(theme.DisplayName).Append("  ").Append(counts.sorted).Append('/').Append(counts.total).Append('\n');
             }
-            directory.text = left.ToString(); directoryRight.text = right.ToString();
+            directory.SetLocalized(left.ToString()); directoryRight.SetLocalized(right.ToString());
             directory.fontSize = directoryRight.fontSize = 18;
             ((RectTransform)directory.transform.parent).sizeDelta = new Vector2(700, 525);
             ((RectTransform)directory.transform).sizeDelta = ((RectTransform)directoryRight.transform).sizeDelta = new Vector2(320, 430);
@@ -323,13 +327,15 @@ public sealed class CarStoreUI : MonoBehaviour
         directoryRight = Text(directoryPanel.transform, "Directory Right", new Vector2(360, 12),
             new Vector2(320, 250), 15, TextAlignmentOptions.TopLeft, false);
         tutorial = Panel(root.transform, "Tutorial", new Color(0.04f, 0.09f, 0.14f, 0.96f));
-        tutorialText = Text(tutorial.transform, "Tutorial Text", new Vector2(0, 95), new Vector2(930, 380), 37, TextAlignmentOptions.Center);
-        startLabel = Button(tutorial.transform, "Start Button", new Vector2(0, -230), DismissTutorial);
+        tutorialText = Text(tutorial.transform.Find("Card"), "Tutorial Text", new Vector2(0, 95), new Vector2(930, 380), 37, TextAlignmentOptions.Center);
+        startLabel = Button(tutorial.transform.Find("Card"), "Start Button", new Vector2(0, -230), DismissTutorial);
         tutorial.SetActive(false);
         finish = Panel(root.transform, "Store Complete", new Color(0.04f, 0.12f, 0.13f, 0.97f));
-        finishText = Text(finish.transform, "Completion Stats", new Vector2(0, 95), new Vector2(940, 360), 42, TextAlignmentOptions.Center);
-        replayLabel = Button(finish.transform, "Replay Button", new Vector2(0, -220), Replay);
+        finishText = Text(finish.transform.Find("Card"), "Completion Stats", new Vector2(0, 95), new Vector2(940, 360), 42, TextAlignmentOptions.Center);
+        replayLabel = Button(finish.transform.Find("Card"), "Replay Button", new Vector2(0, -220), Replay);
         finish.SetActive(false);
+        ToyShop.UI.ToyShopStyle.Apply(root);
+        directoryPanel.AddComponent<ToyShop.UI.ToyShopPanelEntrance>();
     }
 
     private static GameObject Panel(Transform parent, string name, Color color)
@@ -339,7 +345,15 @@ public sealed class CarStoreUI : MonoBehaviour
         RectTransform rect = (RectTransform)panel.transform;
         rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
         rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero;
-        panel.GetComponent<Image>().color = color;
+        var theme = ToyShop.UI.ToyShopTheme.Current;
+        panel.GetComponent<Image>().color = new Color(theme.navy.r, theme.navy.g, theme.navy.b, .72f);
+        GameObject card = new GameObject("Card", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(panel.transform, false);
+        var cardRect = (RectTransform)card.transform;
+        cardRect.anchorMin = cardRect.anchorMax = new Vector2(.5f, .5f);
+        cardRect.sizeDelta = new Vector2(1040, 700);
+        ToyShop.UI.ToyShopStyle.Surface(card.GetComponent<Image>(), theme.cream);
+        card.AddComponent<ToyShop.UI.ToyShopPanelEntrance>();
         return panel;
     }
 
@@ -356,6 +370,9 @@ public sealed class CarStoreUI : MonoBehaviour
         rect.sizeDelta = size;
         TextMeshProUGUI label = go.GetComponent<TextMeshProUGUI>();
         label.fontSize = fontSize;
+        label.enableAutoSizing = true;
+        label.fontSizeMin = fontSize * .65f;
+        label.fontSizeMax = fontSize;
         label.alignment = alignment;
         label.color = Color.white;
         label.raycastTarget = false;
@@ -374,6 +391,7 @@ public sealed class CarStoreUI : MonoBehaviour
         rect.sizeDelta = new Vector2(360, 90);
         go.GetComponent<Image>().color = new Color(0.95f, 0.68f, 0.22f);
         go.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(action);
+        UIButtonAudioFeedback.Ensure(go.GetComponent<UnityEngine.UI.Button>());
         TMP_Text label = Text(go.transform, "Label", Vector2.zero, new Vector2(340, 82), 30, TextAlignmentOptions.Center);
         label.color = new Color(0.08f, 0.1f, 0.14f);
         return label;

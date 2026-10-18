@@ -439,8 +439,10 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         int spot = GetAimedFreeSpot(handler);
         if (GetComponent<TinyRiders.ThemeShelfBinding>() != null && !CanAccept(data, spot, out string reason))
         {
-            TinyRiders.ThemedCollectionSession.Instance?.Report(reason);
-            FloatingTextEffect.Show(reason, transform.position + Vector3.up * 3, new Color(1f, .65f, .4f));
+            PlayRefusalSFX();
+            string key = Localizer.KeyFromEnglish("feedback", reason);
+            TinyRiders.ThemedCollectionSession.Instance?.ReportKey(key);
+            FloatingTextEffect.ShowKey(key, transform.position + Vector3.up * 3, new Color(1f, .65f, .4f));
             return;
         }
         if (spot < 0)
@@ -508,7 +510,6 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         t.SetParent(placingSpots[spot], true);
         ResolvePlacementPose(t, out var destination, out var displayScale);
         if (themed) TinyRiders.ThemedCollectionSession.Instance?.Placed(item, this, spot);
-        if (correct) PlayPlacementSFX(placingSpots[spot].position);
 
         DOTween.Sequence()
             .Join(t.DOLocalJump(destination, jumpPower, 1, jumpDuration).SetEase(jumpEase))
@@ -519,7 +520,11 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
             {
                 item.Settle();
                 item.OnPlaceFeedback();
-                if (correct) item.PlayCorrectLanded();
+                if (correct)
+                {
+                    PlayPlacementSFX(placingSpots[spot].position);
+                    item.PlayCorrectLanded();
+                }
                 else item.PlayWrongLanded();
                 RefreshStatus();
                 if (!IsFullOfOneType()) return;
@@ -786,7 +791,14 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
     /// <summary> Hook: no free spot left. </summary>
     protected virtual void OnShelfFull()
     {
+        PlayRefusalSFX();
         Debug.Log($"{name}: shelf is full.", this);
+    }
+
+    private static void PlayRefusalSFX()
+    {
+        var audio = SimpleAudioManager.instance;
+        if (audio && audio.GameplaySounds) audio.PlayGlobal(audio.GameplaySounds.WrongSFX);
     }
 
     /// <summary> Hook: last spot filled with one matching type; plays the Full feedback. </summary>
@@ -802,7 +814,7 @@ public class SortingShelf : MonoBehaviour, IInteractable, IInteractableSecondary
         SimpleAudioManager audio = SimpleAudioManager.instance;
         if (audio == null || audio.GameplaySounds == null) return;
 
-        audio.PlayJuicyClip(audio.GameplaySounds.GetRandomShelfPlacementSFX(), position);
+        audio.PlayClipAt(audio.GameplaySounds.GetRandomShelfPlacementSFX(), position);
     }
 
     /// <summary> Plays the shelf-complete jingle at unchanged pitch. </summary>

@@ -1,0 +1,66 @@
+TOY RACING FACTORY - Blender redesign, 18 October 2026
+
+Active prefab: Assets/00_Project/02_prefabs/Systems/Upgrade Box.prefab
+Editable construction source: ArtSource/UpgradeStation/Blender/ToyRacingFactory_Source.blend
+UV-unwrapped, textured export source: ArtSource/UpgradeStation/Blender/ToyRacingFactory_Export.blend
+Reproducible source recipe: ArtSource/UpgradeStation/Blender/build_factory.py
+Unity assembly: Assets/TinyRiders/Gameplay/Editor/BlenderFactoryAssembler.cs
+Menu: Tiny Riders > Art > Rebuild Mini Tuning Factory
+
+Authoring and rebuilding:
+Run Blender 5.1 with --background --threads 8 --python ArtSource/UpgradeStation/Blender/build_factory.py.
+This recreates the editable part-based source, globally unwraps meshes, bakes 2048 maps,
+reduces the export mesh, converts its handedness, packs textures into the export .blend,
+and exports FBX plus PNGs to ArtSource/UpgradeStation/Blender/Export.
+Then run the Unity rebuild menu. It imports only FBX, base color, tangent normal, AO,
+and metallic/smoothness textures into Factory/Blender and creates the URP material.
+Metallic is R, smoothness is A; normal and AO use linear sampling. Source roughness and
+metallic bakes remain available for editing. The .blend export contains packed images.
+The construction .blend retains individually named beveled pieces and procedural materials.
+
+Design and provenance:
+All active housing, tool arms, hinges, hoses, controls, turntable, arrow badge, checker marks,
+and racing graphics are newly authored in Blender for this project. Surfaces use baked
+procedural enamel variation, rubber grain, brushed metal, normals and ambient occlusion.
+The car reuses selected decorative meshes/materials from the existing ithappy asset:
+Assets/ithappy/Modular_Racing_Cars/Prefabs/Car_01/Car_01.prefab.
+No vehicle scripts, physics or gameplay behavior are copied.
+Completion audio/VFX and the existing presentation controller are preserved.
+No new paid asset was purchased.
+
+Previously imported POLYGON Sci-Fi City mechanical parts remain available in the project,
+but the new Blender arms replace them in the active machine. Their Synty license still applies
+to those retained third-party source assets. The old source recipe is archived as
+Blender/PreviousFactoryBuilder.cs.txt and is no longer the rebuild implementation.
+Workshop Tools (Nebula Forms, Asset Store product 326488) was acquired on 18 October 2026.
+Its download/import remains unverified, and it is not a dependency of this completed redesign.
+https://assetstore.unity.com/packages/3d/props/industrial/workshop-tools-free-low-poly-asset-pack-326488
+
+Integration:
+The original prefab root, GUID, transform, collider, interaction component, presentation
+controller, audio, particles, indicator/scanner meshes, and three localized sign objects remain.
+Localized keys: sign.upgrades, sign.series, sign.precision.
+The factory has no additional realtime lights, rigidbodies or blocking decorative colliders.
+Idle rotation and purchase sequences use the existing controller. Failed purchases and
+saved-upgrade restoration remain silent. Feedback runs after the upgrade panel closes;
+rapid purchases coalesce into one visible sequence. Offscreen motion remains paused.
+No prices, upgrade effects, save keys or purchase event APIs changed in this redesign.
+
+Verification and evidence: IntegrationEvidence/UpgradeStation/Blender
+before.png / after.png: identical close-up camera and shop lighting.
+before-shop.png / shop-view.png: identical wider camera.
+player-view.png: existing player camera position and FOV, aimed toward the machine.
+upgrade-tests.json: targeted run, 4 passed / 0 failed. The Pipeline collector omits
+pre-domain-reload detail rows; prefab-validation.txt separately records both asset checks.
+Checks cover actual frame advancement, interaction, panel opening, all seven upgrade purchases,
+rejected/MAX purchases, repeated purchases, save reloads, effect lifecycle, feedback cleanup,
+material/script references, three localized signs, texture sizes and 37 animated poses.
+rendering-comparison.txt: 36 -> 22 renderers; 33,732 -> 31,426 triangles.
+New atlas texture memory is reported separately. These are structural costs, not GPU timings.
+The ~0.79 x 0.75m model retains the scene's original 1.34 scale and shelf clearance.
+
+Final asset tests rerun: 2 passed in 0.43s; see final-prefab-tests.json. A slow direct
+verification initially exceeded the Pipeline dispatch timeout but completed successfully.
+The vertex-bound test was optimized without reducing its coverage. A temporary test-only
+compile error was corrected. Historical tooling diagnostics are retained in evidence;
+final compilation and prefab checks pass.

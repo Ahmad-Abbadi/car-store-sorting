@@ -1,0 +1,289 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
+
+namespace TinyRiders.Editor
+{
+    /// <summary> Reproducible source model for the mini tuning factory. All dimensions are metres. </summary>
+    public static class UpgradeFactoryBuilder
+    {
+        public const string PrefabPath = "Assets/00_Project/02_prefabs/Systems/Upgrade Box.prefab";
+        public const string Art = "Assets/TinyRiders/Art/UpgradeStation/Factory";
+        private static readonly List<Mesh> temporary = new List<Mesh>();
+        private static Material teal, ink, ivory, metal, mint, coral, brass;
+
+        [MenuItem("Tiny Riders/Art/Rebuild Mini Tuning Factory")]
+        public static void Build()
+        {
+            Directory.CreateDirectory(Art);
+            AssetDatabase.Refresh();
+            teal = Material("Petrol enamel", new Color(.035f,.42f,.43f), .35f, .65f);
+            ink = Material("Graphite rubber", new Color(.018f,.036f,.048f), .15f,.32f);
+            ivory = Material("Ceramic ivory",new Color(.92f,.89f,.73f),.12f,.6f);
+            metal = Material("Satin aluminium",new Color(.56f,.68f,.7f),.75f,.48f);
+            mint = Material("Mint phosphor",new Color(.25f,.94f,.74f),.2f,.65f,true);
+            coral = Material("Coral enamel",new Color(.98f,.20f,.075f),.25f,.6f);
+            brass = Material("Champagne brass",new Color(.8f,.54f,.19f),.65f,.5f);
+            var root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                var old = root.transform.Find("Visual");
+                if (old) Object.DestroyImmediate(old.gameObject);
+                var visual = Group("Visual",root.transform);
+                var shell = Group("Shell",visual);
+                Box(shell,"Floating plinth",new Vector3(0,.085f,0),new Vector3(.78f,.15f,.76f),ink,.055f);
+                Box(shell,"Lower rim",new Vector3(0,.165f,0),new Vector3(.73f,.05f,.7f),metal,.022f);
+                Box(shell,"Enamel cabinet",new Vector3(0,.49f,-.015f),new Vector3(.71f,.64f,.65f),teal,.055f);
+                Box(shell,"Front panel seam",new Vector3(0,.49f,.316f),new Vector3(.61f,.49f,.019f),ink,.035f);
+                Box(shell,"Front access panel",new Vector3(0,.49f,.33f),new Vector3(.584f,.465f,.018f),ivory,.03f);
+                Box(shell,"Service grille inset",new Vector3(0,.39f,.345f),new Vector3(.46f,.18f,.012f),ink,.012f);
+                for(int i=0;i<7;i++) Box(shell,"Vent fin",new Vector3(0,.32f+i*.023f,.36f),new Vector3(.42f,.009f,.014f),metal,.003f);
+                foreach(float x in new[]{-.258f,.258f}) foreach(float y in new[]{.285f,.69f})
+                    Cylinder(shell,"Panel fastener",new Vector3(x,y,.35f),.012f,.008f,metal,Quaternion.Euler(90,0,0));
+                Box(shell,"Service badge",new Vector3(0,.62f,.351f),new Vector3(.32f,.08f,.012f),teal,.009f);
+                Label(visual,"Series plate","TINY RIDERS  /  MK.02",new Vector3(0,.62f,.365f),.14f,ivory.color,.31f,.06f);
+                foreach(float x in new[]{-.358f,.358f})
+                {
+                    Box(shell,"Side service panel",new Vector3(x,.48f,-.035f),new Vector3(.012f,.39f,.39f),ink,.018f);
+                    for(int i=0;i<5;i++) Box(shell,"Side cooling slat",new Vector3(x*1.013f,.38f+i*.045f,-.035f),new Vector3(.014f,.018f,.30f),teal,.006f);
+                }
+                Box(shell,"Workdeck gasket",new Vector3(0,.835f,0),new Vector3(.765f,.07f,.74f),ink,.03f);
+                Box(shell,"Ceramic workdeck",new Vector3(0,.888f,0),new Vector3(.78f,.075f,.75f),ivory,.035f);
+                Box(shell,"Chamber bed",new Vector3(0,.935f,-.025f),new Vector3(.66f,.03f,.59f),ink,.018f);
+                // Deep rear wall, rounded pillars and canopy frame an open viewing chamber.
+                Box(shell,"Rear enamel shell",new Vector3(0,1.38f,-.287f),new Vector3(.68f,.85f,.105f),teal,.045f);
+                Box(shell,"Rear chamber inset",new Vector3(0,1.40f,-.225f),new Vector3(.57f,.63f,.02f),teal,.03f);
+                foreach(float x in new[]{-.328f,.328f})
+                {
+                    Box(shell,"Pillar gasket",new Vector3(x,1.39f,.24f),new Vector3(.1f,.91f,.10f),ink,.035f);
+                    Box(shell,"Rounded ivory pillar",new Vector3(x,1.40f,.285f),new Vector3(.087f,.89f,.15f),ivory,.035f);
+                    Rod(shell,"Rear support rail",new Vector3(x,.95f,-.22f),new Vector3(x,1.77f,-.22f),.018f,brass);
+                    Box(shell,"Teal pillar inset",new Vector3(x,1.40f,.367f),new Vector3(.045f,.64f,.014f),teal,.018f);
+                    Box(shell,"Chamber light strip",new Vector3(x*.86f,1.40f,.19f),new Vector3(.013f,.58f,.018f),mint,.006f);
+                    Cylinder(shell,"Upper hinge",new Vector3(x,1.72f,.379f),.027f,.019f,metal,Quaternion.Euler(90,0,0));
+                    Cylinder(shell,"Hinge center",new Vector3(x,1.72f,.391f),.011f,.007f,ink,Quaternion.Euler(90,0,0));
+                }
+                Box(shell,"Canopy gasket",new Vector3(0,1.84f,-.006f),new Vector3(.76f,.17f,.67f),ink,.055f);
+                Box(shell,"Rounded teal canopy",new Vector3(0,1.89f,-.015f),new Vector3(.75f,.18f,.66f),teal,.055f);
+                Box(shell,"Ivory marquee",new Vector3(0,1.89f,.324f),new Vector3(.64f,.112f,.022f),ivory,.026f);
+                Label(visual,"UPGRADES sign","UPGRADES",new Vector3(0,1.89f,.342f),.57f,ink.color,.59f,.1f);
+                Box(shell,"Under canopy light",new Vector3(0,1.754f,.10f),new Vector3(.48f,.014f,.27f),mint,.006f);
+                // Turbine rings give the miniature its own stage.
+                Cylinder(shell,"Turntable bearing",new Vector3(0,.976f,.015f),.258f,.053f,metal,Quaternion.identity);
+                Ring(shell,"Turquoise bearing light",new Vector3(0,1.008f,.015f),.238f,.009f,mint);
+                var table = Group("Rotating miniature display",visual);
+                table.localPosition = new Vector3(0,1.035f,.015f);
+                Cylinder(table,"Turntable",Vector3.zero,.233f,.045f,ink,Quaternion.identity);
+                Ring(table,"Machined turntable lip",new Vector3(0,.025f,0),.223f,.006f,brass);
+                for(int i=0;i<12;i++)
+                {
+                    float a=i*Mathf.PI/6f;
+                    var mark=Box(table,"Index mark",new Vector3(Mathf.Sin(a)*.203f,.028f,Mathf.Cos(a)*.203f),new Vector3(.009f,.004f,.025f),ivory,.001f);
+                    mark.localRotation=Quaternion.Euler(0,i*30f,0);
+                }
+                CreateDisplayCar(table);
+                var left=Arm(visual,-1);
+                var right=Arm(visual,1);
+                // Cached Synty medical assembly becomes a miniature rear diagnostic mechanism.
+                var diagnostic=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PolygonSciFiCity/Prefabs/Props/SM_Prop_Medical_Machine_01.prefab"),shell);
+                diagnostic.name="Synty diagnostic mechanism";
+                diagnostic.transform.localPosition=new Vector3(0,1.23f,-.22f);
+                diagnostic.transform.localScale=Vector3.one*.105f;
+                Strip(diagnostic);
+                foreach(var renderer in diagnostic.GetComponentsInChildren<Renderer>()) renderer.sharedMaterial=metal;
+                // Large control button, three status cells, and an inset diagnostic screen.
+                var console=Box(shell,"Angled control desk",new Vector3(0,1.00f,.293f),new Vector3(.63f,.12f,.15f),teal,.027f);
+                console.localRotation=Quaternion.Euler(-15,0,0);
+                Cylinder(shell,"Button metal bezel",new Vector3(.205f,1.066f,.31f),.066f,.025f,brass,Quaternion.identity);
+                Cylinder(shell,"Coral upgrade button",new Vector3(.205f,1.086f,.31f),.052f,.028f,coral,Quaternion.identity);
+                Box(shell,"Screen bezel",new Vector3(-.085f,1.065f,.31f),new Vector3(.29f,.021f,.095f),metal,.015f);
+                Box(shell,"Screen glass",new Vector3(-.085f,1.078f,.31f),new Vector3(.265f,.008f,.075f),ink,.012f);
+                var indicators=Group("Ready indicators",visual);
+                indicators.localPosition=new Vector3(-.085f,1.084f,.31f);
+                for(int i=0;i<3;i++) Box(indicators,"Progress segment",new Vector3(-.072f+i*.072f,0,0),new Vector3(.05f,.004f,.025f),mint,.004f);
+                for(int i=0;i<3;i++) Box(shell,"Rear status bars",new Vector3(-.17f+i*.17f,1.66f,-.206f),new Vector3(.10f,.018f,.01f),mint,.005f);
+                Label(visual,"Chamber caption","PRECISION TUNING",new Vector3(0,1.72f,-.202f),.20f,ivory.color,.49f,.045f);
+                // Guarded cable loops, constrained to the original footprint.
+                foreach(float sign in new[]{-1f,1f})
+                {
+                    Vector3 previous=new Vector3(sign*.31f,1.58f,-.12f);
+                    for(int i=1;i<=16;i++)
+                    {
+                        float t=i/16f;
+                        var next=new Vector3(sign*(.31f-.08f*Mathf.Sin(t*Mathf.PI)),1.58f-.36f*t,-.12f-.05f*Mathf.Sin(t*Mathf.PI));
+                        Rod(shell,"Braided power hose",previous,next,.012f,ink); previous=next;
+                    }
+                }
+                var scanner=Group("Scanning ring",visual);
+                scanner.localPosition=new Vector3(0,1.07f,.015f);
+                Ring(scanner,"Scan line",Vector3.zero,.215f,.003f,mint);
+                Combine(shell,"Shell"); Combine(left,"ArmLeft"); Combine(right,"ArmRight");
+                Combine(table,"Display"); Combine(indicators,"Indicators"); Combine(scanner,"Scanner");
+                var fx = CreateParticles(visual);
+                var presentation=visual.gameObject.AddComponent<UpgradeFactoryPresentation>();
+                presentation.turntable=table; presentation.leftArm=left; presentation.rightArm=right;
+                presentation.scanner=scanner; presentation.readyIndicators=indicators.gameObject;
+                presentation.visibilityBody=shell.GetComponentsInChildren<Renderer>().OrderByDescending(r=>r.bounds.size.sqrMagnitude).First();
+                presentation.completionParticles=fx;
+                presentation.completionClip=AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Mobile Games Bundle/Merge Games Sound Effects and Music Pack/AUDIO/SFX/UI/Claim_Purchase_Upgrade/SFX_UI_Upgrade_2.wav");
+                scanner.gameObject.SetActive(false);
+                foreach(var t in visual.GetComponentsInChildren<Transform>(true)) t.gameObject.layer=root.layer;
+                PrefabUtility.SaveAsPrefabAsset(root,PrefabPath);
+                AssetDatabase.SaveAssets();
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+                foreach(var mesh in temporary) if(mesh) Object.DestroyImmediate(mesh);
+                temporary.Clear();
+            }
+        }
+
+        private static Transform Arm(Transform parent,int sign)
+        {
+            var arm=Group(sign<0?"Left articulated tool":"Right articulated tool",parent);
+            arm.localPosition=new Vector3(sign*.245f,1.43f,-.04f);
+            Cylinder(arm,"Servo hub",Vector3.zero,.047f,.065f,metal,Quaternion.Euler(90,0,0));
+            Cylinder(arm,"Coral hub cap",new Vector3(0,0,.04f),.032f,.015f,coral,Quaternion.Euler(90,0,0));
+            var elbow=new Vector3(-sign*.085f,.13f,.025f);
+            Rod(arm,"Ivory upper arm",Vector3.zero,elbow,.025f,ivory);
+            Cylinder(arm,"Elbow joint",elbow,.032f,.04f,ink,Quaternion.Euler(90,0,0));
+            var tip=new Vector3(-sign*.14f,.04f,.085f);
+            Rod(arm,"Steel forearm",elbow,tip,.017f,metal);
+            var claw=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/PolygonSciFiCity/Prefabs/Props/SM_Prop_Robotic_Part_08.prefab"),arm);
+            claw.name="Synty precision tool"; claw.transform.localScale=Vector3.one*.17f;
+            claw.transform.localPosition=tip+new Vector3(0,-.01f,0);
+            Strip(claw);
+            foreach(var r in claw.GetComponentsInChildren<Renderer>())r.sharedMaterial=metal;
+            Cylinder(arm,"Tool emitter",tip+new Vector3(0,-.035f,.025f),.012f,.026f,mint,Quaternion.identity);
+            return arm;
+        }
+
+        private static void CreateDisplayCar(Transform table)
+        {
+            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ithappy/Modular_Racing_Cars/Prefabs/Car_01/Car_01.prefab");
+            var car=Group("Miniature rally car",table);
+            car.localRotation=Quaternion.Euler(0,55,0); car.localPosition=new Vector3(0,.035f,0); car.localScale=Vector3.one*.108f;
+            var selected=new HashSet<string>{"Car_01","Car_01_Decals","Car_01_Engine","Car_01_Headlight_Simple","Car_01_FrontBumper_Simple","Car_01_RearBumper_Simple","Car_01_Spoiler","Car_01_Wheel_FL","Car_01_Wheel_FR","Car_01_Wheel_RL","Car_01_Wheel_RR"};
+            foreach(var filter in prefab.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if(!selected.Contains(filter.name))continue;
+                var go=new GameObject(filter.name); go.transform.SetParent(car,false);
+                var matrix=prefab.transform.worldToLocalMatrix*filter.transform.localToWorldMatrix;
+                go.transform.localPosition=matrix.GetColumn(3); go.transform.localRotation=matrix.rotation; go.transform.localScale=matrix.lossyScale;
+                go.AddComponent<MeshFilter>().sharedMesh=filter.sharedMesh;
+                go.AddComponent<MeshRenderer>().sharedMaterials=filter.GetComponent<MeshRenderer>().sharedMaterials;
+            }
+        }
+
+        private static ParticleSystem CreateParticles(Transform parent)
+        {
+            var go=new GameObject("Completion motes");go.transform.SetParent(parent,false);go.transform.localPosition=new Vector3(0,1.2f,.02f);
+            var ps=go.AddComponent<ParticleSystem>();ps.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main=ps.main;main.loop=false;main.playOnAwake=false;main.duration=.65f;main.startLifetime=.65f;main.startSpeed=.19f;main.startSize=.012f;main.startColor=new Color(.4f,1f,.76f);main.maxParticles=16;main.useUnscaledTime=true;
+            var emission=ps.emission;emission.rateOverTime=0;emission.SetBursts(new[]{new ParticleSystem.Burst(0,12)});
+            var shape=ps.shape;shape.shapeType=ParticleSystemShapeType.Sphere;shape.radius=.13f;
+            var renderer=ps.GetComponent<ParticleSystemRenderer>();renderer.sharedMaterial=mint;renderer.renderMode=ParticleSystemRenderMode.Mesh;
+            var primitive=GameObject.CreatePrimitive(PrimitiveType.Sphere);renderer.mesh=primitive.GetComponent<MeshFilter>().sharedMesh;Object.DestroyImmediate(primitive);
+            renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
+            return ps;
+        }
+
+        private static void Strip(GameObject go)
+        {
+            foreach(var c in go.GetComponentsInChildren<Collider>(true))Object.DestroyImmediate(c);
+            foreach(var c in go.GetComponentsInChildren<MonoBehaviour>(true))if(c)Object.DestroyImmediate(c);
+        }
+        private static Transform Group(string name,Transform parent)
+        {var go=new GameObject(name);go.transform.SetParent(parent,false);return go.transform;}
+        private static Material Material(string name,Color color,float metallic,float smooth,bool glow=false)
+        {
+            string path=Art+"/"+name+".mat";var mat=AssetDatabase.LoadAssetAtPath<Material>(path);
+            if(!mat){mat=new Material(Shader.Find("Universal Render Pipeline/Lit"));AssetDatabase.CreateAsset(mat,path);}
+            mat.SetColor("_BaseColor",color);mat.SetFloat("_Metallic",metallic);mat.SetFloat("_Smoothness",smooth);
+            mat.EnableKeyword("_EMISSION");mat.SetColor("_EmissionColor",color*(glow?1.3f:.12f));
+            EditorUtility.SetDirty(mat);return mat;
+        }
+        private static Transform MeshObject(Transform parent,string name,Mesh mesh,Material mat,Vector3 position)
+        {
+            var t=Group(name,parent);t.localPosition=position;t.gameObject.AddComponent<MeshFilter>().sharedMesh=mesh;
+            var renderer=t.gameObject.AddComponent<MeshRenderer>();renderer.sharedMaterial=mat;return t;
+        }
+        private static Transform Box(Transform parent,string name,Vector3 p,Vector3 size,Material mat,float r)
+        {return MeshObject(parent,name,Rounded(size,r),mat,p);}
+        private static Mesh Rounded(Vector3 size,float radius)
+        {
+            var vertices=new List<Vector3>();var normals=new List<Vector3>();var uv=new List<Vector2>();var indices=new List<int>();
+            var half=size*.5f;float r=Mathf.Min(radius,Mathf.Min(half.x,Mathf.Min(half.y,half.z))*.98f);var inner=half-Vector3.one*r;
+            for(int face=0;face<6;face++)
+            {
+                int axis=face/2,a=(axis+1)%3,b=(axis+2)%3;float sign=face%2==0?1:-1;int start=vertices.Count;
+                float[] xs=r<.015f?new[]{-half[a],-inner[a],inner[a],half[a]}:new[]{-half[a],-inner[a]-r*.7071f,-inner[a],inner[a],inner[a]+r*.7071f,half[a]};
+                float[] ys=r<.015f?new[]{-half[b],-inner[b],inner[b],half[b]}:new[]{-half[b],-inner[b]-r*.7071f,-inner[b],inner[b],inner[b]+r*.7071f,half[b]};
+                int count=xs.Length;
+                for(int y=0;y<count;y++)for(int x=0;x<count;x++)
+                {
+                    var p=Vector3.zero;p[axis]=half[axis]*sign;p[a]=xs[x];p[b]=ys[y];
+                    var c=new Vector3(Mathf.Clamp(p.x,-inner.x,inner.x),Mathf.Clamp(p.y,-inner.y,inner.y),Mathf.Clamp(p.z,-inner.z,inner.z));
+                    var n=(p-c).normalized;vertices.Add(c+n*r);normals.Add(n);uv.Add(new Vector2(x/(count-1f),y/(count-1f)));
+                }
+                for(int y=0;y<count-1;y++)for(int x=0;x<count-1;x++)
+                {int i=start+y*count+x;if(sign>0)indices.AddRange(new[]{i,i+1,i+count+1,i,i+count+1,i+count});else indices.AddRange(new[]{i,i+count+1,i+1,i,i+count,i+count+1});}
+            }
+            var mesh=new Mesh();mesh.SetVertices(vertices);mesh.SetNormals(normals);mesh.SetUVs(0,uv);mesh.SetTriangles(indices,0);mesh.RecalculateBounds();temporary.Add(mesh);return mesh;
+        }
+        private static Transform Cylinder(Transform parent,string name,Vector3 p,float radius,float height,Material mat,Quaternion rot)
+        {
+            var primitive=GameObject.CreatePrimitive(PrimitiveType.Cylinder);var mesh=primitive.GetComponent<MeshFilter>().sharedMesh;Object.DestroyImmediate(primitive);
+            var t=MeshObject(parent,name,mesh,mat,p);t.localScale=new Vector3(radius*2,height*.5f,radius*2);t.localRotation=rot;return t;
+        }
+        private static void Rod(Transform p,string name,Vector3 a,Vector3 b,float radius,Material mat)
+        {Cylinder(p,name,(a+b)*.5f,radius,(a-b).magnitude,mat,Quaternion.FromToRotation(Vector3.up,b-a));}
+        private static void Ring(Transform parent,string name,Vector3 p,float radius,float tube,Material mat)
+        {
+            var vs=new List<Vector3>();var ns=new List<Vector3>();var ts=new List<int>();
+            for(int i=0;i<=48;i++)for(int j=0;j<=8;j++)
+            {float a=i*Mathf.PI*2/48,b=j*Mathf.PI*2/8;var n=new Vector3(Mathf.Cos(a)*Mathf.Cos(b),Mathf.Sin(b),Mathf.Sin(a)*Mathf.Cos(b));vs.Add(new Vector3(Mathf.Cos(a)*radius,0,Mathf.Sin(a)*radius)+n*tube);ns.Add(n);}
+            for(int i=0;i<48;i++)for(int j=0;j<8;j++){int k=i*9+j;ts.AddRange(new[]{k,k+1,k+10,k,k+10,k+9});}
+            var mesh=new Mesh();mesh.SetVertices(vs);mesh.SetNormals(ns);mesh.SetTriangles(ts,0);mesh.RecalculateBounds();temporary.Add(mesh);MeshObject(parent,name,mesh,mat,p);
+        }
+        private static void Label(Transform parent,string name,string text,Vector3 p,float size,Color color,float width,float height)
+        {
+            var t=Group(name,parent);t.localPosition=p;t.localRotation=Quaternion.Euler(0,180,0);
+            var tmp=t.gameObject.AddComponent<TextMeshPro>();tmp.text=text;tmp.fontSize=size;tmp.alignment=TextAlignmentOptions.Center;tmp.color=color;
+            tmp.fontStyle=FontStyles.Bold;tmp.rectTransform.sizeDelta=new Vector2(width,height);tmp.textWrappingMode=TextWrappingModes.NoWrap;
+            tmp.GetComponent<Renderer>().shadowCastingMode=ShadowCastingMode.Off;
+        }
+        private static void Combine(Transform parent,string key)
+        {
+            var groups=new Dictionary<Material,List<CombineInstance>>();
+            foreach(var f in parent.GetComponentsInChildren<MeshFilter>(true))
+            {
+                var renderer=f.GetComponent<MeshRenderer>();if(!renderer||!f.sharedMesh)continue;
+                for(int sub=0;sub<f.sharedMesh.subMeshCount;sub++)
+                {
+                    var material=renderer.sharedMaterials[Mathf.Min(sub,renderer.sharedMaterials.Length-1)];if(!material)continue;
+                    if(!groups.ContainsKey(material))groups[material]=new List<CombineInstance>();
+                    groups[material].Add(new CombineInstance{mesh=f.sharedMesh,subMeshIndex=sub,transform=parent.worldToLocalMatrix*f.transform.localToWorldMatrix});
+                }
+            }
+            foreach(var pair in groups)
+            {
+                string meshName=key+"_"+pair.Key.name.Replace(" ","_");
+                var mesh=new Mesh{name=meshName,indexFormat=IndexFormat.UInt32};mesh.CombineMeshes(pair.Value.ToArray(),true,true);mesh.RecalculateBounds();
+                string path=Art+"/"+meshName+".asset";
+                var existing=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+                if(existing){existing.Clear();EditorUtility.CopySerialized(mesh,existing);existing.UploadMeshData(false);EditorUtility.SetDirty(existing);Object.DestroyImmediate(mesh);mesh=existing;}else AssetDatabase.CreateAsset(mesh,path);
+                // Output is created after gathering input, then old geometry is removed below.
+                MeshObject(parent,"Combined "+pair.Key.name,mesh,pair.Key,Vector3.zero);
+            }
+            foreach(Transform child in parent.Cast<Transform>().ToArray())if(!child.name.StartsWith("Combined "))Object.DestroyImmediate(child.gameObject);
+        }
+    }
+}

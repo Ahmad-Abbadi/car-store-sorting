@@ -42,7 +42,10 @@ namespace TinyRiders
         public float pileCellSpacing = .75f;
         public float pileCentralAisle;
         public bool completeStoreWhenSorted;
-        public string Message { get; private set; } = "Pick a car, then match its theme to a shelf";
+        private string messageKey = "collection.pick_hint";
+        private object[] messageArgs = Array.Empty<object>();
+        private string literalMessage;
+        public string Message => messageKey != null ? Localizer.Format(messageKey, messageArgs) : literalMessage;
         public event Action Changed;
         public ThemedSessionSave State { get; private set; } = new ThemedSessionSave();
         private readonly Dictionary<string, ThemedCarCatalog.Entry> definitions = new Dictionary<string, ThemedCarCatalog.Entry>();
@@ -54,6 +57,7 @@ namespace TinyRiders
         private readonly List<WorldItemBase> pool = new List<WorldItemBase>();
         [Serializable] private class Layout { public int revision; public ThemedInstanceRecord[] placements; }
         private readonly Dictionary<string, ThemedInstanceRecord> baked = new Dictionary<string, ThemedInstanceRecord>();
+        private readonly Dictionary<string, ThemedInstanceRecord> bakedCopies = new Dictionary<string, ThemedInstanceRecord>();
         private Dictionary<string, int> pileOrder;
         private int pileOrderSeed;
         public bool Recycle(WorldItemBase item)
@@ -72,6 +76,7 @@ namespace TinyRiders
         }
         private float nextMaintenance;
         private bool ready;
+        public bool IsReady => ready;
         public IEnumerable<ThemedCarCatalog.Entry> ActiveDefinitions => definitions.Values;
         public int Total => records.Values.Count(r => definitions.ContainsKey(r.collectibleId));
         public int Sorted => records.Values.Count(r => r.state == "sorted" && definitions.ContainsKey(r.collectibleId));
@@ -87,7 +92,11 @@ namespace TinyRiders
             {
                 var layout = JsonUtility.FromJson<Layout>(pileLayout.text);
                 authoredLayoutRevision = Mathf.Max(1, layout.revision);
-                foreach (var pose in layout.placements) baked[pose.id] = pose;
+                foreach (var pose in layout.placements)
+                {
+                    baked[pose.id] = pose;
+                    bakedCopies[CopyKey(pose.id)] = pose;
+                }
             }
             State.pileLayoutRevision = authoredLayoutRevision;
             RefreshContent();
@@ -113,8 +122,16 @@ namespace TinyRiders
             ready = true; Refill(); Publish();
         }
         private void OnDestroy() { if (Instance == this) Instance = null; }
+        // The seed changes pile order, but each design/copy still has an authored room pose.
+        private static string CopyKey(string id)
+        {
+            int separator = id.IndexOf(':');
+            return separator < 0 ? id : id.Substring(separator + 1);
+        }
+        private bool TryGetBakedPose(string id, out ThemedInstanceRecord pose) =>
+            baked.TryGetValue(id, out pose) || bakedCopies.TryGetValue(CopyKey(id), out pose);
         public ThemedCarCatalog.Entry Definition(ItemDataSO item) => item != null && definitions.TryGetValue(item.SaveId, out var e) ? e : null;
-        public string ThemeName(string id) => catalog.themes.FirstOrDefault(t => t.id == id)?.displayName ?? id;
+        public string ThemeName(string id) => catalog.themes.FirstOrDefault(t => t.id == id)?.DisplayName ?? id;
         private void MergeContent()
         {
             // IDs contain permanent design IDs, never catalog indices. Existing records survive release toggles.
@@ -130,7 +147,9 @@ namespace TinyRiders
             completed.RemoveWhere(theme => { var counts = ThemeCounts(theme); return counts.total > 0 && counts.sorted < counts.total; });
             State.completedThemes = completed.OrderBy(x => x, StringComparer.Ordinal).ToList();
         }
-        public void Report(string message) { Message = message; Changed?.Invoke(); }
+        public void Report(string message) { literalMessage = message; messageKey = null; Changed?.Invoke(); }
+        public void ReportKey(string key, params object[] args)
+        { messageKey = key; messageArgs = args; literalMessage = null; Changed?.Invoke(); }
         public void Held(string id)
         {
             if (string.IsNullOrEmpty(id) || !records.TryGetValue(id, out var r)) return;
@@ -165,12 +184,13 @@ namespace TinyRiders
                 bool first = discovered.Add(r.collectibleId);
                 State.discovered = discovered.OrderBy(x => x, StringComparer.Ordinal).ToList();
                 var e = definitions[r.collectibleId];
-                Report(first ? "Discovered " + e.displayName : "Sorted · " + ThemeName(e.themeId));
+                ReportKey(first ? "collection.discovered" : "collection.sorted",
+                    new Localizer.Value(first ? e.NameKey : "theme." + e.themeId + ".name", first ? e.displayName : e.themeId));
                 int themeTotal = ThemeCounts(e.themeId).total;
                 if (themeTotal > 0 && ThemeCounts(e.themeId).sorted == themeTotal && completed.Add(e.themeId))
-                    Report("Collection complete · " + ThemeName(e.themeId));
+                    ReportKey("collection.theme_complete", new Localizer.Value("theme." + e.themeId + ".name", e.themeId));
             }
-            else Report(Localizer.FromEnglish("feedback", "Wrong Section"));
+            else ReportKey("feedback.wrong_section");
             State.completedThemes = completed.OrderBy(x => x, StringComparer.Ordinal).ToList();
             Publish(); LevelSaveManager.MarkDirty();
             // Occupancy is claimed before this checkpoint; animation interruption cannot duplicate it.
@@ -207,7 +227,7 @@ namespace TinyRiders
                 var t = pair.Value.transform;
                 if (t.position.y < -20f)
                 {
-                    var recovery = baked.TryGetValue(pair.Key, out var pose) ? pileOrigin.position + pose.position : pileOrigin.position + Vector3.up * 5;
+                    var recovery = TryGetBakedPose(pair.Key, out var pose) ? pileOrigin.position + pose.position : pileOrigin.position + Vector3.up * 5;
                     t.SetPositionAndRotation(recovery, Quaternion.identity);
                     if (pair.Value.Body != null) pair.Value.Body.isKinematic = true;
                 }
@@ -268,12 +288,13 @@ namespace TinyRiders
                     if (!reserved.Any(p => (p - position).sqrMagnitude < clearance)) freePositions.Enqueue(position);
                 }
             }
+            Queue<Vector3> fallbackPositions = null;
             foreach (var r in candidates)
             {
                 if (live.Count >= target) break;
                 bool fresh = r.state == "pending";
                 ThemedInstanceRecord pose = null;
-                bool hasBaked = fresh && baked.TryGetValue(r.id, out pose);
+                bool hasBaked = fresh && TryGetBakedPose(r.id, out pose);
                 Vector3 p;
                 if (!fresh) p = r.position;
                 else if (hasBaked) p = pileOrigin.position + pose.position;
@@ -284,12 +305,19 @@ namespace TinyRiders
                 }
                 else
                 {
-                    int cell = 0;
-                    while (cell < visiblePileLimit * 3 && live.Values.Any(w => w != null &&
-                        (w.transform.position - PilePosition(cell)).sqrMagnitude < pileSpacing.x * pileSpacing.x * .65f)) cell++;
-                    p = PilePosition(cell);
+                    // Search once per refill. Restarting at cell zero for every car
+                    // repeatedly scanned native transforms and allocated cell names.
+                    if (fallbackPositions == null)
+                        fallbackPositions = FindFallbackPositions(target);
+                    if (fallbackPositions.Count == 0) break;
+                    p = fallbackPositions.Dequeue();
                 }
                 Quaternion q = hasBaked ? Quaternion.Euler(pose.euler) : fresh ? Quaternion.Euler(0, (Rank(r.id) % 360), 0) : Quaternion.Euler(r.euler);
+                // Older saves can contain a loose car where the enlarged exhibit now stands.
+                // Relocate only obstructing world/pending cars to their protected authored poses.
+                var exhibit = GoldenRewardCeremony.Active;
+                if (exhibit != null && GoldenRewardCeremony.ContainsLoose(exhibit.protectedLooseBounds, p) && TryGetBakedPose(r.id, out var safePose))
+                { p = pileOrigin.position + safePose.position; q = Quaternion.Euler(safePose.euler); }
                 var source = definitions[r.collectibleId].sortingItem.WorldItem;
                 var item = pool.FirstOrDefault(w => w != null && w.Data == source.Data);
                 if (item != null)
@@ -304,8 +332,32 @@ namespace TinyRiders
                     item.gameObject.SetActive(true);
                 }
                 else item = Instantiate(source, p, q);
-                Dropped(item, r.id, publish);
+                Dropped(item, r.id, false);
             }
+            if (publish) Publish();
+        }
+
+        private Queue<Vector3> FindFallbackPositions(int target)
+        {
+            var positions = new Queue<Vector3>();
+            var reserved = live.Values.Where(w => w != null).Select(w => w.transform.position).ToList();
+            // Include saved poses that have not been instantiated yet.
+            reserved.AddRange(records.Values.Where(r => r.state == "world" && !live.ContainsKey(r.id))
+                .Select(r => r.position));
+            float clearance = pileSpacing.x * pileSpacing.x * .65f;
+            int needed = Mathf.Max(0, target - live.Count);
+            int cellLimit = (int)Math.Min(int.MaxValue, (long)Math.Max(visiblePileLimit, target) * 3);
+            for (int cell = 0; cell < cellLimit && positions.Count < needed; cell++)
+            {
+                Vector3 position = PilePosition(cell);
+                bool occupied = false;
+                for (int i = 0; i < reserved.Count; i++)
+                    if ((reserved[i] - position).sqrMagnitude < clearance) { occupied = true; break; }
+                if (occupied) continue;
+                reserved.Add(position);
+                positions.Enqueue(position);
+            }
+            return positions;
         }
         public ThemedSessionSave Capture()
         {
@@ -331,8 +383,13 @@ namespace TinyRiders
                 if (r != null && !string.IsNullOrEmpty(r.id) && !records.ContainsKey(r.id))
                 {
                     // Upgrade only the old unsorted staging layout; held/sorted progress and identities remain intact.
-                    if (save.pileLayoutRevision < authoredLayoutRevision && r.state == "world" && baked.TryGetValue(r.id, out var pose))
-                    { r.position = pileOrigin.position + pose.position; r.euler = pose.euler; }
+                    // Recover cars stranded outside the room by the old fallback search.
+                    // Keep in-room poses, held inventory and sorted shelf progress intact.
+                    if (r.state == "world" &&
+                        (save.pileLayoutRevision < authoredLayoutRevision ||
+                         (roomLayout != null && !roomLayout.Contains(r.position))) &&
+                        TryGetBakedPose(r.id, out var pose))
+                    { r.position = pileOrigin.position + pose.position; r.euler = pose.euler; LayoutMigrated = true; }
                     records.Add(r.id, r);
                 }
             State.pileLayoutRevision = Mathf.Max(save.pileLayoutRevision, authoredLayoutRevision);

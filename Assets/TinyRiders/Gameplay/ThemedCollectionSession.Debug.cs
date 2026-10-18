@@ -15,7 +15,7 @@ namespace TinyRiders
         {
             if (!Application.isPlaying || !ready || debugSorting) return false;
             if (pileOrigin == null || definitions.Values.Any(e => e.sortingItem == null || e.sortingItem.WorldItem == null))
-            { Report("Debug: Cannot reset collection — pile origin or car prefab is missing"); return false; }
+            { ReportKey("debug.reset_unavailable"); return false; }
             debugSorting = true;
             try
             {
@@ -50,7 +50,7 @@ namespace TinyRiders
                 bool spawnAll = spawnEntireCollectionAtStart;
                 try { spawnEntireCollectionAtStart = true; Refill(false); }
                 finally { spawnEntireCollectionAtStart = spawnAll; }
-                Message = "Debug: Collection reset — all cars back in the pile";
+                ReportKey("debug.reset");
                 Publish();
                 foreach (var ui in FindObjectsByType<CarStoreUI>(FindObjectsSortMode.None)) ui.DebugResumeCollection();
                 LevelSaveManager.MarkDirty();
@@ -110,7 +110,7 @@ namespace TinyRiders
                 for (int car = 0; car < remaining.Length; car++)
                     if (!Assign(car, new bool[slots.Count]))
                     {
-                        Report("Debug: Cannot sort all cars — insufficient compatible shelf space");
+                        ReportKey("debug.sort_unavailable");
                         return false;
                     }
 
@@ -146,7 +146,7 @@ namespace TinyRiders
                     if (counts.total > 0 && counts.sorted == counts.total) completed.Add(theme);
                 }
                 State.completedThemes = completed.OrderBy(id => id, StringComparer.Ordinal).ToList();
-                Message = "Debug: All cars sorted";
+                ReportKey("debug.sorted");
                 LevelSaveManager.MarkDirty();
                 Publish();
                 var save = FindFirstObjectByType<LevelSaveManager>();

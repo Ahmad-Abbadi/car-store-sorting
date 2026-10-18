@@ -111,7 +111,7 @@ public class PlacedOnShelfItemBase : MonoBehaviour, IInteractable, IHoverable
         FlashOutline(green, 0.4f);
         Transform shelf = Shelf != null ? Shelf.transform : transform;
         Vector3 start = transform.position + Vector3.up * 0.55f - shelf.forward * 0.45f;
-        FloatingTextEffect.Show(Localizer.FromEnglish("feedback", "Great job!"), start, green);
+        FloatingTextEffect.ShowKey("feedback.great_job", start, green);
     }
 
     /// <summary> Shows the item on its own renderer while a tween animates it. </summary>

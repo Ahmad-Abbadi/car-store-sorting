@@ -129,14 +129,19 @@ public partial class SimpleAudioManager : MonoBehaviour
     }
 
     /// <summary> Plays a sound on the next pooled source; null when skipped. </summary>
-    private AudioSource PlaySound(GameSound sound, Vector3 position, float pitchScale, float threshold)
+    private AudioSource PlaySound(GameSound sound, Vector3 position, float pitchScale, float threshold, bool ui = false)
     {
-        if (!sound.IsValid || _isMute || SfxMuted) return null;
-        if (Time.unscaledTime - _lastTimePlay < threshold) return null;
+        if (!sound.IsValid || (!ui && _isMute) || SfxMuted) return null;
+        if (!ui && threshold > 0f && Time.unscaledTime - _lastTimePlay < threshold) return null;
 
         AudioSource source = GetNextSourceInLoop(out int index);
         float pitch = sound.SafePitch * pitchScale;
 
+        source.Stop();
+        source.spatialBlend = ui ? 0f : 1f;
+        source.ignoreListenerPause = ui;
+        source.loop = false;
+        source.mute = false;
         source.transform.position = position;
         source.clip = sound.Clip;
         source.volume = sound.Volume;
@@ -146,9 +151,12 @@ public partial class SimpleAudioManager : MonoBehaviour
 
         // Real-time length of the cut region, scaled by pitch.
         _stopAt[index] = sound.EndsEarly ? Time.unscaledTime + (sound.EndTime - sound.StartTime) / pitch : 0f;
-        _lastTimePlay = Time.unscaledTime;
+        if (!ui) _lastTimePlay = Time.unscaledTime;
         return source;
     }
+
+    /// <summary> Plays a 2D interface cue, respecting saved SFX mute even while gameplay is paused or muted. </summary>
+    public void PlayUI(GameSound sound) => PlaySound(sound, Vector3.zero, 1f, 0f, true);
 
     /// <summary> Plays a sound at a world position. </summary>
     public void PlayClipAt(GameSound sound, Vector3 position, float threshold = 0f)
@@ -282,7 +290,7 @@ public partial class SimpleAudioManager : MonoBehaviour
         if (_isMute || SfxMuted)
         {
             foreach (var source in _sourcePool)
-                source.Stop();
+                if (SfxMuted || source.spatialBlend > 0f) source.Stop();
         }
     }
 

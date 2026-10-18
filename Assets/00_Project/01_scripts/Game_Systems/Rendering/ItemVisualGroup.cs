@@ -50,6 +50,7 @@ public sealed class ItemVisualGroup : MonoBehaviour
     {
         EnsureCache();
         if (!AllGroups.Contains(this)) AllGroups.Add(this);
+        RefreshDetail((short)ItemDetail.Lod);
     }
 
     public void SetFar(bool value)
@@ -92,9 +93,7 @@ public sealed class ItemVisualGroup : MonoBehaviour
         EnsureCache();
         foreach (MeshRenderer renderer in renderers)
         {
-            if (renderer == null || !renderer.TryGetComponent(out MeshFilter filter) ||
-                filter.sharedMesh == null || filter.sharedMesh.lodCount <= 1) continue;
-            renderer.forceMeshLod = lod;
+            ItemDetail.ApplyTo(renderer);
         }
     }
 

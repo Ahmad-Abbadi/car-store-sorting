@@ -28,10 +28,13 @@ public class LanguageButtonUI : MonoBehaviour
             label.text = ArabicText.NeedsShaping(info.NativeName) ? ArabicText.ToVisual(info.NativeName) : info.NativeName;
         }
 
-        if (background != null) background.color = selected ? selectedColor : normalColor;
+        var theme = ToyShop.UI.ToyShopTheme.Current;
+        if (background != null) background.color = selected ? theme.mint : theme.muted;
+        if (label != null) label.color = theme.navy;
 
         button.onClick.RemoveAllListeners();
         string code = info.Code;
         button.onClick.AddListener(() => onPick(code));
+        UIButtonAudioFeedback.Ensure(button);
     }
 }

@@ -1,0 +1,28 @@
+Audio refresh implemented 2026-10-17.
+
+Replacement assets: 2 stereo music loops and 21 mono sound effects, all CC0.
+Sources and individual preparation measurements are in Assets/00_Project/Audio/Playful/Licenses/.
+Music: Sunshine Coast (menu), Home Town (gameplay), by Juhani Junkala / SubspaceAudio.
+Effects: Kenney Interface Sounds and Impact Sounds.
+Original published assets are Ogg Vorbis. WAV working assets do not restore lost source detail.
+
+Unity import readback: 44.1 kHz preserved; music stereo, CompressedInMemory, quality .85;
+short effects mono, PCM, DecompressOnLoad; preload enabled; importer normalization disabled.
+Unity WebGL uses its own AAC build encoding and has no AudioImporter WebGL override in this Editor.
+
+3 focused EditMode tests passed (editor-tests.json).
+33 runtime checks passed (runtime-checks.txt), including all 17 assigned gameplay variants,
+independent and temporary mutes, mute locking, paused fades, no same-track restart,
+menu/loading/Level/menu music, one persistent manager, and exactly one audio listener
+on every sampled frame throughout both loading transitions.
+Original preference values were restored after the successful runtime probe.
+Editor AudioClip runtime allocation reported by the probe: 7,514,437 bytes.
+
+All 23 prepared waveforms have zero endpoint samples and no clipped samples (waveform-checks.json).
+Music preserves full publisher loop durations; listening remains subjective and was not claimed as an automated test.
+The active player scene dependencies contain no legacy audio clips; original assets remain on disk.
+Unrelated project changes were preserved.
+
+The user explicitly requested no build. No further WebGL/browser validation will be run.
+Cancellation of the existing blocked build was requested; Unity exposes no connected build-cancel command.
+No completed WebGL build or browser CPU/memory/listening result is claimed.

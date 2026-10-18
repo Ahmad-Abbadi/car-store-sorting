@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 
 /// <summary> Looks up translated strings for the chosen language, falling back to the first one. </summary>
 public static class Localizer
@@ -8,9 +10,9 @@ public static class Localizer
     private const string PrefKey = "Language";
 
     private static LocalizationDatabase_SO _db;
-    private static LanguageInfo _current;
-    private static Dictionary<string, string> _table = new Dictionary<string, string>();
-    private static Dictionary<string, string> _fallbackTable = new Dictionary<string, string>();
+    private static RuntimeLocalizationData _data;
+    private static string _notifiedCode;
+    public static RuntimeLocalizationData Data { get { Init(); return _data; } }
     private static bool _initialized;
 
     /// <summary> Fired after the language changes. </summary>
@@ -35,7 +37,7 @@ public static class Localizer
         get
         {
             Init();
-            return _current;
+            return _db != null ? _db.FindLanguage(LocalizationSettings.SelectedLocale?.Identifier.Code ?? "en") : null;
         }
     }
 
@@ -48,11 +50,12 @@ public static class Localizer
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
     {
+        if (_initialized && LocalizationSettings.HasSettings)
+            LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
         _db = null;
-        _current = null;
+        _data = null;
+        _notifiedCode = null;
         _initialized = false;
-        _table = new Dictionary<string, string>();
-        _fallbackTable = new Dictionary<string, string>();
         LanguageChanged = null;
     }
 
@@ -69,7 +72,10 @@ public static class Localizer
             return;
         }
 
-        _fallbackTable = _db.BuildTable(_db.Languages[0].Code);
+        _data = Resources.Load<RuntimeLocalizationData>("RuntimeLocalizationData");
+        if (_data == null) throw new InvalidOperationException("Run Tools/Localization/Build Complete Localization before playing.");
+        LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
         string saved = PlayerPrefs.GetString(PrefKey, string.Empty);
         if (saved.Length == 0) saved = MatchDeviceCode(); // first launch previews the device language
         Apply(_db.FindLanguage(saved) ?? _db.Languages[0]);
@@ -77,8 +83,8 @@ public static class Localizer
 
     private static void Apply(LanguageInfo info)
     {
-        _current = info;
-        _table = _db.BuildTable(info.Code);
+        var locale = _data.FindLocale(info.Code);
+        if (locale != null) LocalizationSettings.SelectedLocale = locale;
     }
 
     /// <summary> Switches language, saves it and notifies listeners. </summary>
@@ -91,7 +97,7 @@ public static class Localizer
         Apply(info);
         PlayerPrefs.SetString(PrefKey, info.Code);
         PlayerPrefs.Save();
-        LanguageChanged?.Invoke();
+        NotifyChanged();
     }
 
 #if UNITY_EDITOR
@@ -99,10 +105,24 @@ public static class Localizer
     public static void RefreshDatabase()
     {
         _initialized = false;
+        _notifiedCode = null;
         Init();
-        LanguageChanged?.Invoke();
+        NotifyChanged();
     }
 #endif
+
+    private static void OnLocaleChanged(Locale locale) => NotifyChanged();
+
+    private static void NotifyChanged()
+    {
+        string code = CurrentCode;
+        if (_notifiedCode == code) return;
+        _notifiedCode = code;
+        LanguageChanged?.Invoke();
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Bootstrap() => Init();
 
     /// <summary> Picker language matching the device language; first language when unsupported. </summary>
     public static string DetectDeviceCode()
@@ -169,6 +189,14 @@ public static class Localizer
         return sb.ToString();
     }
 
+    /// <summary>A deferred argument resolves names in the language active when a message is rendered.</summary>
+    public sealed class Value
+    {
+        private readonly string key, fallback;
+        public Value(string key, string fallback = "") { this.key = key; this.fallback = fallback; }
+        public override string ToString() => GetOr(key, fallback);
+    }
+
     /// <summary> Text for a key with {0}, {1}... filled by args. </summary>
     public static string Format(string key, params object[] args) => FormatText(Get(key), args);
 
@@ -185,7 +213,7 @@ public static class Localizer
         text = null;
         if (string.IsNullOrEmpty(key)) return false;
         Init();
-        if (!_table.TryGetValue(key, out text) && !_fallbackTable.TryGetValue(key, out text)) return false;
+        if (_data == null || (!_data.TryGet(CurrentCode, key, out text) && !_data.TryGet("en", key, out text))) return false;
         text = ResolveHints(text);
         return true;
     }

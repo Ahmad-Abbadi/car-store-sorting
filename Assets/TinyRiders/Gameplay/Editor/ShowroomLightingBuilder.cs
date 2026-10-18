@@ -206,8 +206,12 @@ public static class ShowroomLightingBuilder
             if (asset == null) throw new InvalidOperationException("Missing quality asset: " + level);
             asset.supportsHDR = true;
             var serialized = new SerializedObject(asset);
-            serialized.FindProperty("m_AdditionalLightsRenderingMode").intValue = level == "Low" ? 2 : 1;
-            serialized.FindProperty("m_AdditionalLightsPerObjectLimit").intValue = level == "Low" ? 2 : 4;
+            serialized.FindProperty("m_AdditionalLightsRenderingMode").intValue = 1;
+            serialized.FindProperty("m_AdditionalLightsPerObjectLimit").intValue = 4;
+            serialized.FindProperty("m_MainLightShadowsSupported").boolValue = true;
+            serialized.FindProperty("m_MainLightShadowmapResolution").intValue = 2048;
+            serialized.FindProperty("m_SoftShadowsSupported").boolValue = true;
+            serialized.FindProperty("m_ShadowDistance").floatValue = 40;
             serialized.FindProperty("m_ReflectionProbeBoxProjection").boolValue = true;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(asset); AssetDatabase.SaveAssetIfDirty(asset);

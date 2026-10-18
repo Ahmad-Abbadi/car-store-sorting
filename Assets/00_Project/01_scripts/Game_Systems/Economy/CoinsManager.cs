@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary> Scene coin wallet: earns from right shelf placements, saved in PlayerPrefs. </summary>
@@ -18,11 +19,30 @@ public class CoinsManager : MonoBehaviour
     /// <summary> Current balance; never below zero. </summary>
     public int Coins { get; private set; }
 
+    [Serializable] private sealed class WalletSave
+    {
+        public int version = 1, coins;
+        public List<string> receipts = new List<string>();
+    }
+    private WalletSave wallet = new WalletSave();
+    private string WalletKey => saveKey + "_RewardWallet";
+    private bool walletReadable = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         Coins = Mathf.Max(0, PlayerPrefs.GetInt(saveKey, 0));
+        if (PlayerPrefs.HasKey(WalletKey))
+        {
+            try
+            {
+                var saved = JsonUtility.FromJson<WalletSave>(PlayerPrefs.GetString(WalletKey));
+                if (saved == null || saved.version != 1 || saved.receipts == null) throw new InvalidOperationException("Unsupported wallet save");
+                wallet = saved; Coins = Mathf.Max(0, wallet.coins);
+            }
+            catch (Exception e) { walletReadable = false; Debug.LogWarning("Reward wallet retained without modification: " + e.Message); }
+        }
     }
 
     private void OnEnable()
@@ -62,7 +82,28 @@ public class CoinsManager : MonoBehaviour
     /// <summary> Adds coins to the balance. </summary>
     public void Add(int amount)
     {
-        if (amount > 0) SetCoins(Coins + amount);
+        if (amount > 0) SetCoins(Coins + Math.Min(amount, int.MaxValue - Coins));
+    }
+
+    /// <summary>Balance and receipt share one persisted record; replayed claims never pay twice.</summary>
+    public bool AddRewardOnce(string claimId, int amount)
+    {
+        if (!walletReadable || string.IsNullOrEmpty(claimId) || amount < 0) return false;
+        if (wallet.receipts.Contains(claimId)) return true;
+        wallet.receipts.Add(claimId);
+        Coins += Math.Min(amount, int.MaxValue - Coins);
+        PersistWallet();
+        OnCoinsChanged?.Invoke(Coins);
+        return true;
+    }
+
+    private void PersistWallet()
+    {
+        if (!walletReadable) return;
+        wallet.coins = Coins;
+        PlayerPrefs.SetString(WalletKey, JsonUtility.ToJson(wallet));
+        PlayerPrefs.SetInt(saveKey, Coins); // legacy readers and existing tools
+        PlayerPrefs.Save();
     }
 
     /// <summary> Removes coins, stopping at zero. </summary>
@@ -87,8 +128,7 @@ public class CoinsManager : MonoBehaviour
         if (value == Coins) return;
 
         Coins = value;
-        PlayerPrefs.SetInt(saveKey, Coins);
-        PlayerPrefs.Save();
+        PersistWallet();
         OnCoinsChanged?.Invoke(Coins);
     }
 
@@ -100,8 +140,7 @@ public class CoinsManager : MonoBehaviour
     public void ResetForReplay()
     {
         Coins = 0;
-        PlayerPrefs.DeleteKey(saveKey);
-        PlayerPrefs.Save();
+        PersistWallet();
         OnCoinsChanged?.Invoke(Coins);
     }
 

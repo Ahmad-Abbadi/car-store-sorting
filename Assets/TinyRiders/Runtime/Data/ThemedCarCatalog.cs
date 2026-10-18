@@ -8,6 +8,8 @@ namespace TinyRiders
         [Serializable] public class Entry
         {
             public string collectibleId, baseCarId, themeId, colorwayId, displayName;
+            public string NameKey => "item." + collectibleId + ".name";
+            public string DisplayName => Localizer.GetOr(NameKey, displayName);
             public int contentRevision = 1;
             public GameObject prefab;
             public Texture2D preview;
@@ -23,6 +25,8 @@ namespace TinyRiders
         [Serializable] public class Theme
         {
             public string id, displayName, motif, shelfGroup;
+            public string NameKey => "theme." + id + ".name";
+            public string DisplayName => Localizer.GetOr(NameKey, displayName);
             public Color color = Color.white;
             public bool enabled = true;
         }

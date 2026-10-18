@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-17",
+  "unity": "6000.3.22f1",
+  "compilation": "passed",
+  "automated_tests": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "coverage": [
+      "Theme assets, Arabic fallback, one feedback component per authored button",
+      "Unscaled panel entrance at timeScale zero",
+      "Twenty rapid panel toggles restore alpha and anchored position",
+      "Button feedback restores a non-unit baseline scale",
+      "Presentation does not invoke additional click callbacks"
+    ]
+  },
+  "play_mode_checks": [
+    "Main menu Play handler completed the loading-screen handoff into Level",
+    "Gameplay HUD and existing hidden top-center status rules preserved",
+    "Pause and upgrade panels opened and closed through existing controllers",
+    "Language picker rendered all eight native-language labels",
+    "Generated tutorial, completion and directory panels rendered",
+    "Final ultrawide menu at 2560x1080: no text overflow or off-screen buttons",
+    "Final Arabic pause prefab at 1366x768: no text overflow or off-screen buttons",
+    "Final language picker at 1920x1080: no text overflow or off-screen buttons",
+    "Generated tutorial at 1920x1080 and completion at 1366x768: no overflow",
+    "Directory at 2560x1080: no text overflow"
+  ],
+  "limitations": [
+    "Gameplay shutdown logged NullReferenceException in unchanged ItemVisualGroup.Hide and WorldItemBase.OnDisable; this renderer lifecycle issue is outside the UI refresh.",
+    "Touch controls were themed; physical-device touch input was not exercised.",
+    "Completion presentation was previewed without completing or resetting the player's saved collection."
+  ],
+  "authoring": {
+    "theme": "Assets/00_Project/03_scriptableObjects/Resources/ToyShopTheme.asset",
+    "apply_menu": "Tools > Tiny Riders > Apply Toy Shop UI Theme",
+    "note": "Reapply the theme after changing palette or typography to update authored prefabs and scenes. Runtime-generated store UI reads the theme directly."
+  }
+}

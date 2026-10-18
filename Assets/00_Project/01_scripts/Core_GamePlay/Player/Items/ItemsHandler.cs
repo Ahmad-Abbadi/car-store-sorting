@@ -513,6 +513,8 @@ public class ItemsHandler : MonoBehaviour
         ItemDataSO data = _equipped.Item.Data;
         if (IsThrowBlocked(data))
         {
+            var audio = SimpleAudioManager.instance;
+            if (audio && audio.GameplaySounds) audio.PlayGlobal(audio.GameplaySounds.WrongSFX);
             OnThrowBlocked?.Invoke(data);
             return true; // press consumed, nothing thrown
         }
@@ -606,7 +608,7 @@ public class ItemsHandler : MonoBehaviour
         SimpleAudioManager audio = SimpleAudioManager.instance;
         if (audio == null || audio.GameplaySounds == null) return;
 
-        audio.PlayJuicyGlobalClip(audio.GameplaySounds.GetRandomThrowSFX());
+        audio.PlayGlobal(audio.GameplaySounds.GetRandomThrowSFX());
     }
 
     /// <summary> Arced throw direction from the aim source, or the body's forward. </summary>

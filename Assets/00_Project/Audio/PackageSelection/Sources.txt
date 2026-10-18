@@ -1,0 +1,30 @@
+Package audio selection — 2026-10-17
+
+Working copies made from packages imported by the user:
+- Mobile Games Bundle: 3D Match, Cute UI / Interact, Runner Vol.1, Mini Games, Zen Games,
+  Match 3, and Casual Fun Music Pack.
+  The included Sound Pack Guides identify Swish Swoosh (www.swish-swoosh.com).
+- 2000 Game Sound FX: soft thump. Indoor concrete footsteps now come from Mini Games.
+
+These files remain subject to their original imported-package licenses. They are NOT CC0
+and are not covered by the previous Kenney / Juhani Junkala credits. No purchases or downloads
+were made for this selection. Keep the imported packages and their licensing documentation.
+
+Menu music: MUSC_Life_Is_Simple_MenuTheme_CMajor_120BPM.wav
+Gameplay music: MUSC_Life_Is_Simple_GameplayTheme_CMajor_123BPM.wav
+Both are matched C-major themes. Full original frame counts are retained.
+
+Processing: original 44.1 kHz rate and 16-bit PCM retained; effects downmixed to mono;
+conservative RMS/peak gain; effect-only silence trimming with 3 ms attack / 25 ms tail margin;
+1 ms effect / 2 ms music endpoint ramps. No upsampling, invented detail, or pitch changes.
+
+Sources.json maps every working file to its original package source, measured levels,
+gain, trims, duration, and checksum. Package originals were not changed.
+Reproduction script: IntegrationEvidence/AudioPackageRefresh/prepare_audio.py --prepare
+For action-only updates preserving the current music: --prepare --effects-only
+Assign through Unity: PlayfulAudioBuilder.ApplyActionSounds().
+Plastic stack clicks have three short variations; throws use three related Zen whooshes;
+placement uses plastic drops and a short clack. Wrong-section error and softer locked-action
+tick are separate cues. The shared button click is quiet 2D playback.
+Music working files and their import settings were retained during this action-only update.
+Previous audio remains available in Assets/00_Project/Audio/Playful but is no longer assigned.
