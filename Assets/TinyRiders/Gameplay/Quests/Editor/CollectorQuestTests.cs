@@ -17,7 +17,8 @@ namespace TinyRiders.Editor
         [SetUp] public void SetUp()
         {
             definitions=AssetDatabase.FindAssets("t:CollectorQuestDefinition",new[]{CollectorQuestBuilder.Folder})
-                .Select(g=>AssetDatabase.LoadAssetAtPath<CollectorQuestDefinition>(AssetDatabase.GUIDToAssetPath(g))).ToArray();
+                .Select(g=>AssetDatabase.LoadAssetAtPath<CollectorQuestDefinition>(AssetDatabase.GUIDToAssetPath(g)))
+                .Where(d=>CollectorQuestBuilder.LegacyIds.Contains(d.id)).ToArray();
             Assert.AreEqual(8,definitions.Length);
             engine=new CollectorQuestProgress(new CollectorCareer(),definitions);
             s=new CollectorSnapshot{total=100,designs=50}; s.themes.Add("A",(0,50)); s.themes.Add("B",(0,50));
@@ -147,7 +148,7 @@ namespace TinyRiders.Editor
                 Assert.AreEqual(1,board.GetComponentsInChildren<Collider>(true).Length);
                 var view=ui.GetComponent<CollectorQuestUI>(); Assert.NotNull(view.cardPrefab);
                 Assert.NotNull(view.scroll.viewport.GetComponent<UnityEngine.UI.Mask>());
-                Assert.NotNull(view.scroll.content.GetComponent<UnityEngine.UI.ContentSizeFitter>());
+                Assert.NotNull(view.scroll.content.GetComponent<UnityEngine.UI.GridLayoutGroup>());
                 Assert.True(view.window.GetComponent<CollectorQuestPanel>().RequireMouse);
                 Assert.True(view.window.GetComponent<CollectorQuestPanel>().RequirePause);
                 Assert.True(ui.GetComponentsInChildren<Transform>(true).All(t=>GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(t.gameObject)==0));

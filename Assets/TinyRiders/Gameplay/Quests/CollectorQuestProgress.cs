@@ -12,6 +12,10 @@ namespace TinyRiders.Quests
         public CollectorQuestGoal goal;
         public bool challenge, complete, claimed;
         public int target, progress, baseline, coins, xp;
+        public string subjectId, seriesId;
+        public CollectorQuestCategory category;
+        public int stageOrder, authoredOrder;
+        public bool available = true;
     }
 
     [Serializable]
@@ -25,8 +29,10 @@ namespace TinyRiders.Quests
 
     public sealed class CollectorSnapshot
     {
-        public int sorted, total, discovered, designs, fullShelves, upgrades;
+        public int sorted, total, discovered, designs, fullShelves, upgrades, shelfCapacity, totalUpgradeLevels, upgradeCapacity;
         public readonly Dictionary<string, (int sorted, int total)> themes = new Dictionary<string, (int, int)>();
+        public readonly Dictionary<string, (int sorted, int total)> families = new Dictionary<string, (int, int)>();
+        public readonly Dictionary<string, (int level, int max)> upgradeLevels = new Dictionary<string, (int, int)>();
         public readonly HashSet<string> completedThemes = new HashSet<string>();
     }
 
@@ -44,11 +50,17 @@ namespace TinyRiders.Quests
         public int Target { get; }
         public int Coins { get; }
         public int XP { get; }
+        public string SubjectId { get; }
+        public string SeriesId { get; }
+        public CollectorQuestCategory Category { get; }
+        public int AuthoredOrder { get; }
+        public bool Available { get; }
         public CollectorQuestView(CollectorQuestRecord q)
         {
             Id=q.id; DefinitionId=q.definitionId; ThemeId=q.themeId; Goal=q.goal;
             Challenge=q.challenge; Complete=q.complete; Claimed=q.claimed;
             Progress=q.progress; Target=q.target; Coins=q.coins; XP=q.xp;
+            SubjectId=q.subjectId; SeriesId=q.seriesId; Category=q.category; AuthoredOrder=q.authoredOrder; Available=q.available;
         }
     }
 
@@ -57,36 +69,62 @@ namespace TinyRiders.Quests
     {
         public CollectorCareer Career { get; }
         readonly IReadOnlyList<CollectorQuestDefinition> definitions;
+        readonly Dictionary<string,CollectorQuestDefinition> byId;
         public CollectorQuestProgress(CollectorCareer career, IReadOnlyList<CollectorQuestDefinition> definitions)
-        { Career = career; this.definitions = definitions; }
+        { Career = career; this.definitions = definitions; byId=definitions.ToDictionary(d=>d.id,StringComparer.Ordinal); }
 
         public void Evaluate(CollectorSnapshot s)
         {
             Career.sortedHighWater = Math.Max(Career.sortedHighWater, s.sorted);
+            var existing=new HashSet<string>(Career.quests.Select(q=>q.id),StringComparer.Ordinal);
             foreach (var d in definitions)
-                if (!Career.quests.Any(q => q.id == d.id))
+                if (existing.Add(d.id))
                     Career.quests.Add(new CollectorQuestRecord { id=d.id, definitionId=d.id, goal=d.goal, target=d.target, coins=d.coins, xp=d.xp });
-            foreach (var q in Career.quests.Where(q => !q.complete))
+            foreach (var q in Career.quests)
             {
-                int value = Value(q, s);
                 if (!q.challenge)
                 {
-                    var definition=definitions.FirstOrDefault(d => d.id == q.definitionId);
-                    if(!definition) continue; // retired content keeps its career record
-                    if (q.goal == CollectorQuestGoal.SortedCars || q.goal == CollectorQuestGoal.EntireStore)
-                        q.target = Math.Min(definition.target, s.total);
-                    if (q.goal == CollectorQuestGoal.EntireStore) q.target = s.total;
-                    if (q.goal == CollectorQuestGoal.CompletedThemes)
-                        q.target = Math.Min(definition.target, s.themes.Count);
+                    if(!byId.TryGetValue(q.definitionId,out var d)) {q.available=q.complete; continue;}
+                    // Add presentation metadata without replacing saved achievements or rewards.
+                    q.subjectId=d.subjectId; q.seriesId=d.seriesId; q.category=d.category;
+                    q.stageOrder=d.stageOrder; q.authoredOrder=d.authoredOrder;
+                    int capacity=Capacity(d,s);
+                    int target=d.targetFraction>0 ? (int)Math.Ceiling(capacity*(double)d.targetFraction) : d.goal==CollectorQuestGoal.EntireStore ? capacity : d.target;
+                    if(d.seriesId=="legacy" && (d.goal==CollectorQuestGoal.SortedCars || d.goal==CollectorQuestGoal.CompletedThemes))
+                        target=Math.Min(target,capacity);
+                    q.available=q.complete || (capacity>0 && target>0 && target<=capacity);
+                    if(!q.complete) q.target=target;
                 }
+                else q.category=q.goal==CollectorQuestGoal.DiscoveredDesigns ? CollectorQuestCategory.Discoveries :
+                    q.goal==CollectorQuestGoal.SpecificTheme ? CollectorQuestCategory.Themes : CollectorQuestCategory.Sorting;
+                if(q.complete || !q.available) continue;
+                int value = Value(q, s);
                 q.progress = Math.Clamp(value - q.baseline, 0, Math.Max(0, q.target));
                 if (q.target > 0 && q.progress >= q.target) q.complete = true;
             }
             EnsureChallenges(s);
-            if(Career.pinnedId!=null && !Career.quests.Any(q=>q.id==Career.pinnedId && !q.claimed))
+            if(Career.pinnedId!=null && !Career.quests.Any(q=>q.id==Career.pinnedId && !q.claimed && q.available))
             { Career.pinnedId=null; Career.pinChosen=false; }
             if (!Career.pinChosen)
-                Career.pinnedId = Career.quests.FirstOrDefault(q => !q.challenge && !q.complete)?.id;
+                Career.pinnedId = CollectorQuestPresentation.Select(Career.quests.Select(q=>new CollectorQuestView(q)),CollectorQuestTab.Journey)
+                    .FirstOrDefault(q=>!q.Complete)?.Id;
+        }
+
+        static int Capacity(CollectorQuestDefinition d,CollectorSnapshot s)
+        {
+            switch(d.goal)
+            {
+                case CollectorQuestGoal.SortedCars: case CollectorQuestGoal.EntireStore: return s.total;
+                case CollectorQuestGoal.DiscoveredDesigns: return s.designs;
+                case CollectorQuestGoal.FullShelves: return s.shelfCapacity>0 ? s.shelfCapacity : s.fullShelves;
+                case CollectorQuestGoal.OwnedUpgrades: return s.upgradeLevels.Count>0 ? s.upgradeLevels.Count : s.upgrades;
+                case CollectorQuestGoal.CompletedThemes: return s.themes.Count;
+                case CollectorQuestGoal.ThemeSortedCars: return s.themes.TryGetValue(d.subjectId ?? "",out var t) ? t.total : 0;
+                case CollectorQuestGoal.FamilySortedCars: return s.families.TryGetValue(d.subjectId ?? "",out var f) ? f.total : 0;
+                case CollectorQuestGoal.UpgradeLevel: return s.upgradeLevels.TryGetValue(d.subjectId ?? "",out var u) ? u.max : 0;
+                case CollectorQuestGoal.TotalUpgradeLevels: return s.upgradeCapacity;
+                default: return 0;
+            }
         }
 
         static int Value(CollectorQuestRecord q, CollectorSnapshot s)
@@ -98,6 +136,10 @@ namespace TinyRiders.Quests
                 case CollectorQuestGoal.OwnedUpgrades: return s.upgrades;
                 case CollectorQuestGoal.DiscoveredDesigns: return s.discovered;
                 case CollectorQuestGoal.CompletedThemes: return s.completedThemes.Count;
+                case CollectorQuestGoal.ThemeSortedCars: return s.themes.TryGetValue(q.subjectId ?? "",out var theme) ? theme.sorted : 0;
+                case CollectorQuestGoal.FamilySortedCars: return s.families.TryGetValue(q.subjectId ?? "",out var family) ? family.sorted : 0;
+                case CollectorQuestGoal.UpgradeLevel: return s.upgradeLevels.TryGetValue(q.subjectId ?? "",out var upgrade) ? upgrade.level : 0;
+                case CollectorQuestGoal.TotalUpgradeLevels: return s.totalUpgradeLevels;
                 case CollectorQuestGoal.SpecificTheme:
                     return s.themes.TryGetValue(q.themeId ?? "", out var t) && t.total > 0 && t.sorted == t.total ? 1 : 0;
                 default: return 0;
@@ -118,11 +160,14 @@ namespace TinyRiders.Quests
             if (target <= 0 || Career.quests.Any(q => q.challenge && !q.claimed && q.goal == goal)) return;
             Career.quests.Add(new CollectorQuestRecord { id=Career.runId+"/"+Guid.NewGuid().ToString("N"),
                 definitionId=definitionId, goal=goal, target=target, baseline=baseline, coins=coins, xp=xp, challenge=true, themeId=theme });
+            var added=Career.quests[Career.quests.Count-1];
+            added.category=goal==CollectorQuestGoal.DiscoveredDesigns ? CollectorQuestCategory.Discoveries :
+                goal==CollectorQuestGoal.SpecificTheme ? CollectorQuestCategory.Themes : CollectorQuestCategory.Sorting;
         }
 
         public bool Pin(string id)
         {
-            if (id != null && !Career.quests.Any(q => q.id == id && !q.claimed)) return false;
+            if (id != null && !Career.quests.Any(q => q.id == id && !q.claimed && q.available)) return false;
             Career.pinChosen = true; Career.pinnedId = id; return true;
         }
 
@@ -155,6 +200,7 @@ namespace TinyRiders.Quests
             { Career.pinnedId=null; Career.pinChosen=false; }
         }
 
-        public static int RankIndex(int xp) => xp>=1000 ? 4 : xp>=500 ? 3 : xp>=250 ? 2 : xp>=100 ? 1 : 0;
+        public static readonly int[] RankThresholds = {0,100,250,500,1000,2500,5000,10000};
+        public static int RankIndex(int xp) => xp>=10000 ? 7 : xp>=5000 ? 6 : xp>=2500 ? 5 : xp>=1000 ? 4 : xp>=500 ? 3 : xp>=250 ? 2 : xp>=100 ? 1 : 0;
     }
 }

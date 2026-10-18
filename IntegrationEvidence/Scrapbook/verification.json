@@ -1,0 +1,41 @@
+{
+  "automated_checks": {
+    "quest": 36,
+    "scrapbook": 2,
+    "localization": 1,
+    "font": 1,
+    "upgrade": 1,
+    "shelf_aim": 1,
+    "total_passed": 42
+  },
+  "layouts": [
+    "english-1280x720: 1280x720, fits=True, overflow=, cards=6, RTL=False",
+    "english-1280x800: 1280x800, fits=True, overflow=, cards=6, RTL=False",
+    "english-1920x1080: 1920x1080, fits=True, overflow=, cards=6, RTL=False",
+    "english-ultrawide: 2560x1080, fits=True, overflow=, cards=6, RTL=False",
+    "arabic-1280x720: 1280x720, fits=True, overflow=, cards=6, RTL=True",
+    "arabic-1280x800: 1280x800, fits=True, overflow=, cards=6, RTL=True",
+    "arabic-1920x1080: 1920x1080, fits=True, overflow=, cards=6, RTL=True",
+    "arabic-ultrawide: 2560x1080, fits=True, overflow=, cards=6, RTL=True"
+  ],
+  "live_checks": [
+    "240 quests across 40 spreads; six reused cards",
+    "Board ray interaction and pause/cursor restoration",
+    "Successful claim shows collected stamp and 28 bounded particles while paused",
+    "Repeated claim pays exactly once",
+    "Pin indicator updates; rapid paging and close/reopen retain bounded card count",
+    "Page changes and closing cancel effects",
+    "Batched passive achievement notification delivered after modal closes",
+    "Reload preserves XP, coins, claims and manually pinned quest",
+    "Production preferences match pre-QA snapshot; isolated saves removed"
+  ],
+  "limits": [
+    "Editor validation; no standalone WebGL build or physical controller test"
+  ],
+  "previews": [
+    "english-1920x1080.png",
+    "arabic-1280x800.png",
+    "collected-stamp.png",
+    "achievement-notification.png"
+  ]
+}

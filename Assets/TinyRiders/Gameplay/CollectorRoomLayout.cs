@@ -15,6 +15,8 @@ namespace TinyRiders
         public float minimumAisle = 1.8f;
         public float ceilingHeight = 4.6f;
         public bool walkThroughLooseCars;
+        [Tooltip("Optional local floor rectangles for shops with wings or alcoves. Empty uses roomSize.")]
+        public Bounds[] floorRegions = Array.Empty<Bounds>();
         public Bounds[] pileRegions = Array.Empty<Bounds>();
         public Bounds[] pileExclusions = Array.Empty<Bounds>();
         public Section[] sections = Array.Empty<Section>();
@@ -40,6 +42,13 @@ namespace TinyRiders
         public bool Contains(Vector3 world, float margin = 0)
         {
             var p = world - origin;
+            if (floorRegions != null && floorRegions.Length > 0)
+            {
+                foreach (var region in floorRegions)
+                    if (p.x >= region.min.x + margin && p.x <= region.max.x - margin &&
+                        p.z >= region.min.z + margin && p.z <= region.max.z - margin) return true;
+                return false;
+            }
             return Mathf.Abs(p.x) <= roomSize.x * .5f - margin &&
                    Mathf.Abs(p.z) <= roomSize.y * .5f - margin;
         }

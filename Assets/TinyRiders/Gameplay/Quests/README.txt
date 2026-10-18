@@ -1,5 +1,15 @@
 COLLECTOR QUESTS
 
+240 permanent quests: the original 8, plus 120 theme stages, 45 car-family
+stages, 20 sorting milestones, 12 discovery milestones, 12 shelf milestones,
+8 theme-count milestones and 15 upgrade goals. Three optional challenge types
+continue to rotate alongside the permanent collection.
+
+Journey recommends one unfinished goal per category and includes all claimable
+permanent quests. All Quests browses the full catalog. Category filters apply
+to each tab, and scrapbook spreads reuse at most 6 card objects. Simultaneous completions
+are counted in a single toast; multiple queued rank-ups show the highest rank.
+
 Open the Level scene and enter Play mode. The physical board stands to the right
 of the entrance at (501.7, 0, -10.25). Aim at it and use the normal interaction
 action. Select Journey, Challenges or Completed; pin a goal and claim completed
@@ -17,11 +27,24 @@ default content and integrates it into the open Level scene. It resets authored
 default assets; edit definitions directly for custom balancing instead of
 rebuilding afterwards. The builder uses the upgrade station interaction layer.
 
+Tiny Riders > Quests > Expand to 240 Collector Quests updates definitions and
+the existing UI prefab while preserving physical board placement. Theme and
+family IDs come from the eligible catalog; percentage targets round upward.
+Generation reads authored layout capacity even when an EditMode test runner
+temporarily opens an empty scene. Stable IDs and asset GUIDs survive rebuilding.
+
+New goals use 5/10/20 coin and 15/30/60 XP tiers. The complete permanent catalog
+awards 2678 coins and 8185 XP; original rewards and upgrade prices are unchanged.
+Ranks now continue through Curator (2500), Collector Legend (5000) and Hall of
+Fame (10000). Replaying optional challenges can continue advancing the career.
+
 Runtime
 CollectorQuestProgress evaluates snapshots without Unity scene dependencies.
 CollectorQuestManager waits for collection restoration, consumes session,
 upgrade and shelf events, and exposes immutable views. Dirty events are batched
-once per frame; collection scans do not run every idle frame.
+once per frame. One record traversal supplies global, theme and car-family
+counts; collection scans do not run every idle frame. Unfinished goals with
+missing content are hidden without reducing separate milestones to one target.
 
 Challenges count progress above assignment baselines. Sorting assignments use
 the run's highest sorted count so removing and reshelving cannot farm rewards.
@@ -41,5 +64,19 @@ and wallet receipts while retaining settings. Unreadable/unsupported quest or
 wallet saves are preserved and reward claims remain unavailable.
 
 Verification
-CollectorQuestTests contains 18 focused tests. Live gameplay verification and
-screenshots are recorded in IntegrationEvidence/Quests/verification.json.
+CollectorQuestTests and CollectorQuestExpansionTests contain 36 focused cases.
+Expansion verification and screenshots are in IntegrationEvidence/Quests240/.
+CollectorQuestExpansionQA is an explicit opt-in editor probe: Prepare seeds an
+isolated eight-quest career with a pending claim; scene callbacks redirect the
+level, position, wallet and career keys before startup; Finish removes only its
+own QA keys and verifies production progress is unchanged. Do not leave a QA
+session active when handing the Editor back to a player.
+
+Scrapbook presentation
+CollectorScrapbookPresenter owns page turns, category artwork, membership stamps,
+wallet feedback and passive corner notifications. CollectorQuestUI commits claims
+through the unchanged manager before displaying a short collected stamp.
+Tiny Riders/Quests/Build Collector Scrapbook updates existing prefabs in place.
+Build and Expand also apply this presentation. All Quests has 40 six-card spreads.
+New artwork, UI labels and checks are in IntegrationEvidence/Scrapbook/.
+

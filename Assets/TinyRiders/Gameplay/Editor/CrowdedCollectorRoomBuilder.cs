@@ -122,8 +122,10 @@ public static class CrowdedCollectorRoomBuilder
             !l.pileExclusions.Any(a=>a.min.x<b.max.x&&a.max.x>b.min.x&&a.min.z<b.max.z&&a.max.z>b.min.z);
     }
 
-    public static CollectorRoomBuilder.Pile Bake(CollectorRoomLayout l,ThemedCarCatalog catalog,int seed)
+    public static CollectorRoomBuilder.Pile Bake(CollectorRoomLayout l,ThemedCarCatalog catalog,int seed,string evidence=Evidence,float fixtureClearance=0)
     {
+        // A visual body can extend slightly beyond its rounded physics capsule at fixture corners.
+        var bakeExclusions=l.pileExclusions.Select(b=>{b.Expand(new Vector3(fixtureClearance*2,0,fixtureClearance*2));return b;}).ToArray();
         var definitions=catalog.entries.Where(e=>e.enabled).ToDictionary(e=>e.collectibleId);
         var ids=ThemedPileSequence.InstanceIds(definitions.Values,2,seed).OrderBy(id=>ThemedPileSequence.Rank(id+":crowded",seed)).ThenBy(id=>id,StringComparer.Ordinal).ToArray();
         var art=definitions.ToDictionary(p=>p.Key,p=>CollectorRoomBuilder.ArtBounds(p.Value.sortingItem.WorldItem.gameObject));
@@ -137,9 +139,9 @@ public static class CrowdedCollectorRoomBuilder
             {
                 float roll=random.NextDouble()<.08?90:Random(-23,23);
                 var q=Quaternion.Euler(Random(-15,15),Random(0,360),roll);
-                var box=TransformedBounds(b,Vector3.zero,q);var a=l.pileRegions[0];
+                var box=TransformedBounds(b,Vector3.zero,q);var a=l.pileRegions[placements.Count % l.pileRegions.Length];
                 var p=new Vector3(Random(a.min.x+.35f,a.max.x-.35f),.03f-box.min.y,Random(a.min.z+.4f,a.max.z-.4f));
-                box=TransformedBounds(b,p,q);if(!Inside(l,box))continue;
+                box=TransformedBounds(b,p,q);if(!Inside(l,box)||bakeExclusions.Any(a=>a.min.x<box.max.x&&a.max.x>box.min.x&&a.min.z<box.max.z&&a.max.z>box.min.z))continue;
                 float support=0;
                 foreach(var other in occupied)if(box.min.x<other.max.x+.015f&&box.max.x>other.min.x-.015f&&box.min.z<other.max.z+.015f&&box.max.z>other.min.z-.015f) support=Mathf.Max(support,other.max.y);
                 p.y+=support;box.center+=Vector3.up*support;if(box.max.y>1.07f)continue;
@@ -160,13 +162,13 @@ public static class CrowdedCollectorRoomBuilder
                 var go=new GameObject(name);SceneManager.MoveGameObjectToScene(go,bakeScene);var col=go.AddComponent<BoxCollider>();col.center=b.center;col.size=b.size;col.sharedMaterial=material;col.contactOffset=.002f;return col;
             }
             Proxy("Floor",new Bounds(new Vector3(0,-.2f,0),new Vector3(l.roomSize.x,.4f,l.roomSize.y)));
-            var region=l.pileRegions[0];
+            foreach(var region in l.pileRegions)
             foreach(float side in new[]{-1f,1f})
             {
-                Proxy("Bake X boundary",new Bounds(new Vector3(region.center.x+side*(region.extents.x+.1f),1,region.center.z),new Vector3(.2f,2,l.roomSize.y)));
-                Proxy("Bake Z boundary",new Bounds(new Vector3(region.center.x,1,region.center.z+side*(region.extents.z+.1f)),new Vector3(l.roomSize.x,2,.2f)));
+                Proxy("Bake X boundary",new Bounds(new Vector3(region.center.x+side*(region.extents.x+.1f),1,region.center.z),new Vector3(.2f,2,region.size.z+.4f)));
+                Proxy("Bake Z boundary",new Bounds(new Vector3(region.center.x,1,region.center.z+side*(region.extents.z+.1f)),new Vector3(region.size.x+.4f,2,.2f)));
             }
-            foreach(var exclusion in l.pileExclusions)Proxy("Protected fixture approach",exclusion);
+            foreach(var exclusion in bakeExclusions)Proxy("Protected fixture approach",exclusion);
             for(int i=0;i<placements.Count;i++)
             {
                 var r=placements[i];var go=new GameObject(r.id);SceneManager.MoveGameObjectToScene(go,bakeScene);
@@ -184,14 +186,15 @@ public static class CrowdedCollectorRoomBuilder
                 for(int j=0;j<i;j++)if(col.bounds.Intersects(colliders[j].bounds)&&Physics.ComputePenetration(col,body.position,body.rotation,colliders[j],bodies[j].position,bodies[j].rotation,out _,out float depth))penetration=Mathf.Max(penetration,depth);
             }
             if(penetration>.012f)throw new InvalidOperationException("Bake penetration exceeds contact tolerance: "+penetration);
-            File.WriteAllText(Evidence+"/physics_bake.json",JsonUtility.ToJson(new BakeReport{cars=1200,steps=steps,unsettled=moving,maxContactPenetration=penetration},true));
+            Directory.CreateDirectory(evidence);
+            File.WriteAllText(evidence+"/physics_bake.json",JsonUtility.ToJson(new BakeReport{cars=placements.Count,steps=steps,unsettled=moving,maxContactPenetration=penetration},true));
         }
         finally{SceneManager.SetActiveScene(original);EditorSceneManager.ClosePreviewScene(bakeScene);Object.DestroyImmediate(material);}
-        return new CollectorRoomBuilder.Pile{revision=4,placements=placements.ToArray()};
+        return new CollectorRoomBuilder.Pile{revision=l.revision,placements=placements.ToArray()};
     }
     [Serializable] class BakeReport {public int cars,steps,unsettled;public float maxContactPenetration;}
 
-    public static void Validate(CollectorRoomLayout l,CollectorRoomBuilder.Pile pile,ThemedCarCatalog catalog)
+    public static void Validate(CollectorRoomLayout l,CollectorRoomBuilder.Pile pile,ThemedCarCatalog catalog,string evidence=Evidence)
     {
         if(l.shelves.Length!=80||l.sections.SelectMany(s=>s.themes).Distinct().Count()!=40||pile.placements.Length!=1200||pile.placements.Select(r=>r.id).Distinct().Count()!=1200||pile.placements.GroupBy(r=>r.collectibleId).Count()!=600||pile.placements.GroupBy(r=>r.collectibleId).Any(g=>g.Count()!=2))throw new InvalidOperationException("Collection identity/capacity mismatch");
         var art=catalog.entries.Where(e=>e.enabled).ToDictionary(e=>e.collectibleId,e=>CollectorRoomBuilder.ArtBounds(e.sortingItem.WorldItem.gameObject));
@@ -204,11 +207,11 @@ public static class CrowdedCollectorRoomBuilder
         }
         foreach(var pair in l.shelves.GroupBy(p=>p.saveId.Substring(0,p.saveId.Length-5)))
         {var poses=pair.ToArray();if(poses.Length!=2||Mathf.Abs(Mathf.DeltaAngle(poses[0].yaw,poses[1].yaw))>.1f||Vector3.Distance(poses[0].position,poses[1].position)>1.73f)throw new InvalidOperationException("Theme pair must share an adjacent display face");}
-        ValidateContacts(pile,art);
+        ValidateContacts(pile,art,evidence);
     }
 
     // Validate persisted poses too: a manually edited pile must not bypass the bake checks.
-    static void ValidateContacts(CollectorRoomBuilder.Pile pile,Dictionary<string,Bounds> art)
+    static void ValidateContacts(CollectorRoomBuilder.Pile pile,Dictionary<string,Bounds> art,string evidence)
     {
         var preview=EditorSceneManager.NewPreviewScene();var colliders=new List<CapsuleCollider>();
         try
@@ -234,8 +237,8 @@ public static class CrowdedCollectorRoomBuilder
             }
             var queue=new Queue<int>(supported);while(queue.Count>0)foreach(int neighbour in contacts[queue.Dequeue()])if(supported.Add(neighbour))queue.Enqueue(neighbour);
             if(maxPenetration>.012f||supported.Count!=pile.placements.Length)throw new InvalidOperationException("Invalid pile contacts: penetration="+maxPenetration+", unsupported="+(pile.placements.Length-supported.Count));
-            Directory.CreateDirectory(Evidence);
-            File.WriteAllText(Evidence+"/contact_validation.json",JsonUtility.ToJson(new ContactReport{supported=supported.Count,maxPenetration=maxPenetration},true));
+            Directory.CreateDirectory(evidence);
+            File.WriteAllText(evidence+"/contact_validation.json",JsonUtility.ToJson(new ContactReport{supported=supported.Count,maxPenetration=maxPenetration},true));
         }
         finally{EditorSceneManager.ClosePreviewScene(preview);}
     }

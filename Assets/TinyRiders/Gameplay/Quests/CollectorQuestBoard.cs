@@ -21,7 +21,7 @@ namespace TinyRiders.Quests
         { if(manager) manager.Changed-=Refresh; Localizer.LanguageChanged-=Refresh; }
         void Refresh()
         {
-            title.SetLocalized(Localizer.GetOr("quest.board.title","COLLECTOR\nQUESTS").Replace("\\n","\n"));
+            title.SetLocalized(Localizer.GetOr("quest.scrapbook.board","COLLECTOR\nSCRAPBOOK").Replace("\\n","\n"));
             subtitle.SetLocalized(Localizer.GetOr("quest.board.subtitle","SORT • DISCOVER • GROW"));
             int count=manager ? manager.ClaimableCount : 0;
             rewardIndicator.SetActive(count>0);

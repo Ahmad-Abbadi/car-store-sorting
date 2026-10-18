@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-18",
+  "unity": "6000.3.22f1",
+  "permanent_quests": 240,
+  "content": {
+    "original": 8,
+    "theme_stages": 120,
+    "family_stages": 45,
+    "sorting_milestones": 20,
+    "discovery_milestones": 12,
+    "shelf_milestones": 12,
+    "theme_milestones": 8,
+    "upgrade_goals": 15,
+    "permanent_coin_rewards": 2678,
+    "permanent_xp_rewards": 8185
+  },
+  "automated_tests": {
+    "CollectorQuestTests": {"passed": 18, "failed": 0},
+    "CollectorQuestExpansionTests": {"passed": 18, "failed": 0},
+    "localization_table_coverage_and_placeholders": "passed",
+    "localized_font_glyphs_including_shaped_arabic": "passed",
+    "upgrade_asset_ids_and_prices": "passed",
+    "shelf_take_back_aim_regression": "passed",
+    "total_passed": 40
+  },
+  "live_editor_checks": {
+    "save_isolation": "fresh unique QA keys for level, wallet, position and career; production upgrade progress read only",
+    "legacy_migration": "8 permanent quests expanded to 240; completed and claimed originals retained",
+    "interrupted_claim": "pending getting_organized claim recovered once: 50 XP and 5 coins",
+    "board_interaction": "actual player ray mask, opening modal, pause, cursor and closing verified",
+    "pagination": "all 240 unique quests traversed across 20 pages using 12 reusable card objects",
+    "gradual_reveal": "six unfinished category recommendations at startup",
+    "real_placements": "8 real pickups and placements completed TH_ALIEN stage 1 at 8/8",
+    "family_tracking": "18 additional C001 placements across themes completed its first family stage at 20/20",
+    "expansion_reward": "theme stage paid +5 coins and +15 XP; repeated claim rejected",
+    "bulk_sorting": "1200 sorted cars completed all non-upgrade permanent goals",
+    "completion_batch": "215 simultaneous completions combined into one notification after modal and ceremony",
+    "rank_progression": "45 successful UI claims reached 2820 XP and Curator; pool remained 12 cards",
+    "reload": "XP, coins, claims, pinned family quest and sorted cars preserved without duplicate payment",
+    "player_progress_after_qa": "original save, wallet, career, position, upgrades and language compared equal to pre-QA snapshot; isolated data removed",
+    "visual_checks": ["English 1280x720", "English 1680x720", "Arabic 1280x800"]
+  },
+  "limits": [
+    "Verified in Unity Editor; a standalone WebGL build was not produced.",
+    "Live reset was not used; reset integration remains covered with isolated storage tests."
+  ]
+}

@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace TinyRiders.Editor
 {
-    public static class CollectorQuestBuilder
+    public static partial class CollectorQuestBuilder
     {
         public const string Folder="Assets/TinyRiders/Gameplay/Quests/Content";
         public const string BoardPath=Folder+"/CollectorQuestBoard.prefab";
@@ -28,15 +28,20 @@ namespace TinyRiders.Editor
             Directory.CreateDirectory(Folder); AssetDatabase.Refresh();
             var defs=Definitions();
             BuildCard(); BuildUI(); BuildBoard();
+            Polish();
+            Scrapbook();
             var manager=Object.FindFirstObjectByType<CollectorQuestManager>();
             if(!manager) manager=new GameObject("Collector Quest Manager").AddComponent<CollectorQuestManager>();
             manager.definitions=defs; EditorUtility.SetDirty(manager);
             var ui=Object.FindFirstObjectByType<CollectorQuestUI>();
             if(!ui) ui=((GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(UIPath))).GetComponent<CollectorQuestUI>();
             var board=Object.FindFirstObjectByType<CollectorQuestBoard>();
-            if(!board) board=((GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(BoardPath))).GetComponent<CollectorQuestBoard>();
-            // Inside the entrance's existing pile exclusion, to the right of the main walking line.
-            board.transform.position=new Vector3(501.7f,0,-10.25f); board.transform.rotation=Quaternion.Euler(0,50,0);
+            if(!board)
+            {
+                board=((GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(BoardPath))).GetComponent<CollectorQuestBoard>();
+                // Initial placement only; rebuilding must respect an authored board location.
+                board.transform.position=new Vector3(501.7f,0,-10.25f); board.transform.rotation=Quaternion.Euler(0,50,0);
+            }
             board.interfaceUI=ui; PrefabUtility.RecordPrefabInstancePropertyModifications(board);
             PrefabUtility.RecordPrefabInstancePropertyModifications(board.transform);
             BindAudio();
@@ -54,13 +59,15 @@ namespace TinyRiders.Editor
             int[] targets={5,25,1,1,100,1,3,int.MaxValue}, coins={3,5,5,5,10,10,15,25}, xp={20,30,30,30,50,50,75,100};
             string[] descriptions={"Correctly shelve {0} cars","Correctly shelve {0} cars","Fill {0} shelf correctly","Own any upgrade",
                 "Correctly shelve {0} cars","Complete {0} themes","Complete {0} themes","Correctly shelve the entire collection"};
-            return ids.Select((id,i)=>{
+            var legacy=ids.Select((id,i)=>{
                 string path=Folder+"/"+id+".asset";
                 var d=AssetDatabase.LoadAssetAtPath<CollectorQuestDefinition>(path);
                 if(!d){d=ScriptableObject.CreateInstance<CollectorQuestDefinition>(); AssetDatabase.CreateAsset(d,path);}
                 d.id=id; d.title=titles[i]; d.description=descriptions[i]; d.goal=goals[i]; d.target=targets[i]; d.coins=coins[i]; d.xp=xp[i];
+                d.seriesId="legacy"; d.authoredOrder=i; d.category=CategoryFor(d.goal);
                 EditorUtility.SetDirty(d); return d;
             }).ToArray();
+            return ExpandDefinitions(legacy);
         }
 
         static RectTransform Rect(Transform parent,string name,float x,float y,float w,float h)
@@ -135,24 +142,37 @@ namespace TinyRiders.Editor
             var accent=Rect(frame,"Accent",0,0,1100,9); Surface(accent,T.gold);
             ui.heading=Text(frame,"Heading","COLLECTOR QUESTS",32,26,690,58,42);
             ui.subtitle=Text(frame,"Subtitle","Small goals. A spectacular collection.",34,88,680,34,23);
+            ui.claimedLabel=Text(frame,"Claimed Count","0 / 240 quests claimed",34,136,680,28,20);
             var rank=Rect(frame,"Collector Rank",744,30,324,150); Surface(rank,T.navy);
             ui.rank=Text(rank,"Rank","Rookie",20,12,284,44,31); ui.rank.color=T.gold;
             ui.xp=Text(rank,"XP","0 / 100 XP",20,65,284,30,21); ui.xp.color=T.cream;
             ui.rankFill=Bar(rank,20,110,284,10);
-            ui.journey=Button(frame,"Journey Tab","Journey",32,194,220,out ui.journeyLabel);
-            ui.challenges=Button(frame,"Challenges Tab","Challenges",266,194,220,out ui.challengesLabel);
-            ui.completed=Button(frame,"Completed Tab","Completed",500,194,220,out ui.completedLabel);
+            ui.journey=Button(frame,"Journey Tab","Journey",32,194,184,out ui.journeyLabel);
+            ui.challenges=Button(frame,"Challenges Tab","Challenges",230,194,184,out ui.challengesLabel);
+            ui.allQuests=Button(frame,"All Quests Tab","All Quests",428,194,184,out ui.allQuestsLabel);
+            ui.completed=Button(frame,"Completed Tab","Completed",626,194,184,out ui.completedLabel);
             ui.close=Button(frame,"Close Quests","Close",918,194,150,out ui.closeLabel);
-            var scroll=Rect(frame,"Quest Scroll",30,260,1040,414); ui.scroll=scroll.gameObject.AddComponent<UnityEngine.UI.ScrollRect>();
-            var viewport=Rect(scroll,"Viewport",0,0,1040,414); Surface(viewport,Color.white); viewport.gameObject.AddComponent<UnityEngine.UI.Mask>().showMaskGraphic=false;
+            ui.categoryButtons=new UnityEngine.UI.Button[7]; ui.categoryLabels=new TMP_Text[7];
+            string[] categories={"All","Sorting","Discoveries","Shelves","Themes","Car Families","Upgrades"};
+            for(int i=0;i<7;i++)
+            {
+                ui.categoryButtons[i]=Button(frame,"Category "+categories[i],categories[i],32+i*150,248,136,out ui.categoryLabels[i]);
+                ((RectTransform)ui.categoryButtons[i].transform).sizeDelta=new Vector2(136,34);
+                ui.categoryLabels[i].rectTransform.sizeDelta=new Vector2(120,34); ui.categoryLabels[i].fontSizeMax=18; ui.categoryLabels[i].fontSizeMin=12;
+            }
+            var scroll=Rect(frame,"Quest Scroll",30,300,1040,350); ui.scroll=scroll.gameObject.AddComponent<UnityEngine.UI.ScrollRect>();
+            var viewport=Rect(scroll,"Viewport",0,0,1040,350); Surface(viewport,Color.white); viewport.gameObject.AddComponent<UnityEngine.UI.Mask>().showMaskGraphic=false;
             var content=Rect(viewport,"Content",0,0,1040,0); content.anchorMax=new Vector2(1,1); content.sizeDelta=Vector2.zero;
             var v=content.gameObject.AddComponent<UnityEngine.UI.VerticalLayoutGroup>(); v.spacing=12; v.childControlWidth=true; v.childControlHeight=true; v.childForceExpandWidth=true; v.childForceExpandHeight=false;
             var fitter=content.gameObject.AddComponent<UnityEngine.UI.ContentSizeFitter>(); fitter.verticalFit=UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
             ui.content=content; ui.scroll.content=content; ui.scroll.viewport=viewport; ui.scroll.horizontal=false;
             ui.scroll.movementType=UnityEngine.UI.ScrollRect.MovementType.Clamped; ui.scroll.scrollSensitivity=32;
             ui.cardPrefab=AssetDatabase.LoadAssetAtPath<GameObject>(CardPath).GetComponent<CollectorQuestCard>();
-            ui.empty=Text(frame,"Empty State","Your claimed quests will appear here",80,360,940,120,30); ui.empty.alignment=TextAlignmentOptions.Center;
-            ui.footer=Text(frame,"Footer","No rush. No timers. Make the showroom yours.",32,704,1036,32,19);
+            ui.empty=Text(frame,"Empty State","Your claimed quests will appear here",80,382,940,120,30); ui.empty.alignment=TextAlignmentOptions.Center;
+            ui.previousPage=Button(frame,"Previous Page","Previous",244,670,172,out ui.previousLabel);
+            ui.nextPage=Button(frame,"Next Page","Next",684,670,172,out ui.nextLabel);
+            ui.pageLabel=Text(frame,"Page Number","Page 1 / 20",426,670,248,44,20); ui.pageLabel.alignment=TextAlignmentOptions.Center;
+            ui.footer=Text(frame,"Footer","No rush. No timers. Make the showroom yours.",32,720,1036,28,17);
             PrefabUtility.SaveAsPrefabAsset(root.gameObject,UIPath); Object.DestroyImmediate(root.gameObject);
         }
 
@@ -177,31 +197,7 @@ namespace TinyRiders.Editor
         }
         static void BuildBoard()
         {
-            var root=new GameObject("Collector Quest Board"); var b=root.AddComponent<CollectorQuestBoard>();
-            var upgradeStation=Object.FindFirstObjectByType<UpgradeBox>();
-            root.layer=upgradeStation ? upgradeStation.gameObject.layer : 8;
-            var navy=Material("Board Navy",T.navy); var gold=Material("Board Gold",T.gold); var cream=Material("Board Cream",T.cream);
-            var mint=Material("Board Mint",T.mint); var blue=Material("Board Blue",T.blue);
-            Cube(root.transform,"Frame",new Vector3(0,1.55f,0),new Vector3(1.48f,1.85f,.18f),navy);
-            Cube(root.transform,"Notice Surface",new Vector3(0,1.55f,-.105f),new Vector3(1.34f,1.7f,.055f),cream);
-            Cube(root.transform,"Header",new Vector3(0,2.16f,-.15f),new Vector3(1.34f,.48f,.05f),gold);
-            b.title=Sign(root.transform,"Board Title","COLLECTOR\nQUESTS",new Vector3(0,2.16f,-.19f),new Vector2(1.23f,.44f),2.3f,T.navy);
-            b.subtitle=Sign(root.transform,"Board Subtitle","SORT • DISCOVER • GROW",new Vector3(0,1.82f,-.18f),new Vector2(1.24f,.18f),.95f,T.navy);
-            float[] heights={1.57f,1.27f,.97f}; Material[] colors={blue,mint,gold};
-            for(int i=0;i<3;i++)
-            {
-                Cube(root.transform,"Quest Note "+i,new Vector3(.1f,heights[i],-.16f),new Vector3(.92f,.22f,.035f),colors[i]);
-                Cube(root.transform,"Check Box "+i,new Vector3(-.49f,heights[i],-.17f),new Vector3(.14f,.14f,.035f),navy);
-                Cube(root.transform,"Note Line "+i,new Vector3(.06f,heights[i],-.185f),new Vector3(.65f,.022f,.012f),cream);
-            }
-            b.status=Sign(root.transform,"Board Status","Your next goal starts here",new Vector3(0,.76f,-.185f),new Vector2(1.26f,.14f),.8f,T.navy);
-            b.rewardIndicator=Cube(root.transform,"Rewards Ready Badge",new Vector3(.62f,2.46f,-.12f),new Vector3(.22f,.22f,.08f),mint).gameObject;
-            b.rewardIndicator.transform.localRotation=Quaternion.Euler(0,0,45); b.rewardIndicator.SetActive(false);
-            Cube(root.transform,"Left Leg",new Vector3(-.52f,.34f,0),new Vector3(.09f,.68f,.12f),navy);
-            Cube(root.transform,"Right Leg",new Vector3(.52f,.34f,0),new Vector3(.09f,.68f,.12f),navy);
-            Cube(root.transform,"Base",new Vector3(0,.05f,0),new Vector3(1.25f,.1f,.38f),navy);
-            var collider=root.AddComponent<BoxCollider>(); collider.center=new Vector3(0,1.25f,0); collider.size=new Vector3(1.48f,2.5f,.38f);
-            PrefabUtility.SaveAsPrefabAsset(root,BoardPath); Object.DestroyImmediate(root);
+            PremiumCollectorBoardBuilder.Rebuild();
         }
 
         static void BindAudio()
