@@ -9,7 +9,7 @@ public class ResetProgressButton : MonoBehaviour
     // Default PlayerPrefs keys of every progress save; settings and analytics are kept.
     private static readonly string[] ProgressKeys =
     {
-        "LevelSave", "Coins", "Coins_RewardWallet", "CollectorQuests", "PlayerPositionSave"
+        "LevelSave", "Coins", "Coins_RewardWallet", "CollectorQuests", "PlayerPositionSave", TutorialProgress.StatusKey
     };
 
     [SerializeField] private Button resetButton;

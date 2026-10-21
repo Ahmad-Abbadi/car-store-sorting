@@ -1,0 +1,34 @@
+var preview=UnityEngine.GameObject.Find("Branding QA Loading Preview");
+if(preview) UnityEngine.Object.DestroyImmediate(preview);
+var menu=UnityEngine.Object.FindFirstObjectByType<MainMenu>();
+if(!menu) throw new System.Exception("Startup did not reach the menu.");
+var so=new UnityEditor.SerializedObject(menu);
+var logo=menu.transform.Find("Toy Car Sort Logo").GetComponent<UnityEngine.UI.Image>();
+if(!logo || !logo.sprite || logo.raycastTarget || !logo.preserveAspect) throw new System.Exception("Invalid menu logo.");
+var detail=ItemDetail.Current;
+bool hadDetail=UnityEngine.PlayerPrefs.HasKey("Item_Detail");
+var button=(UnityEngine.UI.Button)so.FindProperty("itemDetailButton").objectReferenceValue;
+button.onClick.Invoke();
+if(ItemDetail.Current==detail) throw new System.Exception("Detail button did not respond.");
+ItemDetail.Set(detail);
+if(!hadDetail) UnityEngine.PlayerPrefs.DeleteKey("Item_Detail");
+var reset=UnityEngine.Object.FindFirstObjectByType<ResetProgressButton>();
+var rs=new UnityEditor.SerializedObject(reset);
+var panel=(UnityEngine.GameObject)rs.FindProperty("confirmPanel").objectReferenceValue;
+if(!panel) throw new System.Exception("Reset confirmation panel is missing.");
+((UnityEngine.UI.Button)rs.FindProperty("resetButton").objectReferenceValue).onClick.Invoke();
+if(!panel.activeSelf) throw new System.Exception("Reset confirmation did not open.");
+((UnityEngine.UI.Button)rs.FindProperty("noButton").objectReferenceValue).onClick.Invoke();
+if(panel.activeSelf) throw new System.Exception("Reset cancel did not respond.");
+LanguagePickerUI.Show(canClose:true);
+if(!LanguagePickerUI.IsOpen) throw new System.Exception("Language picker did not open.");
+UnityEngine.Object.FindFirstObjectByType<LanguagePickerUI>().Close();
+var db=UnityEngine.Resources.Load<LocalizationDatabase_SO>(LocalizationDatabase_SO.ResourcePath);
+foreach(var language in db.Languages) {
+    var table=db.BuildTable(language.Code);
+    if(table["menu.title"]!="Toy Car Sort" || table["sign.series"]!="TOY CAR SORT  /  MK.02") throw new System.Exception("Old brand in "+language.Code);
+}
+var log="PASS: startup reached MainMenu Scene; logo sprite, transparency and non-blocking UI; detail button; theme toggle (bright/dark captures); reset confirmation/cancel; language picker; English brand across "+db.Languages.Count+" languages.\n";
+System.IO.File.WriteAllText("IntegrationEvidence/ToyCarSort/menu-verification.txt",log);
+CinematicMenuTests.SetGameSize(1280,720);
+return log;

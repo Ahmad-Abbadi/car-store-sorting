@@ -102,6 +102,7 @@ public static class MutedShopSurfaceBuilder
                 : Mathf.Abs(n.x) > .5f ? new Vector2(world.z, world.y) * .5f : new Vector2(world.x, world.y) * .5f;
         }
         mesh.uv = uv; mesh.RecalculateTangents(); filter.sharedMesh = mesh;
+        MeshUtility.SetMeshCompression(mesh, ModelImporterMeshCompression.Off);
         EditorUtility.SetDirty(mesh); EditorUtility.SetDirty(filter);
     }
 }

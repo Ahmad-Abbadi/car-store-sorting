@@ -50,7 +50,7 @@ public sealed class CrazyGamesInitializer : BaseSystemInitializer
     {
         Scene scene = SceneManager.GetActiveScene();
         var flow = GameFlowManager.Instance;
-        bool playable = scene.isLoaded && (scene.name == "Level" || scene.name == "ThemedSorting");
+        bool playable = scene.isLoaded && (scene.name == "Level" || scene.name == "ThemedSorting" || scene.name == TutorialProgress.SceneName);
         bool ready = playable && Time.frameCount > sceneLoadedFrame && !transitioning && !SceneLoader.IsLoading
             && flow != null && flow.currentState == GameFlowManager.GameState.Playing
             && Player.Instance != null && Player.Instance.isActiveAndEnabled;

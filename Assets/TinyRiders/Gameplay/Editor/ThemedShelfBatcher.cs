@@ -71,6 +71,9 @@ public static class ThemedShelfBatcher
                     saved.CombineMeshes(combine.ToArray(),true,true,false);saved.RecalculateBounds();
                     UnityEngine.Object.DestroyImmediate(mesh);EditorUtility.SetDirty(saved);
                 }
+                // Keep the symbol/plaque separation exact when rebuilding an existing cache.
+                MeshUtility.SetMeshCompression(saved,ModelImporterMeshCompression.Off);
+                EditorUtility.SetDirty(saved);
                 parts.Add(new Part{mesh=saved,material=group.Key.material,shadow=group.Key.shadowCastingMode,receive=group.Key.receiveShadows});
             }
         }

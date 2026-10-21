@@ -1,0 +1,41 @@
+{
+  "testedBuild": "Local gameplay snapshot and final release have identical WebAssembly SHA-256: 254db914b3e8985a503626172be2379a030f57e6c9a9a1b3e8a2ac445127df31",
+  "browser": "Available Chromium in-app browser",
+  "directChromeAndEdge": "Unavailable through browser automation; not tested directly",
+  "passed": [
+    "Menu, language selection, and visible ByteBrew privacy notice",
+    "Play routes a new player to the tutorial",
+    "WASD movement and mouse look",
+    "Left mouse and E pickup",
+    "Right mouse and F placement",
+    "All three tutorial cars sorted and main shop opened",
+    "Tab pause, Continue, tutorial Restart",
+    "Music mute control changes visual state",
+    "Tutorial completion persists across page reload; Play opens main shop",
+    "Desktop resizing from 1280x720 to 1024x768 keeps HUD visible"
+  ],
+  "limits": [
+    "Fullscreen entry occurred, but the automation screenshot did not establish a stable fullscreen layout; recheck in portal preview",
+    "Audio toggle behavior observed; audible playback not independently captured",
+    "Intermittent browser input-control timeouts in main shop; reload recovered the preview",
+    "Nested portal iframe input automation was unreliable; portal gameplay event indicators remain unverified. SDK initialization was confirmed in console."
+  ],
+  "screenshots": [
+    "qa-menu.jpg",
+    "qa-first-sort.jpg",
+    "qa-tutorial-completed.jpg",
+    "qa-resize-1024x768.jpg"
+  ],
+  "finalPackageSha256": "f427a7f8f78ad08f5c58256e4ead6e1e5ba17b7180dddc7eb2c40cc4c4f9731f",
+  "portal": {
+    "gameId": "e349e554-f0df-407f-a10c-57f02e99cf6e",
+    "buildId": "e0adf00c-6c2d-4277-8949-ed9d9c368bb3",
+    "reportedTotalMiB": 47.2,
+    "sdkInitialized": true,
+    "unitySdkVersion": "5.35.0",
+    "gameplayEventsVerified": false,
+    "browserChecklist": "No: direct Chrome and Edge tests unavailable",
+    "status": "Ready for final action-time terms confirmation; NOT submitted for review",
+    "listingUrl": "https://developer.crazygames.com/games/e349e554-f0df-407f-a10c-57f02e99cf6e"
+  }
+}

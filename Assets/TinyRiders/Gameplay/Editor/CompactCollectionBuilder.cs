@@ -195,9 +195,9 @@ public static class CompactCollectionBuilder
         var saveSo = new SerializedObject(save); saveSo.FindProperty("autosaveInterval").floatValue = 8; saveSo.ApplyModifiedPropertiesWithoutUndo();
         Text(UnityEngine.Object.FindFirstObjectByType<PlayerSavePosition>(),"saveKey",SaveKey+".position");
         foreach (var camera in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Include,FindObjectsSortMode.None))
-        { camera.farClipPlane=10000; camera.useOcclusionCulling=false; camera.layerCullDistances=new float[32]; EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera); }
+        { camera.farClipPlane=ShopCameraClipping.FarDistance; camera.useOcclusionCulling=false; camera.layerCullDistances=new float[32]; EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera); }
         foreach (var camera in UnityEngine.Object.FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsInactive.Include,FindObjectsSortMode.None))
-        { var lens=camera.Lens; lens.FarClipPlane=10000; camera.Lens=lens; EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera); }
+        { var lens=camera.Lens; lens.FarClipPlane=ShopCameraClipping.FarDistance; camera.Lens=lens; EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera); }
         foreach(var interaction in UnityEngine.Object.FindObjectsByType<InteractionHandler>(FindObjectsSortMode.None))
         { var so=new SerializedObject(interaction); so.FindProperty("triggerInteraction").enumValueIndex=(int)QueryTriggerInteraction.Collide; so.ApplyModifiedPropertiesWithoutUndo(); }
         ExactThemeShelfBuilder.ValidateScene();
@@ -276,9 +276,9 @@ public static class CompactCollectionBuilder
         foreach(var hiding in UnityEngine.Object.FindObjectsByType<CarVisualCulling>(FindObjectsInactive.Include,FindObjectsSortMode.None))UnityEngine.Object.DestroyImmediate(hiding);
         foreach(var hiding in UnityEngine.Object.FindObjectsByType<ThemedVisibility>(FindObjectsInactive.Include,FindObjectsSortMode.None))UnityEngine.Object.DestroyImmediate(hiding);
         foreach(var camera in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Include,FindObjectsSortMode.None))
-        {camera.farClipPlane=10000;camera.useOcclusionCulling=false;camera.layerCullDistances=new float[32];EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera);}
+        {camera.farClipPlane=ShopCameraClipping.FarDistance;camera.useOcclusionCulling=false;camera.layerCullDistances=new float[32];EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera);}
         foreach(var camera in UnityEngine.Object.FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsInactive.Include,FindObjectsSortMode.None))
-        {var lens=camera.Lens;lens.FarClipPlane=10000;camera.Lens=lens;EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera);}
+        {var lens=camera.Lens;lens.FarClipPlane=ShopCameraClipping.FarDistance;camera.Lens=lens;EditorUtility.SetDirty(camera);PrefabUtility.RecordPrefabInstancePropertyModifications(camera);}
         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
         Debug.Log("FULL_STARTING_COLLECTION_READY 600 varieties / 1200 physical cars / no staged refill or distance hiding");
     }

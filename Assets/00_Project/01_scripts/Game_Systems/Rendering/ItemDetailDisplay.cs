@@ -18,6 +18,7 @@ public sealed class ItemDetailDisplay : MonoBehaviour
 
     private void Apply()
     {
-        foreach (var renderer in renderers) ItemDetail.ApplyTo(renderer);
+        int lod = ItemDetail.Lod;
+        foreach (var renderer in renderers) ItemDetail.ApplyTo(renderer, lod);
     }
 }

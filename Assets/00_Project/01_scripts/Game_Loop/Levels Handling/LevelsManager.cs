@@ -44,7 +44,12 @@ public class LevelsManager : MonoBehaviour
     /// its standalone fallback path — that path bypasses <see cref="LoadCoord"/>, so without this the boot
     /// level (level 1 for a new player) would never emit a "started" event and go untracked.
     /// </summary>
-    public static void RaiseLevelEntered(int levelNumber) => OnLevelEntered?.Invoke(levelNumber);
+    public static string EnteredSceneName { get; private set; }
+    public static void RaiseLevelEntered(int levelNumber, string sceneName = null)
+    {
+        EnteredSceneName = sceneName ?? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        OnLevelEntered?.Invoke(levelNumber);
+    }
 
     [Header("Data")]
     [Tooltip("Worlds + scene names and the ProgressionData ref.")]
@@ -248,7 +253,7 @@ public class LevelsManager : MonoBehaviour
 
         // Announce the switch BEFORE the load so analytics can close out the level being left and start
         // the clock for this one (enter → next enter = the leaving level's duration).
-        OnLevelEntered?.Invoke(NumberFromCoord(worldIndex, levelIndex));
+        RaiseLevelEntered(NumberFromCoord(worldIndex, levelIndex), sceneName);
 
         if (GameFlowManager.Instance != null) GameFlowManager.Instance.LoadScene(sceneName);
         else Debug.LogError("LevelsManager: GameFlowManager.Instance is null; cannot load scene.", this);

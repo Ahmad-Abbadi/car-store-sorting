@@ -68,14 +68,21 @@ public class CompactCollectionTests
         Assert.True(Player.Instance.SortingBehaviour.TryGetPlacedItemFromHand(out var placed));
         shelf.AddItem(placed, slot);
     }
-    static void Note(string text) { File.AppendAllText("IntegrationEvidence/compact_playmode_passed.txt", text + "\n"); }
+    static string EvidencePath => SessionState.GetString("CompactQA.evidencePath", "IntegrationEvidence/compact_playmode_passed.txt");
+    static void Note(string text) { File.AppendAllText(EvidencePath, text + "\n"); }
 
     [UnityTest, Timeout(600000)]
     public IEnumerator CompactRoom_CollectionSortingSaveCompletionAndReplay()
     {
         SessionState.SetBool("TinyRiders.Compact.QA.Active", true);
+        SessionState.SetBool("CompactQA.hadTutorialStatus", PlayerPrefs.HasKey(TutorialProgress.StatusKey));
+        SessionState.SetInt("CompactQA.tutorialStatus", PlayerPrefs.GetInt(TutorialProgress.StatusKey));
+        SessionState.SetBool("CompactQA.restoreTutorialStatus", true);
         PlayerPrefs.DeleteKey(Key); PlayerPrefs.DeleteKey(Key + ".position"); PlayerPrefs.DeleteKey(Key + ".coins");
-        File.WriteAllText("IntegrationEvidence/compact_playmode_passed.txt", "");
+        // A viewer can keep a Windows memory mapping open on an earlier report. Never truncate it.
+        string evidence = "IntegrationEvidence/CarBatching/collection-run-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff") + ".txt";
+        SessionState.SetString("CompactQA.evidencePath", evidence);
+        File.WriteAllText(evidence, "");
         EditorSceneManager.OpenScene(CompactCollectionBuilder.ScenePath); Isolate(default, LoadSceneMode.Single);
         yield return new EnterPlayMode();
         Application.runInBackground = true;
@@ -93,7 +100,7 @@ public class CompactCollectionTests
         Assert.True(initial.GroupBy(w=>w.Data.SaveId).All(g=>g.Count()==2));
         Assert.AreEqual(0,Session.State.instances.Count(r=>r.state=="pending"));
         Assert.True(initial.SelectMany(w=>w.GetComponentsInChildren<Renderer>()).All(r=>r.enabled&&!r.forceRenderingOff));
-        var view=Camera.main;Assert.AreEqual(10000,view.farClipPlane);Assert.False(view.useOcclusionCulling);
+        var view=Camera.main;Assert.AreEqual(ShopCameraClipping.FarDistance,view.farClipPlane);Assert.False(view.useOcclusionCulling);
         Assert.True(view.layerCullDistances.All(d=>d==0));
         Assert.AreEqual(40, initial.Select(w => w.GetComponentInChildren<ThemedCarIdentity>().themeId).Distinct().Count());
         Assert.AreEqual(15, initial.Select(w => w.GetComponentInChildren<ThemedCarIdentity>().baseCarId).Distinct().Count());
@@ -175,6 +182,9 @@ public class CompactCollectionTests
             string heldId = Pick(heldEntry); yield return Tick(.4f);
             var manager = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); manager.Save();
             var old = JsonUtility.FromJson<LevelSaveData>(PlayerPrefs.GetString(Key));
+            // Keep the outgoing scene's autosave from overwriting this deliberately old fixture
+            // while asynchronous scene loading yields. The new session resumes normal saving.
+            Session.suspendPersistenceForTests = true;
             old.themed.pileLayoutRevision = Session.roomLayout.revision - 1;
             foreach (var r in old.themed.instances.Where(r => r.state == "world")) r.position = new Vector3(900,0,900);
             PlayerPrefs.SetString(Key,JsonUtility.ToJson(old));
@@ -212,7 +222,7 @@ public class CompactCollectionTests
         // Physically sort every remaining instance into an actual slot; no injected completion states.
         Session.suspendPersistenceForTests = true;
         var allShelves = UnityEngine.Object.FindObjectsByType<SortingShelf>(FindObjectsSortMode.None).OrderBy(s => s.SaveId).ToArray();
-        ExactShelfCapacityTests.CaptureShelves("before_completion", Shelf(egypt[0].themeId));
+        ExactShelfCapacityTests.CaptureShelves("before_completion_" + Path.GetFileNameWithoutExtension(EvidencePath), Shelf(egypt[0].themeId));
         int placedCount = 0;
         foreach (var record in Session.State.instances.Where(r => r.state == "world" || r.state == "pending").ToArray())
         {
@@ -230,12 +240,24 @@ public class CompactCollectionTests
         Assert.AreEqual(1200, occupants.Length);
         Assert.AreEqual(1200, occupants.Select(ThemedWorldInstance.Read).Distinct().Count());
         Assert.True(occupants.All(o => o != null && !o.IsWrong));
-        ExactShelfCapacityTests.CaptureShelves("filled", Shelf(egypt[0].themeId));
-        ThemedShelfArtTests.CaptureCheckpoints("filled");
+        string captureRun = Path.GetFileNameWithoutExtension(EvidencePath);
+        ExactShelfCapacityTests.CaptureShelves("filled_" + captureRun, Shelf(egypt[0].themeId));
+        ThemedShelfArtTests.CaptureCheckpoints("filled_" + captureRun);
         Session.suspendPersistenceForTests = false;
         var save = UnityEngine.Object.FindFirstObjectByType<LevelSaveManager>(); save.Save();
         Assert.True(save.StoreCompleted);
-        Assert.AreEqual(GameFlowManager.GameState.LevelFinished, GameFlowManager.Instance.currentState);
+        var reward = UnityEngine.Object.FindFirstObjectByType<GoldenCarReveal>();
+        if (reward != null)
+        {
+            // The current store rewards completion with a cinematic and then resumes play.
+            // Validate that flow instead of requiring the superseded completion screen.
+            float revealDeadline = Time.realtimeSinceStartup + reward.duration + 20f;
+            while (reward.IsRevealing && Time.realtimeSinceStartup < revealDeadline) yield return null;
+            Assert.True(reward.IsRevealed, "The collection reward must be revealed.");
+            Assert.False(reward.IsRevealing, "The reward cinematic must release its camera and freeze.");
+            Assert.AreEqual(GameFlowManager.GameState.Playing, GameFlowManager.Instance.currentState);
+        }
+        else Assert.AreEqual(GameFlowManager.GameState.LevelFinished, GameFlowManager.Instance.currentState);
         Assert.True(JsonUtility.FromJson<LevelSaveData>(PlayerPrefs.GetString(Key)).completed);
         yield return ReloadWorld(0);
         Assert.AreEqual(1200,Session.Sorted); Assert.AreEqual(600,Session.UniqueDiscovered);
@@ -263,14 +285,41 @@ public class CompactCollectionTests
         yield return Tick(.3f);
         Assert.AreEqual(0, Session.Sorted); Assert.AreEqual(1200, Session.Total); Assert.AreEqual(1200, Session.LivePileCount);
         Note("Replay returns to Level with a fresh 1200-copy collection and a complete 1200-car pile");
-        yield return SceneManager.LoadSceneAsync("MainMenu Scene"); yield return null;
-        UnityEngine.Object.FindFirstObjectByType<MainMenu>().Play();
+        // This collection fixture checks the returning-player route; tutorial has its own gameplay fixture.
+        PlayerPrefs.SetInt(TutorialProgress.StatusKey, 2);
+        var menuLoad = SceneManager.LoadSceneAsync("MainMenu Scene");
+        float menuDeadline = Time.realtimeSinceStartup + 30;
+        MainMenu menu = null;
+        while (!menuLoad.isDone || (menu = UnityEngine.Object.FindFirstObjectByType<MainMenu>()) == null)
+        { Assert.Less(Time.realtimeSinceStartup, menuDeadline, "Main menu load"); yield return null; }
+        yield return null;
+        menu.Play();
         while(SceneManager.GetActiveScene().name!="Level"||Session==null||Session.LivePileCount!=1200) yield return null;
         yield return Tick(.3f);
         Assert.AreEqual(CompactCollectionBuilder.CatalogPath, AssetDatabase.GetAssetPath(Session.catalog));
-        Assert.True(UnityEngine.Object.FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None).Any(t=>t.text.Contains("0 / 1200")&&t.text.Contains("0 / 600")));
+        Assert.AreEqual(0, Session.Sorted); Assert.AreEqual(0, Session.UniqueDiscovered);
+        string expectedHud = Localizer.Format("collection.progress", 0, 1200, 0, 600);
+        if (Localizer.IsRtl && ArabicText.NeedsShaping(expectedHud))
+            expectedHud = expectedHud.Length <= ArabicText.MaxVisualLength && expectedHud.IndexOf('\n') < 0
+                ? ArabicText.ToVisual(expectedHud) : ArabicText.ToLayout(expectedHud);
+        var overallField = typeof(CarStoreUI).GetField("overall", BindingFlags.Instance | BindingFlags.NonPublic);
+        float hudDeadline = Time.realtimeSinceStartup + 30;
+        while (true)
+        {
+            var hud = UnityEngine.Object.FindFirstObjectByType<CarStoreUI>();
+            var label = hud != null ? overallField.GetValue(hud) as TMPro.TMP_Text : null;
+            if (label != null && label.text == expectedHud) break;
+            Assert.Less(Time.realtimeSinceStartup, hudDeadline, "Localized collection HUD did not finish initializing: " + label?.text);
+            yield return null;
+        }
         Note("Main-menu Play follows the Loading scene into the compact Level and shows 0/1200 cars and 0/600 designs");
         Session.suspendPersistenceForTests = true;
+        // Publish a conventional path atomically; the uniquely named run remains authoritative.
+        string published = "IntegrationEvidence/compact_playmode_passed.txt";
+        string staging = published + "." + Guid.NewGuid().ToString("N");
+        File.Copy(EvidencePath, staging);
+        try { if (File.Exists(published)) File.Replace(staging, published, null); else File.Move(staging, published); }
+        catch (IOException) { Debug.LogWarning("Collection passed; evidence retained at " + EvidencePath); File.Delete(staging); }
     }
 
     [UnityTearDown]
@@ -278,6 +327,13 @@ public class CompactCollectionTests
     {
         if (EditorApplication.isPlaying) { if (Session != null) Session.suspendPersistenceForTests = true; yield return new ExitPlayMode(); }
         SessionState.SetBool("TinyRiders.Compact.QA.Active", false);
+        if (SessionState.GetBool("CompactQA.restoreTutorialStatus", false))
+        {
+            if (SessionState.GetBool("CompactQA.hadTutorialStatus", false))
+                PlayerPrefs.SetInt(TutorialProgress.StatusKey, SessionState.GetInt("CompactQA.tutorialStatus", 0));
+            else PlayerPrefs.DeleteKey(TutorialProgress.StatusKey);
+        }
+        SessionState.SetBool("CompactQA.restoreTutorialStatus", false);
         if (SessionState.GetBool("CompactQA.restoreUpgrades", false))
         foreach (string guid in AssetDatabase.FindAssets("t:UpgradeSO"))
         {

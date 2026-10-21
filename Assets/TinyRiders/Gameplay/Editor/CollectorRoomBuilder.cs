@@ -283,7 +283,7 @@ public static class CollectorRoomBuilder
         Box(root,"Directory Board",new Vector3(-6,2.35f,-21.87f),new Vector3(7,2,.12f),white);
         string directory="FIND YOUR COLLECTION\n"+string.Join("\n",Enumerable.Range(0,4).Select(i=>(i*2+1).ToString("00")+" "+l.sections[i*2].title+"     |     "+(i*2+2).ToString("00")+" "+l.sections[i*2+1].title));
         Label(root,"Store Directory",directory,new Vector3(-6,2.35f,-21.79f),180,new Vector2(6.6f,1.8f),2.8f,Ink);
-        Label(root,"Shop Brand","TINY RIDERS",new Vector3(0,3.95f,21.87f),0,new Vector2(12,.8f),7,Ink);
+        Label(root,"Shop Brand","TOY CAR SORT",new Vector3(0,3.95f,21.87f),0,new Vector2(12,.8f),7,Ink);
         Label(root,"Shop Tagline","SMALL CARS. BIG COLLECTIONS.",new Vector3(0,3.3f,21.86f),0,new Vector2(10,.45f),2.8f,Ink);
         Box(root,"Entry Door",new Vector3(0,1.4f,-21.88f),new Vector3(3.5f,2.8f,.08f),teal);
         foreach(float x in new[]{-1f,1f}) Box(root,"Door Glass",new Vector3(x,1.6f,-21.82f),new Vector3(1.3f,1.65f,.03f),Mat("Frosted Blue",new Color(.45f,.66f,.69f)));

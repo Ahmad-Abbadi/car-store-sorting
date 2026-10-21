@@ -21,6 +21,7 @@ public class PlayerSavePosition : MonoBehaviour
     [Tooltip("PlayerPrefs key the position is stored under.")]
     [SerializeField] private string saveKey = "PlayerPositionSave";
 
+    private bool _preserveUnreadableSave;
     private bool _ready;         // false until Load ran; blocks early saves
     private bool _levelFinished; // blocks saving once the level is won
 
@@ -50,9 +51,26 @@ public class PlayerSavePosition : MonoBehaviour
     [ContextMenu("Save Now")]
     public void Save()
     {
-        if (!_ready || _levelFinished || player == null || player.Motor == null) return;
+        if (!TryCapture(out string key, out string json)) return;
+        bool hadSave = PlayerPrefs.HasKey(key);
+        string previous = PlayerPrefs.GetString(key, string.Empty);
+        try
+        {
+            PlayerPrefs.SetString(key, json);
+            PlayerPrefs.Save();
+        }
+        catch (Exception e)
+        {
+            if (hadSave) PlayerPrefs.SetString(key, previous); else PlayerPrefs.DeleteKey(key);
+            LogSaveIssue("Position checkpoint failed; previous data retained. " + e.Message);
+        }
+    }
 
-        PositionSave data = new PositionSave
+    internal bool TryCapture(out string key, out string json)
+    {
+        key = null; json = null;
+        if (!_ready || _levelFinished || _preserveUnreadableSave || player == null || player.Motor == null) return false;
+        var data = new PositionSave
         {
             scene = gameObject.scene.name,
             position = player.Motor.TransientPosition,
@@ -60,9 +78,9 @@ public class PlayerSavePosition : MonoBehaviour
             pitch = player.Look != null ? player.Look.Pitch : 0f,
             roomLayoutRevision = TinyRiders.ThemedCollectionSession.Instance?.roomLayout?.revision ?? 0
         };
-
-        PlayerPrefs.SetString(saveKey, JsonUtility.ToJson(data));
-        PlayerPrefs.Save();
+        json = JsonUtility.ToJson(data);
+        key = saveKey;
+        return true;
     }
 
     /// <summary> Deletes the saved position. </summary>
@@ -71,11 +89,14 @@ public class PlayerSavePosition : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(saveKey);
         PlayerPrefs.Save();
+        _levelFinished = true;
+        _preserveUnreadableSave = false;
     }
 
     /// <summary> Wipes the save once the level is won; replays start fresh. </summary>
     private void HandleLevelCompleted(int levelNumber)
     {
+        if (TinyRiders.ThemedCollectionSession.Instance != null) { Save(); return; }
         _levelFinished = true;
         Clear();
     }
@@ -100,14 +121,17 @@ public class PlayerSavePosition : MonoBehaviour
         }
         catch (ArgumentException e)
         {
-            Debug.LogWarning($"{name}: corrupt position save discarded. {e.Message}", this);
-            Clear();
+            _preserveUnreadableSave = true;
+            LogSaveIssue("Unreadable position retained. " + e.Message);
             return;
         }
 
-        if (data == null || data.scene != gameObject.scene.name)
+        if (data == null || data.scene != gameObject.scene.name ||
+            !float.IsFinite(data.position.x) || !float.IsFinite(data.position.y) || !float.IsFinite(data.position.z) ||
+            !float.IsFinite(data.yaw) || !float.IsFinite(data.pitch))
         {
-            Clear();
+            _preserveUnreadableSave = true;
+            LogSaveIssue("Invalid position retained without replacing the current spawn.");
             return;
         }
 
@@ -122,4 +146,7 @@ public class PlayerSavePosition : MonoBehaviour
         player.Motor.BaseVelocity = Vector3.zero;
         if (player.Look != null) player.Look.SetLook(data.yaw, data.pitch);
     }
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+    private void LogSaveIssue(string message) => Debug.LogWarning("[Save] " + message, this);
 }

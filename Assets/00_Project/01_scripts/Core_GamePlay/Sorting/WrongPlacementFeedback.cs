@@ -34,6 +34,8 @@ public class WrongPlacementFeedback : MonoBehaviour
     private MaterialPropertyBlock _block;
     private Tween _flash;
 
+    public bool IsFlashing => _flash != null && _flash.IsActive() && _flash.IsPlaying();
+
     /// <summary> Sets the renderer the tint is applied to. </summary>
     public void Bind(MeshRenderer model) => _models = model != null ? new[] { model } : null;
 

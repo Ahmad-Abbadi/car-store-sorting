@@ -47,12 +47,14 @@ public class LoadingScreen : MonoBehaviour
         Cursor.visible = true;
         SetFill(0f);
         BringCanvasToFront();
+        LogStage("Loading overlay ready; unloading previous scenes.");
 
         yield return null; // draw over the old scene before tearing it down
         yield return UnloadOtherScenes();
         yield return Resources.UnloadUnusedAssets();
 
         string target = string.IsNullOrEmpty(SceneLoader.TargetScene) ? fallbackScene : SceneLoader.TargetScene;
+        LogStage($"Requesting scene '{target}'.");
         AsyncOperation load = SceneManager.LoadSceneAsync(target);
         load.allowSceneActivation = false;
 
@@ -68,6 +70,7 @@ public class LoadingScreen : MonoBehaviour
         }
 
         SetFill(1f);
+        LogStage($"Scene '{target}' ready for activation.");
         yield return null; // draw the full bar once before the switch
 
         // Survive the switch so the new scene's startup hitches stay hidden.
@@ -75,13 +78,19 @@ public class LoadingScreen : MonoBehaviour
         DontDestroyOnLoad(root);
         load.allowSceneActivation = true;
         yield return load;
+        LogStage($"Scene '{target}' activated; waiting for settle and fade.");
 
         yield return WaitForSettle();
         yield return FadeOut(root);
         // The game becomes playable only once the covering loading UI has faded out.
         SceneLoader.MarkDone();
+        LogStage($"Scene '{target}' uncovered; loading complete.");
         Destroy(root);
     }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+    private void LogStage(string message) => Debug.Log("[Startup] " + message, this);
 
     /// <summary> Waits for a run of smooth frames, or the max settle time. </summary>
     private IEnumerator WaitForSettle()

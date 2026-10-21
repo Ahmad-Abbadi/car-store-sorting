@@ -296,7 +296,7 @@ public static class CrowdedCollectorRoomBuilder
         Box(root,"Directory Board",new Vector3(-4.7f,2.3f,-d*.5f+.06f),new Vector3(6.4f,1.05f,.06f),white);
         string directory="COLLECTOR DIRECTORY\n"+string.Join("\n",Enumerable.Range(0,4).Select(i=>(i*2+1).ToString("00")+" "+l.sections[i*2].title+"   |   "+(i*2+2).ToString("00")+" "+l.sections[i*2+1].title));
         Label(root,"Store Directory",directory,new Vector3(-4.7f,2.3f,-d*.5f+.105f),180,new Vector2(6.2f,1),1.9f,Ink);
-        Label(root,"Shop Brand","TINY RIDERS / COLLECTOR SHOP",new Vector3(0,2.65f,d*.5f-.07f),0,new Vector2(10,.55f),3.3f,Ink);
+        Label(root,"Shop Brand","TOY CAR SORT / COLLECTOR SHOP",new Vector3(0,2.65f,d*.5f-.07f),0,new Vector2(10,.55f),3.3f,Ink);
         RenderSettings.ambientMode=AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.85f,.88f,.9f);RenderSettings.ambientEquatorColor=new Color(.65f,.68f,.66f);RenderSettings.ambientGroundColor=new Color(.4f,.39f,.35f);RenderSettings.ambientIntensity=1;RenderSettings.fog=false;
     }
 

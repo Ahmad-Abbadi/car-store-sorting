@@ -94,6 +94,10 @@ public static class ItemDetail
 
     /// <summary> Swaps the renderer to its LOD-capable mesh and forces the current level. </summary>
     public static void ApplyTo(MeshRenderer renderer)
+        => ApplyTo(renderer, Lod);
+
+    /// <summary>Applies a detail level already resolved for a group of renderers.</summary>
+    public static void ApplyTo(MeshRenderer renderer, int lod)
     {
         if (renderer == null) return;
 
@@ -102,7 +106,7 @@ public static class ItemDetail
 
         Mesh lodMesh = LodSet != null ? GetLodMesh(filter.sharedMesh) : null;
         if (lodMesh != null) filter.sharedMesh = lodMesh;
-        renderer.forceMeshLod = (short)Mathf.Clamp(Lod, 0, filter.sharedMesh.lodCount - 1);
+        renderer.forceMeshLod = (short)Mathf.Clamp(lod, 0, filter.sharedMesh.lodCount - 1);
     }
 
     /// <summary> Source mesh behind a LOD copy; the mesh itself otherwise. </summary>

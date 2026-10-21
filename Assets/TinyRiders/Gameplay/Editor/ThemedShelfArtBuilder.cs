@@ -88,7 +88,8 @@ public static class ThemedShelfArtBuilder
             var materials = new[] { frame, tray, paint, signature };
             string modelPath = Root + "/Models/" + theme.id + ".fbx";
             var importer = (ModelImporter)AssetImporter.GetAtPath(modelPath);
-            importer.globalScale = 1; importer.isReadable = true; importer.importAnimation = false; importer.addCollider = false; importer.SaveAndReimport();
+            importer.globalScale = 1; importer.isReadable = true; importer.importAnimation = false; importer.addCollider = false;
+            importer.meshCompression = ModelImporterMeshCompression.Off; importer.SaveAndReimport();
             var source = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
             var imported = (GameObject)PrefabUtility.InstantiatePrefab(source);
             var cabinet = (GameObject)PrefabUtility.InstantiatePrefab(ExactThemeShelfBuilder.EnsurePrefab());

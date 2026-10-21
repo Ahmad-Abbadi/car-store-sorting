@@ -1,0 +1,153 @@
+{
+  "measurement": "Medians of the independent 15-second Unity frame-time samples; WebGL calls counted for one subsequent frame outside timing.",
+  "rows": [
+    {
+      "browser": "Chrome",
+      "scenario": "pile",
+      "width": 1280,
+      "height": 682,
+      "quality": "Medium",
+      "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "baseline": {
+        "runs": 2,
+        "averageFrameMs": 384.604248046875,
+        "p95FrameMs": 510.0,
+        "drawCalls": 53453.0,
+        "submittedTriangles": 16253382.0,
+        "allocatedBytes": 339370421.0,
+        "wasmHeapBytes": 556793856.0,
+        "evidence": [
+          "Chrome-Baseline-pile-1.json",
+          "Chrome-Baseline-pile-2.json"
+        ]
+      },
+      "optimized": {
+        "runs": 2,
+        "averageFrameMs": 217.5181427001953,
+        "p95FrameMs": 273.50000762939453,
+        "drawCalls": 32108.0,
+        "submittedTriangles": 16408189.0,
+        "allocatedBytes": 314839846.0,
+        "wasmHeapBytes": 556793856.0,
+        "evidence": [
+          "Chrome-Optimized-pile-1.json",
+          "Chrome-Optimized-pile-2.json"
+        ]
+      },
+      "averageFrameImprovementPercent": 43.443645304280544,
+      "drawCallReductionPercent": 39.93227695358539,
+      "average60FpsTargetMet": false,
+      "p95Within60FpsBudget": false
+    },
+    {
+      "browser": "Chrome",
+      "scenario": "shelves",
+      "width": 1280,
+      "height": 682,
+      "quality": "Medium",
+      "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "baseline": {
+        "runs": 1,
+        "averageFrameMs": 236.64614868164062,
+        "p95FrameMs": 403,
+        "drawCalls": 24286,
+        "submittedTriangles": 7449152,
+        "allocatedBytes": 359755779,
+        "wasmHeapBytes": 556793856,
+        "evidence": [
+          "Chrome-Baseline-shelves-1.json"
+        ]
+      },
+      "optimized": {
+        "runs": 1,
+        "averageFrameMs": 161.89247131347656,
+        "p95FrameMs": 233,
+        "drawCalls": 14578,
+        "submittedTriangles": 7495548,
+        "allocatedBytes": 349071208,
+        "wasmHeapBytes": 556793856,
+        "evidence": [
+          "Chrome-Optimized-shelves-1.json"
+        ]
+      },
+      "averageFrameImprovementPercent": 31.588799473229535,
+      "drawCallReductionPercent": 39.97364736885448,
+      "average60FpsTargetMet": false,
+      "p95Within60FpsBudget": false
+    },
+    {
+      "browser": "Edge",
+      "scenario": "pile",
+      "width": 1280,
+      "height": 682,
+      "quality": "Medium",
+      "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "baseline": {
+        "runs": 2,
+        "averageFrameMs": 282.01671600341797,
+        "p95FrameMs": 479.5,
+        "drawCalls": 53453.0,
+        "submittedTriangles": 16253382.0,
+        "allocatedBytes": 339369453.0,
+        "wasmHeapBytes": 556793856.0,
+        "evidence": [
+          "Edge-Baseline-pile-1.json",
+          "Edge-Baseline-pile-2.json"
+        ]
+      },
+      "optimized": {
+        "runs": 2,
+        "averageFrameMs": 189.91439056396484,
+        "p95FrameMs": 232.0,
+        "drawCalls": 32108.0,
+        "submittedTriangles": 16408189.0,
+        "allocatedBytes": 314855788.0,
+        "wasmHeapBytes": 556793856.0,
+        "evidence": [
+          "Edge-Optimized-pile-1.json",
+          "Edge-Optimized-pile-2.json"
+        ]
+      },
+      "averageFrameImprovementPercent": 32.65846320908753,
+      "drawCallReductionPercent": 39.93227695358539,
+      "average60FpsTargetMet": false,
+      "p95Within60FpsBudget": false
+    },
+    {
+      "browser": "Edge",
+      "scenario": "shelves",
+      "width": 1280,
+      "height": 682,
+      "quality": "Medium",
+      "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A788) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "baseline": {
+        "runs": 1,
+        "averageFrameMs": 204.40541076660156,
+        "p95FrameMs": 229,
+        "drawCalls": 24286,
+        "submittedTriangles": 7449152,
+        "allocatedBytes": 359411769,
+        "wasmHeapBytes": 556793856,
+        "evidence": [
+          "Edge-Baseline-shelves-1.json"
+        ]
+      },
+      "optimized": {
+        "runs": 1,
+        "averageFrameMs": 154.38461303710938,
+        "p95FrameMs": 215,
+        "drawCalls": 14578,
+        "submittedTriangles": 7495548,
+        "allocatedBytes": 349091768,
+        "wasmHeapBytes": 556793856,
+        "evidence": [
+          "Edge-Optimized-shelves-1.json"
+        ]
+      },
+      "averageFrameImprovementPercent": 24.471366751933964,
+      "drawCallReductionPercent": 39.97364736885448,
+      "average60FpsTargetMet": false,
+      "p95Within60FpsBudget": false
+    }
+  ]
+}

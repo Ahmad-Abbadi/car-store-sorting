@@ -1,0 +1,24 @@
+{
+  "automated_tests": {
+    "passed": 4,
+    "failed": 0,
+    "report": "editor-test-results.xml"
+  },
+  "live_editor_checks_passed": [
+    "Rendered main-room shelf artwork and matching floor, wall, and ceiling materials",
+    "All four scene/routing/completion regression tests passed",
+    "Live gameplay-loading request observed after three settled correct placements; target was Level",
+    "No exit door or walk-to-exit requirement",
+    "Editor test preferences and saved store progress restored"
+  ],
+  "webgl": {
+    "result": "Succeeded",
+    "report": "webgl-build.json",
+    "browser_smoke_test": "Previous implementation build only; the visual revision was validated in the Editor and has not been rebuilt for WebGL.",
+    "revision_build": "Not rebuilt for this revision"
+  },
+  "notes": [
+    "The automatic transition starts when the final placement finishes landing."
+  ],
+  "revision": "Match the main-room art and automatically load gameplay"
+}

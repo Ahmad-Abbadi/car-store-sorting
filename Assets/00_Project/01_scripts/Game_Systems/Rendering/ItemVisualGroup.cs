@@ -15,6 +15,10 @@ public sealed class ItemVisualGroup : MonoBehaviour
     private object[] secondaryKeys;
     private bool[] originalEnabled;
     private bool far;
+    private bool primaryVisible;
+    private bool secondaryVisible;
+
+    public bool IsOutlined => primaryVisible || secondaryVisible;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetGroups() => AllGroups.Clear();
@@ -70,6 +74,9 @@ public sealed class ItemVisualGroup : MonoBehaviour
     private void Show(bool primary, Color color, float width)
     {
         EnsureCache();
+        if (far) SetFar(false);
+        if (primary) primaryVisible = true;
+        else secondaryVisible = true;
         object[] keys = primary ? primaryKeys : secondaryKeys;
         for (int i = 0; i < renderers.Length; i++)
         {
@@ -83,6 +90,8 @@ public sealed class ItemVisualGroup : MonoBehaviour
 
     private void Hide(bool primary)
     {
+        if (primary) primaryVisible = false;
+        else secondaryVisible = false;
         if (renderers == null) return;
         object[] keys = primary ? primaryKeys : secondaryKeys;
         for (int i = 0; i < keys.Length; i++) SharedOutline.Hide(keys[i]);
@@ -93,7 +102,7 @@ public sealed class ItemVisualGroup : MonoBehaviour
         EnsureCache();
         foreach (MeshRenderer renderer in renderers)
         {
-            ItemDetail.ApplyTo(renderer);
+            ItemDetail.ApplyTo(renderer, lod);
         }
     }
 

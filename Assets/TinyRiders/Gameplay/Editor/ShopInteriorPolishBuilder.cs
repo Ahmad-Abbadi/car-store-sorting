@@ -300,7 +300,8 @@ public static class ShopInteriorPolishBuilder
     {
         string path=ArtRoot+"/Meshes/"+name+".asset";var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(path);
         if(mesh==null){mesh=new Mesh{name=name};AssetDatabase.CreateAsset(mesh,path);}
-        mesh.Clear();mesh.indexFormat=IndexFormat.UInt32;mesh.SetVertices(g.vertices);mesh.SetUVs(0,g.uv);mesh.SetTriangles(g.triangles,0);mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();EditorUtility.SetDirty(mesh);
+        mesh.Clear();mesh.indexFormat=IndexFormat.UInt32;mesh.SetVertices(g.vertices);mesh.SetUVs(0,g.uv);mesh.SetTriangles(g.triangles,0);mesh.RecalculateNormals();mesh.RecalculateTangents();mesh.RecalculateBounds();
+        MeshUtility.SetMeshCompression(mesh,ModelImporterMeshCompression.Off);EditorUtility.SetDirty(mesh);
         var t=root.Find(name);if(t==null){t=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer)).transform;t.SetParent(root,false);Undo.RegisterCreatedObjectUndo(t.gameObject,"Create interior decoration");}
         t.localPosition=Vector3.zero;t.localRotation=Quaternion.identity;t.localScale=Vector3.one;t.gameObject.layer=2;
         t.GetComponent<MeshFilter>().sharedMesh=mesh;var r=t.GetComponent<MeshRenderer>();r.sharedMaterial=mat;r.shadowCastingMode=ShadowCastingMode.Off;r.receiveShadows=true;

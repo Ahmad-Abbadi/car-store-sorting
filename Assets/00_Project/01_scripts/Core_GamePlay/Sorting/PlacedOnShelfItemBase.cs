@@ -36,6 +36,7 @@ public class PlacedOnShelfItemBase : MonoBehaviour, IInteractable, IHoverable
 
     /// <summary> True once flagged as sitting on a wrong-category shelf. </summary>
     public bool IsWrong => _isWrong;
+    public bool IsFlashingWrong => _wrongFeedback != null && _wrongFeedback.IsFlashing;
 
     private static readonly Color HoverOutlineColor = Color.white;
     private MeshRenderer _model;

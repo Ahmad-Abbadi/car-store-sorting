@@ -87,7 +87,7 @@ public class levelMapperManager : MonoBehaviour
         // it here too so the boot level (level 1 for a new player) still emits a "started" event and gets
         // tracked — otherwise analytics never sees the first level of a session. Mirrors LoadCoord: fire
         // BEFORE the scene load.
-        LevelsManager.RaiseLevelEntered(FlatLevelNumber(worldIndex, levelIndex));
+        LevelsManager.RaiseLevelEntered(FlatLevelNumber(worldIndex, levelIndex), sceneName);
 
         GameFlowManager.Instance.LoadScene(sceneName);
     }

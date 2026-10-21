@@ -40,7 +40,7 @@ public static class StoreLoadingScreenBuilder
             AssetDatabase.SaveAssets();
         }
         finally { EditorSceneManager.RestoreSceneManagerSetup(setup); }
-        Debug.Log("STORE_LOADING_SCREEN_BUILT: shared prefab, startup activity and async menu handoff, Play progress; no branding.");
+        Debug.Log("STORE_LOADING_SCREEN_BUILT: shared prefab, startup activity and async menu handoff, Play progress; Toy Car Sort branding.");
     }
 
     private static void ConfigureTexture()
@@ -122,6 +122,7 @@ public static class StoreLoadingScreenBuilder
         var dotArray = so.FindProperty("activityDots"); dotArray.arraySize = dots.Length;
         for(int i=0;i<dots.Length;i++) dotArray.GetArrayElementAtIndex(i).objectReferenceValue = dots[i];
         so.ApplyModifiedPropertiesWithoutUndo();
+        ToyCarSortBranding.ApplyLoading(root);
         return root;
     }
 

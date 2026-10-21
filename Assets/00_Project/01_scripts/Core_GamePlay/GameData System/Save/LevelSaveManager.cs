@@ -37,8 +37,16 @@ public class LevelSaveManager : MonoBehaviour
     private bool _storeCompleted;
     private float _elapsedSeconds;
     private bool _preserveUnreadableSave;
+    private bool _saving;
+    private int _saveFailures;
+    private float _progressSaveAt = float.PositiveInfinity;
+    private const float ProgressSaveDelay = 1f;
+    private const int MaxSaveAttempts = 3;
+    public bool HasRestoredProgress { get; private set; }
 
     public bool StoreCompleted => _storeCompleted;
+    /// <summary>New completion only; restoring a completed save does not raise this notification.</summary>
+    public static event System.Action<string> OnStoreCompleted;
     public float ElapsedSeconds => _elapsedSeconds;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -59,12 +67,24 @@ public class LevelSaveManager : MonoBehaviour
         _instance._storeCompleted = true;
         MarkDirty();
         _instance.Save();
+        OnStoreCompleted?.Invoke(_instance.gameObject.scene.name);
     }
 
     /// <summary> Flags unsaved changes; the next autosave writes them. </summary>
     public static void MarkDirty()
     {
-        if (_instance != null && _instance._ready) _instance._dirty = true;
+        if (_instance == null || !_instance._ready) return;
+        _instance._dirty = true;
+        _instance._saveFailures = 0;
+        // Fixed window from the first change: continuous interaction cannot starve saving.
+        _instance._progressSaveAt = Mathf.Min(_instance._progressSaveAt, Time.unscaledTime + ProgressSaveDelay);
+    }
+
+    /// <summary>Capture while the scene's player and shelves are still alive.</summary>
+    public static void FlushPending()
+    {
+        // Pose can change after collection completion, when the elapsed timer no longer dirties it.
+        if (_instance != null) _instance.Save();
     }
 
     private void Awake() => _instance = this;
@@ -98,10 +118,9 @@ public class LevelSaveManager : MonoBehaviour
             _elapsedSeconds += Time.deltaTime;
             _dirty = true;
         }
-        if (!_dirty || autosaveInterval <= 0f || Time.unscaledTime < _nextAutosave) return;
-
-        _nextAutosave = Time.unscaledTime + autosaveInterval;
-        Save();
+        if (!_dirty || _saveFailures >= MaxSaveAttempts) return;
+        bool periodic = autosaveInterval > 0f && Time.unscaledTime >= _nextAutosave;
+        if (Time.unscaledTime >= _progressSaveAt || periodic) Save();
     }
 
     private void OnApplicationPause(bool paused)
@@ -124,11 +143,54 @@ public class LevelSaveManager : MonoBehaviour
     public void Save()
     {
         if (TinyRiders.ThemedCollectionSession.Instance != null && TinyRiders.ThemedCollectionSession.Instance.suspendPersistenceForTests) return;
-        if (!_ready || _levelFinished || database == null || _preserveUnreadableSave) return;
+        if (!_ready || _levelFinished || database == null || _preserveUnreadableSave || _saving ||
+            _saveFailures >= MaxSaveAttempts) return;
 
-        PlayerPrefs.SetString(saveKey, JsonUtility.ToJson(Capture()));
-        PlayerPrefs.Save();
-        _dirty = false;
+        _saving = true;
+        bool hadSave = PlayerPrefs.HasKey(saveKey);
+        string previous = PlayerPrefs.GetString(saveKey, string.Empty);
+        string positionKey = null, positionJson = null, previousPosition = null;
+        bool hadPosition = false;
+        try
+        {
+            // Serialize first; no stored value is changed if capture fails.
+            string json = JsonUtility.ToJson(Capture());
+            var position = FindFirstObjectByType<PlayerSavePosition>();
+            bool capturePosition = position != null && position.TryCapture(out positionKey, out positionJson);
+            if (capturePosition)
+            {
+                hadPosition = PlayerPrefs.HasKey(positionKey);
+                previousPosition = PlayerPrefs.GetString(positionKey, string.Empty);
+            }
+            PlayerPrefs.SetString(saveKey, json);
+            if (capturePosition) PlayerPrefs.SetString(positionKey, positionJson);
+            PlayerPrefs.Save(); // one flush for collection, pose and already-staged progression keys
+            _dirty = false;
+            _saveFailures = 0;
+            _progressSaveAt = float.PositiveInfinity;
+            _nextAutosave = Time.unscaledTime + autosaveInterval;
+        }
+        catch (Exception e)
+        {
+            // Restore the in-memory prefs too, so another component's later flush cannot
+            // accidentally persist this failed checkpoint over the previous valid value.
+            try
+            {
+                if (hadSave) PlayerPrefs.SetString(saveKey, previous); else PlayerPrefs.DeleteKey(saveKey);
+                if (positionKey != null)
+                {
+                    if (hadPosition) PlayerPrefs.SetString(positionKey, previousPosition);
+                    else PlayerPrefs.DeleteKey(positionKey);
+                }
+            }
+            catch (Exception rollback) { LogSaveIssue("Could not restore cached prefs: " + rollback.Message); }
+            _dirty = true;
+            _saveFailures++;
+            _progressSaveAt = Time.unscaledTime + 2f * _saveFailures;
+            _nextAutosave = _progressSaveAt;
+            LogSaveIssue($"Checkpoint failed ({_saveFailures}/{MaxSaveAttempts}); previous data retained. {e.Message}");
+        }
+        finally { _saving = false; }
     }
 
     /// <summary> Deletes the level save. </summary>
@@ -139,6 +201,9 @@ public class LevelSaveManager : MonoBehaviour
         PlayerPrefs.Save();
         _storeCompleted = false;
         _elapsedSeconds = 0f;
+        _dirty = false;
+        _levelFinished = true; // an explicit replay/reset must not be re-saved during transition
+        _preserveUnreadableSave = false;
     }
 
     /// <summary> Wipes the save once the level is won; replays start fresh. </summary>
@@ -330,29 +395,30 @@ public class LevelSaveManager : MonoBehaviour
         }
         catch (ArgumentException e)
         {
-            if (TinyRiders.ThemedCollectionSession.Instance != null)
-            { _preserveUnreadableSave = true; Debug.LogWarning("Themed save could not be read; original data retained. " + e.Message); return; }
-            Debug.LogWarning($"{name}: corrupt level save discarded. {e.Message}", this);
-            Clear();
+            RetainUnreadableSave(e.Message);
             return;
         }
 
-        // Only the current level and format are kept; anything else is stale.
         if (data == null || data.version != SaveVersion || data.scene != gameObject.scene.name)
         {
-            if (TinyRiders.ThemedCollectionSession.Instance != null) { _preserveUnreadableSave = true; return; }
-            Clear();
+            RetainUnreadableSave("Unsupported version or scene.");
             return;
         }
 
-        _storeCompleted = data.completed;
-        _elapsedSeconds = Mathf.Max(0f, data.elapsedSeconds);
-        if (TinyRiders.ThemedCollectionSession.Instance != null)
+        var session = TinyRiders.ThemedCollectionSession.Instance;
+        if (session != null)
         {
-            if (data.themed != null && data.themed.schema != 1) { _preserveUnreadableSave = true; return; }
-            TinyRiders.ThemedCollectionSession.Instance.Restore(data.themed);
+            if (!session.ValidateSave(data.themed, out string reason))
+            { RetainUnreadableSave(reason); return; }
+            session.Restore(data.themed);
+            _storeCompleted = data.completed; // earned reward stays unlocked after later shelf edits
+            _elapsedSeconds = float.IsNaN(data.elapsedSeconds) || float.IsInfinity(data.elapsedSeconds)
+                ? 0f : Mathf.Max(0f, data.elapsedSeconds);
+            HasRestoredProgress = true;
             return;
         }
+        _storeCompleted = data.completed;
+        _elapsedSeconds = Mathf.Max(0f, data.elapsedSeconds);
 
         ItemDataSO[] items = ResolveIds(data.ids);
         RestoreWorld(data.removed, data.world, items);
@@ -362,6 +428,16 @@ public class LevelSaveManager : MonoBehaviour
         if (SortingProgressTracker.Instance != null)
             SortingProgressTracker.Instance.LoadFromSave(data.collected, data.total);
     }
+
+    private void RetainUnreadableSave(string reason)
+    {
+        _preserveUnreadableSave = true;
+        LogSaveIssue("Save not restored; original data retained and checkpoint writes blocked. " + reason);
+    }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+    private void LogSaveIssue(string message) => Debug.LogWarning("[Save] " + message, this);
 
     /// <summary> Maps the saved id table to item data; missing ids become null. </summary>
     private ItemDataSO[] ResolveIds(List<string> ids)

@@ -192,6 +192,7 @@ public class GameFlowManager : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        LevelSaveManager.FlushPending();
         OnSceneTransition?.Invoke(sceneName);
         Time.timeScale = 1f;
          SceneManager.LoadScene(sceneName);

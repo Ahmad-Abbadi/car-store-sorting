@@ -57,12 +57,17 @@ public static class SharedOutline
         MeshFilter source = target.GetComponent<MeshFilter>();
         if (source == null || source.sharedMesh == null) return;
 
-        Show(owner, source.sharedMesh, target.transform, color, target.forceMeshLod, width);
+        ShowMesh(owner, source.sharedMesh, target.transform, color, target.forceMeshLod, width, false,
+            target.GetComponent<CarBatchGeometry>() != null);
     }
 
     /// <summary> Outlines a given mesh at the target's pose; optional width and through-walls mode. </summary>
     public static void Show(object owner, Mesh mesh, Transform target, Color color, short meshLod = -1,
         float width = Width, bool throughWalls = false)
+        => ShowMesh(owner, mesh, target, color, meshLod, width, throughWalls, false);
+
+    private static void ShowMesh(object owner, Mesh mesh, Transform target, Color color, short meshLod,
+        float width, bool throughWalls, bool bakedNormals)
     {
         if (owner == null || mesh == null || target == null || !EnsureDriver()) return;
 
@@ -73,7 +78,7 @@ public static class SharedOutline
         }
 
         Mesh outlineMesh = GetOutlineMesh(mesh);
-        SmoothNormals(outlineMesh);
+        if (!bakedNormals) SmoothNormals(outlineMesh);
         entry.Filter.sharedMesh = outlineMesh;
         entry.FillFilter.sharedMesh = outlineMesh;
         entry.Renderer.forceMeshLod = meshLod; // outline the detail level shown
@@ -122,8 +127,22 @@ public static class SharedOutline
         Mesh combined = Object.Instantiate(source);
         combined.name = source.name + " (Outline)";
         combined.hideFlags = HideFlags.HideAndDontSave;
+        // Flatten material slots at EVERY native LOD, rather than replacing all levels with LOD0.
+        var indices = new List<int>();
+        var ranges = new List<MeshLodRange>();
+        for (int level = 0; level < source.lodCount; level++)
+        {
+            uint start = (uint)indices.Count;
+            for (int sub = 0; sub < source.subMeshCount; sub++)
+                indices.AddRange(source.GetIndices(sub, level, true));
+            ranges.Add(new MeshLodRange { indexStart = start, indexCount = (uint)indices.Count - start });
+        }
+        combined.lodCount = 1;
         combined.subMeshCount = 1;
-        combined.SetTriangles(source.triangles, 0);
+        combined.SetIndices(indices, MeshTopology.Triangles, 0, false);
+        combined.lodCount = source.lodCount;
+        combined.SetLods(ranges.ToArray(), 0, MeshUpdateFlags.Default);
+        combined.bounds = source.bounds;
         OutlineMeshes[source] = combined;
         return combined;
     }

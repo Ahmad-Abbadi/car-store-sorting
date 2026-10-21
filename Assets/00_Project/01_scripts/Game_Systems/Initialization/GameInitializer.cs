@@ -32,11 +32,18 @@ public class GameInitializer : MonoBehaviour
     /// <summary> Initializes each system one after another. </summary>
     private async Awaitable InitializeAll()
     {
+        LogStage("Beginning system initialization.");
         foreach (var system in systems)
         {
-            if (system == null) continue;
+            if (system == null)
+            {
+                LogStage("Missing system reference; skipped by existing startup policy.");
+                continue;
+            }
 
+            LogStage($"Initializing {system.GetType().Name}.");
             bool success = await system.Initialize();
+            LogStage($"{system.GetType().Name}: {(success ? "ready" : "failed")}.");
             if (success) continue;
 
             Debug.LogWarning($"[GameInitializer] '{system.name}' failed to initialize.", system);
@@ -46,6 +53,11 @@ public class GameInitializer : MonoBehaviour
             return;
         }
 
+        LogStage("Systems processed; requesting initial scene.");
         OnInitializeComplete?.Invoke();
     }
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+    private void LogStage(string message) => Debug.Log("[Startup] " + message, this);
 }

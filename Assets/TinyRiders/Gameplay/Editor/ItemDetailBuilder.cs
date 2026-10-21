@@ -33,7 +33,8 @@ public static class ItemDetailBuilder
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stop Play mode before baking.");
         if (!AssetDatabase.IsValidFolder(MeshRoot)) AssetDatabase.CreateFolder("Assets/TinyRiders/Gameplay", "DetailMeshes");
-        var meshes = CatalogPrefabs().SelectMany(p => p.GetComponentsInChildren<MeshFilter>(true))
+        var sourceArt = AssetDatabase.LoadAssetAtPath<ThemedCarCatalog>(CatalogPath).entries.Where(e => e.enabled).Select(e => e.prefab);
+        var meshes = CatalogPrefabs().Concat(sourceArt).SelectMany(p => p.GetComponentsInChildren<MeshFilter>(true))
             .Select(f => f.sharedMesh).Where(m => m != null).Distinct()
             .OrderBy(m => AssetDatabase.GetAssetPath(m)).ThenBy(m => m.name).ToArray();
         var entries = new List<ItemLodSet.Entry>();
@@ -41,6 +42,12 @@ public static class ItemDetailBuilder
         long[] totals = new long[3];
         foreach (var source in meshes)
         {
+            // These meshes already concatenate the exact authored triangle lists at all three levels.
+            if (AssetDatabase.GetAssetPath(source).StartsWith(CarVisualBatchBuilder.Root + "/", StringComparison.Ordinal))
+            {
+                entries.Add(new ItemLodSet.Entry { mesh = source, bakedMesh = source });
+                continue;
+            }
             AssetDatabase.TryGetGUIDAndLocalFileIdentifier(source, out string guid, out long id);
             string path = MeshRoot + "/" + guid + "_" + id + ".asset";
             var copy = Object.Instantiate(source);

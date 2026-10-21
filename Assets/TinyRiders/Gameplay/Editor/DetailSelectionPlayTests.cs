@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 public class DetailSelectionPlayTests
 {
     const string Backup = "Details.Validation.";
-    static readonly string[] IntKeys = { "Item_Detail", "Lighting_Theme", "TinyRiders.Compact.QA.coins" };
+    static readonly string[] IntKeys = { "Item_Detail", "Lighting_Theme", "TinyRiders.Compact.QA.coins", TutorialProgress.StatusKey };
     static readonly string[] StringKeys = { "TinyRiders.Compact.QA", "TinyRiders.Compact.QA.position" };
     static string Evidence => ItemDetailBuilder.Evidence;
     static void Note(string text) => File.AppendAllText(Evidence + "/runtime.txt", text + "\n");
@@ -27,7 +27,7 @@ public class DetailSelectionPlayTests
     public IEnumerator DetailsChangeGeometryAndSharpnessWithoutChangingLighting()
     {
         Directory.CreateDirectory(Evidence);
-        File.WriteAllText(Evidence + "/runtime.txt", "");
+        File.AppendAllText(Evidence + "/runtime.txt", "\nRun " + System.DateTime.UtcNow.ToString("O") + "\n");
         SessionState.SetString(Backup + "scene", SceneManager.GetActiveScene().path);
         SessionState.SetInt(Backup + "quality", QualitySettings.GetQualityLevel());
         SessionState.SetBool(Backup + "background", Application.runInBackground);
@@ -152,8 +152,12 @@ public class DetailSelectionPlayTests
             Note("PASS actual menu button cycles labels, saved value, and mesh levels");
             LightingThemeSettings.Set(LightingTheme.Bright);
             ItemDetail.Set(ItemDetailLevel.High);
+            // Validate the returning-player menu route; the tutorial has a separate live fixture.
+            PlayerPrefs.SetInt(TutorialProgress.StatusKey, 2);
             menu.Play();
-            while (SceneLoader.IsLoading || SceneManager.GetActiveScene().name != "Level") yield return null;
+            float loadDeadline = Time.realtimeSinceStartup + 60;
+            while (SceneLoader.IsLoading || SceneManager.GetActiveScene().name != "Level")
+            { Assert.Less(Time.realtimeSinceStartup, loadDeadline, "Menu-to-store load"); yield return null; }
             yield return null;
             Assert.AreEqual(ItemDetailLevel.High, ItemDetail.Current);
             while (ThemedCollectionSession.Instance == null || ThemedCollectionSession.Instance.LivePileCount < 1100) yield return null;

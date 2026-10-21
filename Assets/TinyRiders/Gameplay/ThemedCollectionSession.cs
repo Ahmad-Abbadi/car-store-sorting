@@ -193,8 +193,8 @@ namespace TinyRiders
             else ReportKey("feedback.wrong_section");
             State.completedThemes = completed.OrderBy(x => x, StringComparer.Ordinal).ToList();
             Publish(); LevelSaveManager.MarkDirty();
-            // Occupancy is claimed before this checkpoint; animation interruption cannot duplicate it.
-            FindFirstObjectByType<LevelSaveManager>()?.Save();
+            // Occupancy is already claimed; the coordinator batches this checkpoint with
+            // nearby inventory changes and flushes it before any supported scene transition.
         }
         public (int sorted, int total) ThemeCounts(string theme)
         {
@@ -371,11 +371,45 @@ namespace TinyRiders
             State.selection = stash != null ? stash.SelectedIndex : 0;
             return State;
         }
+        /// <summary>Validate before changing live state; never overwrite an unreadable collection.</summary>
+        public bool ValidateSave(ThemedSessionSave save, out string reason)
+        {
+            reason = null;
+            if (save == null || save.schema != 1 || save.instances == null || save.instances.Count == 0)
+            { reason = "Missing collection payload or unsupported schema."; return false; }
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var record in save.instances)
+            {
+                if (record == null || string.IsNullOrEmpty(record.id) || string.IsNullOrEmpty(record.collectibleId) ||
+                    !ids.Add(record.id))
+                { reason = "Missing or duplicate car identity."; return false; }
+                string prefix = "TRWORLD-" + save.seed + ":" + record.collectibleId + ":";
+                if (!record.id.StartsWith(prefix, StringComparison.Ordinal) ||
+                    !int.TryParse(record.id.Substring(prefix.Length), out int copy) || copy < 1 ||
+                    record.id != prefix + copy.ToString("D4") ||
+                    (definitions.ContainsKey(record.collectibleId) && copy > copiesPerDesign))
+                { reason = "Car identity does not match its permanent variant."; return false; }
+                if (record.state != "pending" && record.state != "world" && record.state != "held" &&
+                    record.state != "sorted" && record.state != "misplaced")
+                { reason = "Unknown car placement state."; return false; }
+                if (!Finite(record.position) || !Finite(record.euler))
+                { reason = "Non-finite saved car pose."; return false; }
+            }
+            return true;
+        }
+        private static bool Finite(Vector3 v) =>
+            !float.IsNaN(v.x) && !float.IsInfinity(v.x) && !float.IsNaN(v.y) &&
+            !float.IsInfinity(v.y) && !float.IsNaN(v.z) && !float.IsInfinity(v.z);
+
         public void Restore(ThemedSessionSave save)
         {
             if (save == null) return;
             if (save.schema != 1) { Debug.LogWarning("Unsupported themed save retained without loading"); return; }
             LayoutMigrated = roomLayout != null && save.pileLayoutRevision < authoredLayoutRevision;
+            // Older valid payloads may omit empty lists. Capture requires mutable lists.
+            save.heldOrder ??= new List<string>();
+            save.discovered ??= new List<string>();
+            save.completedThemes ??= new List<string>();
             State = save; records.Clear(); discovered.Clear(); completed.Clear();
             foreach (string id in save.discovered ?? new List<string>()) discovered.Add(id);
             foreach (string id in save.completedThemes ?? new List<string>()) completed.Add(id);

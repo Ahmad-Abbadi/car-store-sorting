@@ -29,6 +29,7 @@ public static class SceneLoader
     {
         if (IsLoading) return;
 
+        LevelSaveManager.FlushPending();
         IsLoading = true;
         TargetScene = targetScene;
         MinimumDurationOverride = minimumDuration;

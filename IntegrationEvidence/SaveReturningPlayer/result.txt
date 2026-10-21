@@ -1,0 +1,20 @@
+PASS fresh: 1200 copies, 600 definitions, normal inline tutorial, no golden unlock; required prefabs present.
+PASS normal pickup and three placements into a partial shelf; fourth car held.
+PASS debounced save (without manual Save): three sorted copies, held copy/order, pose, tutorial complete. Normal GameFlow scene-transition flush executed.
+PASS reload: same 1200 physical IDs, 1196 world + 3 exact shelf slots + 1 held copy/order; upgrades/wallet and tutorial preserved; welcome displayed and faded; no golden unlock on partial store; look restored.
+PASS reload: same 1200 physical IDs, 1196 world + 3 exact shelf slots + 1 held copy/order; upgrades/wallet and tutorial preserved; welcome displayed and faded; no golden unlock on partial store; look restored.
+PASS second reload: no loss/duplicates; returning player continues normal sorting. Injected capture failure retained previous JSON, stopped at 3 attempts, and recovered on next meaningful checkpoint.
+PASS earned golden reward restores immediately without replaying reveal; 1200 unique saved shelf copies and 40 completed themes. Duplicate identities, unknown states and missing payload rejected before mutation.
+PASS invalid startup: no stall, no false golden unlock, no welcome; missing payload and malformed pose retained without overwrite. All production store/pose/wallet/quest values match backups; no missing runtime scripts or required car prefabs.
+CLEANUP: original tutorial status restored exactly; original store/pose/wallet/quest values verified; temporary keys removed; no production upgrade keys were written.
+FINAL: Unity compilation completed with no errors; Editor stopped; authored Level reopened, scene clean; production save keys and tutorial status restored.
+FILES CHANGED FOR TASK 5:
+Assets/00_Project/01_scripts/Core_GamePlay/GameData System/Save/LevelSaveManager.cs
+Assets/00_Project/01_scripts/Core_GamePlay/Player/PlayerSavePosition.cs
+Assets/00_Project/01_scripts/Game_Systems/Loading/SceneLoader.cs
+Assets/00_Project/01_scripts/Game_Loop/Managers/GameFlowManager.cs
+Assets/TinyRiders/Gameplay/ThemedCollectionSession.cs
+Assets/TinyRiders/Gameplay/TutorialController.InStore.cs
+QA scripts and this record: IntegrationEvidence/SaveReturningPlayer/
+Storage remains existing PlayerPrefs (SDK Data is installed but unused by gameplay); existing keys/version/schema retained, no migration. Saves occur after a one-second progress window, periodically, on supported focus/pause/quit callbacks, and before both existing scene-transition routes; collection and pose share a checkpoint flush. At most three failed checkpoint attempts per progress burst; original unreadable collection/pose keys are blocked from overwrite. Restores finish before initial pile materialization. Existing upgrade, wallet, category, tutorial and earned-reward storage retained.
+Browser-only gaps: actual IndexedDB persistence/quotas and abrupt tab closure, WebGL focus/visibility delivery, CrazyGames hosted-origin behavior. No WebGL build or publishing performed.

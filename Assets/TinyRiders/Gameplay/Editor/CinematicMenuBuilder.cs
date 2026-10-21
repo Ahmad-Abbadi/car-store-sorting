@@ -83,9 +83,76 @@ public static class CinematicMenuBuilder
         if (openedLevel) EditorSceneManager.CloseScene(level, true);
         ShowroomLightingBuilder.Apply(menu);
         ShowroomLightingBuilder.BakeReflection(menu);
+        CompactStaticSnapshot(menu);
         EditorSceneManager.MarkSceneDirty(menu);
         EditorSceneManager.SaveScene(menu);
         Debug.Log("CINEMATIC_MENU_BUILT: visual-only store, six shuffled views.");
+    }
+
+    /// <summary>Removes permanently unused geometry from the static menu snapshot only.</summary>
+    public static void CompactStaticSnapshot(Scene menu)
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode || menu.path != MenuPath)
+            throw new InvalidOperationException("Compaction requires the idle menu scene.");
+        var stage = menu.GetRootGameObjects().Single(g => g.name == "Cinematic Store");
+        // These are the only scripts in this visual snapshot. None activates model parts.
+        if (stage.GetComponentsInChildren<MonoBehaviour>(true).Any(b => b == null ||
+            !(b is TMP_Text || b is LocalizedText || b is ItemDetailDisplay ||
+              b is UnityEngine.Rendering.Universal.UniversalAdditionalLightData)) ||
+            stage.GetComponentsInChildren<Animator>(true).Length != 0 ||
+            stage.GetComponentsInChildren<Animation>(true).Length != 0 ||
+            stage.GetComponentsInChildren<LODGroup>(true).Length != 0)
+            throw new InvalidOperationException("Snapshot contains dynamic art; retain its hierarchy.");
+
+        var transforms = stage.GetComponentsInChildren<Transform>(true);
+        int before = transforms.Length;
+        foreach (var instance in transforms.Select(t => PrefabUtility.GetOutermostPrefabInstanceRoot(t.gameObject))
+                     .Where(g => g != null).Distinct().ToArray())
+            PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+
+        var visible = stage.GetComponentsInChildren<MeshRenderer>(true)
+            .Where(r => r.enabled && r.gameObject.activeInHierarchy)
+            .ToDictionary(r => r, r => (json: EditorJsonUtility.ToJson(r), matrix: r.transform.localToWorldMatrix,
+                mesh: r.GetComponent<MeshFilter>().sharedMesh));
+        // Retain serialized references, including native probe anchors and UI/camera targets.
+        var referenced = new System.Collections.Generic.HashSet<Object>();
+        foreach (var component in menu.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Component>(true)))
+        {
+            if (component == null || component is Transform) continue;
+            using (var serialized = new SerializedObject(component))
+            {
+                var property = serialized.GetIterator();
+                while (property.Next(true))
+                    if (property.propertyPath != "m_GameObject" &&
+                        property.propertyType == SerializedPropertyType.ObjectReference && property.objectReferenceValue != null)
+                        referenced.Add(property.objectReferenceValue);
+            }
+        }
+        int removed = 0;
+        foreach (var renderer in stage.GetComponentsInChildren<MeshRenderer>(true))
+        {
+            if (renderer.enabled && renderer.gameObject.activeInHierarchy) continue;
+            var filter = renderer.GetComponent<MeshFilter>();
+            if (referenced.Contains(renderer) || (filter && referenced.Contains(filter))) continue;
+            Object.DestroyImmediate(renderer);
+            if (filter) Object.DestroyImmediate(filter);
+            removed++;
+        }
+        // Bottom-up pruning keeps all retained children at their exact authored transforms.
+        foreach (var t in transforms.Reverse())
+            if (t != stage.transform && t.childCount == 0 && t.GetComponents<Component>().Length == 1 &&
+                !referenced.Contains(t) && !referenced.Contains(t.gameObject))
+                Object.DestroyImmediate(t.gameObject);
+
+        foreach (var pair in visible)
+            if (!pair.Key || !pair.Key.enabled || !pair.Key.gameObject.activeInHierarchy ||
+                EditorJsonUtility.ToJson(pair.Key) != pair.Value.json ||
+                pair.Key.transform.localToWorldMatrix != pair.Value.matrix ||
+                pair.Key.GetComponent<MeshFilter>().sharedMesh != pair.Value.mesh)
+                throw new InvalidOperationException("Menu visible geometry changed; do not save the scene.");
+        EditorSceneManager.MarkSceneDirty(menu);
+        Debug.Log($"MENU_STARTUP_COMPACTION: transforms {before} -> {stage.GetComponentsInChildren<Transform>(true).Length}; " +
+            $"removed {removed} dormant renderers; preserved {visible.Count} visible renderers exactly.");
     }
 
     private static void StripGameplay(GameObject root)
@@ -144,7 +211,7 @@ public static class CinematicMenuBuilder
     {
         var camera = menu.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Camera>(true)).Single();
         camera.nearClipPlane = .02f;
-        camera.farClipPlane = 120;
+        camera.farClipPlane = ShopCameraClipping.FarDistance;
         camera.useOcclusionCulling = false;
         camera.clearFlags = CameraClearFlags.Skybox;
         var brain = camera.GetComponent<CinemachineBrain>() ?? camera.gameObject.AddComponent<CinemachineBrain>();
@@ -173,7 +240,7 @@ public static class CinematicMenuBuilder
             vcam.transform.SetParent(group, false);
             vcam.transform.SetPositionAndRotation(start.position,start.rotation);
             vcam.Priority = i == 0 ? 20 : 0;
-            var lens = vcam.Lens; lens.FieldOfView = lenses[i]; lens.NearClipPlane = .02f; lens.FarClipPlane = 120; vcam.Lens = lens;
+            var lens = vcam.Lens; lens.FieldOfView = lenses[i]; lens.NearClipPlane = .02f; lens.FarClipPlane = ShopCameraClipping.FarDistance; vcam.Lens = lens;
             var shot = shots.GetArrayElementAtIndex(i);
             shot.FindPropertyRelative("name").stringValue = names[i];
             shot.FindPropertyRelative("camera").objectReferenceValue = vcam;
@@ -215,7 +282,7 @@ public static class CinematicMenuBuilder
         title.rectTransform.pivot = new Vector2(0,0);
         title.rectTransform.anchoredPosition = new Vector2(width*.055f,250);
         title.rectTransform.sizeDelta = new Vector2(460,160);
-        title.text = "TINY\nRIDERS"; title.fontSize = 76; title.alignment = TextAlignmentOptions.BottomLeft;
+        title.text = "Toy Car Sort"; title.fontSize = 76; title.alignment = TextAlignmentOptions.BottomLeft;
         title.color = new Color(.98f,.94f,.82f); title.textWrappingMode = TextWrappingModes.NoWrap;
         foreach (var button in card.GetComponentsInChildren<UnityEngine.UI.Button>(true))
         {
@@ -227,6 +294,7 @@ public static class CinematicMenuBuilder
             var colors = button.colors; colors.highlightedColor = new Color(1,.94f,.78f); colors.selectedColor = colors.highlightedColor;
             colors.pressedColor = new Color(.75f,.8f,.85f); button.colors = colors;
         }
+        ToyCarSortBranding.ApplyMenu(canvas);
         canvas.transform.Find("Reset_Group").SetAsLastSibling();
     }
 }

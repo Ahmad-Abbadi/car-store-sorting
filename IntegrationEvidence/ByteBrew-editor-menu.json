@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new { scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, frame = UnityEngine.Time.frameCount, reporting = ByteBrewInitializer.ReportingEnabled, crazyGamesInitialized = UnityEngine.Object.FindFirstObjectByType<CrazyGamesInitializer>()?.IsInitialized };",
+      "timeout": "15000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "scene": "MainMenu Scene",
+        "frame": 1055,
+        "reporting": false,
+        "crazyGamesInitialized": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "C:\\Users\\User\\Documents\\Games_Projects\\My_Games_Projects\\Car Store Sorting"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

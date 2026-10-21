@@ -30,7 +30,11 @@ public sealed class StoreLoadingScreenTests
         Assert.IsNotNull(prefab.GetComponent<LoadingPresentation>());
         Assert.IsNull(prefab.GetComponent<LoadingScreen>(), "The shared presentation must not start a scene load.");
         Assert.AreEqual("loading.label",prefab.GetComponentInChildren<LocalizedText>().Key);
-        Assert.AreEqual(1,prefab.GetComponentsInChildren<TMP_Text>(true).Length,"Only Loading is shown, without branding.");
+        Assert.AreEqual(1,prefab.GetComponentsInChildren<TMP_Text>(true).Length,"Loading text remains localized; branding is a separate image.");
+        var logo = prefab.transform.Find("Toy Car Sort Logo").GetComponent<UnityEngine.UI.Image>();
+        Assert.AreEqual(ToyCarSortBranding.LogoPath,AssetDatabase.GetAssetPath(logo.sprite));
+        Assert.IsTrue(logo.preserveAspect);
+        Assert.IsFalse(logo.raycastTarget);
         var texture = prefab.GetComponentInChildren<UnityEngine.UI.RawImage>().texture;
         Assert.LessOrEqual(Mathf.Max(texture.width,texture.height),2048);
         var importer = (TextureImporter)AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture));

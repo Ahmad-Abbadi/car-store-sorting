@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     [Tooltip("Scene the Play button loads.")]
     [SerializeField] private string levelScene = "Level";
     [SerializeField] private Button playButton;
+    [SerializeField] private Button tutorialButton;
     [SerializeField] private Button itemDetailButton;
     [SerializeField] private TMP_Text ItemDetails;
     [SerializeField] private UnityEngine.UI.Button themeButton;
@@ -22,11 +23,13 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         if (playButton) playButton.onClick.AddListener(Play);
+        if (tutorialButton) tutorialButton.onClick.AddListener(LearnToPlay);
         if (itemDetailButton) itemDetailButton.onClick.AddListener(CycleItemDetail);
         if (themeButton) themeButton.onClick.AddListener(ToggleTheme);
         if (quitButton) quitButton.onClick.AddListener(Quit);
 #if UNITY_WEBGL && !UNITY_EDITOR
         if (quitButton) quitButton.gameObject.SetActive(false);
+        AnalyticsPrivacyNotice.Create(transform);
 #endif
     }
 
@@ -62,6 +65,7 @@ public class MainMenu : MonoBehaviour
     private void OnDestroy()
     {
         if (playButton) playButton.onClick.RemoveListener(Play);
+        if (tutorialButton) tutorialButton.onClick.RemoveListener(LearnToPlay);
         if (itemDetailButton) itemDetailButton.onClick.RemoveListener(CycleItemDetail);
         if (themeButton) themeButton.onClick.RemoveListener(ToggleTheme);
         if (quitButton) quitButton.onClick.RemoveListener(Quit);
@@ -70,11 +74,19 @@ public class MainMenu : MonoBehaviour
     /// <summary> Loads the gameplay level through the loading screen. </summary>
     public void Play()
     {
+        StartGame(false);
+    }
+
+    public void LearnToPlay() => StartGame(true);
+
+    private void StartGame(bool replayTutorial)
+    {
         if (startingGame || SceneLoader.IsLoading) return;
         startingGame = true;
         if (playButton) playButton.interactable = false;
         if (cinematicTour) cinematicTour.StopTour();
-        SceneLoader.LoadWithLoadingScreen(levelScene);
+        if (tutorialButton) tutorialButton.interactable = false;
+        SceneLoader.LoadWithLoadingScreen(TutorialProgress.Destination(levelScene, replayTutorial));
     }
 
     /// <summary> Cycles item detail High, Medium, Low; saved for every scene. </summary>

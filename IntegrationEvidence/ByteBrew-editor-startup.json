@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "return new { scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, frame = UnityEngine.Time.frameCount, initialized = UnityEngine.Object.FindFirstObjectByType<ByteBrewInitializer>()?.IsInitialized, sdkObjects = UnityEngine.Object.FindObjectsByType<ByteBrewSDK.ByteBrew>(UnityEngine.FindObjectsSortMode.None).Length, reporting = ByteBrewInitializer.ReportingEnabled, sdkInitialized = ByteBrewSDK.ByteBrew.IsInitilized, crazyGamesObjects = UnityEngine.Object.FindObjectsByType<CrazyGamesInitializer>(UnityEngine.FindObjectsSortMode.None).Length };",
+      "timeout": "15000"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "scene": "Loading Scene",
+        "frame": 6,
+        "initialized": true,
+        "sdkObjects": 1,
+        "reporting": false,
+        "sdkInitialized": false,
+        "crazyGamesObjects": 1
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7801,
+      "projectPath": "C:\\Users\\User\\Documents\\Games_Projects\\My_Games_Projects\\Car Store Sorting"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}
